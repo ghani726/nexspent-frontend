@@ -10,7 +10,93 @@ import toast from "react-hot-toast";
 import { AddAccount, EditAccount } from "../../../api/AccountsAPI";
 import ColorPicker from "./ColorPicker";
 
-const AccountsModal = ({ typeOfModal, Cancel, editObj = null }) => {
+const handleCreation = async ({
+	setIsLoading,
+	name,
+	balance,
+	dP,
+	selectedColor,
+	selectedCurrency,
+	accessToken,
+	GetData,
+	Cancel,
+}) => {
+	if (!name.trim()) {
+		return toast.error("Account name is required");
+	}
+	setIsLoading(true);
+	try {
+		const res = await AddAccount({
+			name: name,
+			balance: balance,
+			decimalPrecision: dP,
+			bgColor: selectedColor,
+			currency: selectedCurrency,
+			token: accessToken,
+		});
+		if (res.success) {
+			toast.success("Account added successfully!");
+			setIsLoading(false);
+			GetData();
+			Cancel();
+			return;
+		} else {
+			return toast.error(res.error.message);
+		}
+	} catch (error) {
+		setIsLoading(false);
+		if (error.response) {
+			return toast.error(error.response.data.message);
+		} else {
+			return toast.error(error.message);
+		}
+	}
+};
+
+const handleEdit = async ({
+	setIsLoading,
+	name,
+	dP,
+	selectedColor,
+	selectedCurrency,
+	editObj,
+	accessToken,
+	GetData,
+	Cancel,
+}) => {
+	if (!name.trim()) {
+		return toast.error("Account name is required");
+	}
+	setIsLoading(true);
+	try {
+		const res = await EditAccount({
+			name: name,
+			decimalPrecision: dP,
+			bgColor: selectedColor,
+			currency: selectedCurrency,
+			accountID: editObj.accountID,
+			token: accessToken,
+		});
+		if (res.success) {
+			toast.success("Account updated successfully!");
+			setIsLoading(false);
+			GetData();
+			Cancel();
+			return;
+		} else {
+			return toast.error(res.error.message);
+		}
+	} catch (error) {
+		setIsLoading(false);
+		if (error.response) {
+			return toast.error(error.response.data.message);
+		} else {
+			return toast.error(error.message);
+		}
+	}
+};
+
+const AccountsModal = ({ typeOfModal, Cancel, editObj = null, GetData }) => {
 	// Loading State
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -71,74 +157,33 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null }) => {
 		currencies.unshift(removedCurrency[0]);
 	};
 
-	const handleCreation = async () => {
-		setName((prev) => prev.trim());
-		if (!name) {
-			return toast.error("Account name is required");
-		}
-		setIsLoading(true);
-		try {
-			const res = await AddAccount({
-				name: name,
-				balance: balance,
-				decimalPrecision: dP,
-				bgColor: selectedColor,
-				currency: selectedCurrency,
-				token: accessToken,
+	const handleButtonClick = () => {
+		if (typeOfModal === "Add") {
+			handleCreation({
+				setIsLoading,
+				name,
+				balance,
+				dP,
+				selectedColor,
+				selectedCurrency,
+				accessToken,
+				GetData,
+				Cancel,
 			});
-			if (res.success) {
-				toast.success("Account added successfully!");
-				setIsLoading(false);
-				// setShowModal(false);
-				Cancel();
-				return;
-			} else {
-				return toast.error(res.error.message);
-			}
-		} catch (error) {
-			setIsLoading(false);
-			if (error.response) {
-				return toast.error(error.response.data.message);
-			} else {
-				return toast.error(error.message);
-			}
+		} else if (typeOfModal === "Edit") {
+			handleEdit({
+				setIsLoading,
+				name,
+				dP,
+				selectedColor,
+				selectedCurrency,
+				editObj,
+				accessToken,
+				GetData,
+				Cancel,
+			});
 		}
 	};
-
-	const handleEdit = async () => {
-		setName((prev) => prev.trim());
-		if (!name) {
-			return toast.error("Account name is required");
-		}
-		setIsLoading(true);
-		try {
-			const res = await EditAccount({
-				name: name,
-				decimalPrecision: dP,
-				bgColor: selectedColor,
-				currency: selectedCurrency,
-				accountID: editObj.accountID,
-				token: accessToken,
-			});
-			if (res.success) {
-				toast.success("Account updated successfully!");
-				setIsLoading(false);
-				// setShowModal(false);
-				Cancel();
-				return;
-			} else {
-				return toast.error(res.error.message);
-			}
-		} catch (error) {
-			setIsLoading(false);
-			if (error.response) {
-				return toast.error(error.response.data.message);
-			} else {
-				return toast.error(error.message);
-			}
-		}
-	};
-
 	return (
 		<div className="fixed starting:scale-0 starting:opacity-0 transition-all opacity-100 scale-100 ease-in-out duration-300 inset-0 z-5 backdrop-blur-sm flex justify-center items-center">
 			<div
@@ -166,14 +211,11 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null }) => {
 					<input
 						type="text"
 						onClick={() => setShowDialPad(false)}
-						onKeyDown={(e) =>
-							e.key === "Enter" && e.preventDefault()
-						}
 						value={name}
 						onChange={(e) => {
 							setName(e.target.value);
 						}}
-						className="border-none px-1 w-full text-center outline-none text-2xl font-bold"
+						className="border-transparent p-1 focus:bg-app w-fit field-sizing-content text-center rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold"
 						placeholder="Account Name"
 					/>
 
@@ -314,13 +356,7 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null }) => {
 					</button>
 					<button
 						disabled={isLoading}
-						onClick={
-							typeOfModal === "Add"
-								? handleCreation
-								: typeOfModal === "Edit"
-									? handleEdit
-									: null
-						}
+						onClick={handleButtonClick}
 						className="px-4 disabled:bg-primary-400 disabled:active:scale-100 disabled:cursor-not-allowed cursor-pointer active:scale-95 py-2 rounded-full bg-primary hover:bg-primary-hover text-white hover:bg-primary-800 duration-300 ease-in-out"
 					>
 						{typeOfModal === "Add" ? "Create" : "Update"} Account

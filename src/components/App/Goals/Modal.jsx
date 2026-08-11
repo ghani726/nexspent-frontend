@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import DialPad from "../DialPad";
 
 import useAuth from "../../../hooks/Auth";
@@ -90,6 +90,11 @@ const handleEdit = async ({
 };
 
 const AccountsModal = ({ typeOfModal, Cancel, editObj = null }) => {
+	// End Date Ref
+	const endDateRef = useRef(null);
+
+	// Format current date to YYYY-MM-DD
+	const today = new Date().toISOString().split("T")[0];
 	// States
 	const [isLoading, setIsLoading] = useState(false);
 	const [showDialPad, setShowDialPad] = useState(false);
@@ -112,6 +117,8 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null }) => {
 	const [selectedIcon, setSelectedIcon] = useState(
 		typeOfModal === "Edit" ? editObj.icon : "🖼",
 	);
+	const [startDate, setStartDate] = useState(today);
+	const [endDate, setEndDate] = useState("");
 
 	// Button Click Handler
 	const handleButtonClick = () => {
@@ -136,8 +143,15 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null }) => {
 		}
 	};
 
+	useEffect(() => {
+		if(startDate > endDate && endDate !== "") {
+			toast.error("End date cannot be before start date");
+			setEndDate("");  //eslint-disable-line
+		}
+	}, [startDate, endDate]);
+
 	return (
-		<div className="fixed starting:scale-0 starting:opacity-0 transition-all opacity-100 scale-100 ease-in-out duration-300 inset-0 z-5 backdrop-blur-sm flex justify-center items-center">
+		<div className="fixed start:scale-0 start:opacity-0 transition-all opacity-100 scale-100 ease-in-out duration-300 inset-0 z-5 backdrop-blur-sm flex justify-center items-center">
 			<div
 				className={`flex max-h-9/10 flex-col bg-surface justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-6 rounded-5xl w-[90%] md:w-2/3 lg:w-1/2 gap-4`}
 			>
@@ -195,6 +209,42 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null }) => {
 							{user?.defaultCurrency?.symbol}
 							{amount.toLocaleString()}
 						</button>
+					</div>
+
+					<div
+						className={`w-full font-medium text-lg flex flex-col justify-center items-center gap-2`}
+					>
+						<input
+							type="date"
+							value={startDate}
+							onChange={(e) => setStartDate(e.target.value)}
+							className={`font-bold text-2xl bg-gray-200 p-1 rounded-xl cursor-pointer active:scale-95 duration-300 ease-in-out`}
+						/>
+						<div
+							className={`font-bold text-2xl bg-gray-200 p-1 rounded-xl cursor-pointer active:scale-95 duration-300 ease-in-out relative`}
+						>
+							<input
+								ref={endDateRef}
+								type="date"
+								value={endDate}
+								onChange={(e) => setEndDate(e.target.value)}
+								className={`font-bold ${!endDate && "invisible w-0 h-0"} peer text-2xl bg-gray-200 rounded-xl cursor-pointer active:scale-95 duration-300 ease-in-out`}
+							/>
+							{!endDate && (
+								<span
+									onClick={() => {
+										if (endDateRef.current) {
+											endDateRef.current.showPicker
+												? endDateRef.current.showPicker()
+												: endDateRef.current.click();
+										}
+									}}
+									className="text-gray-500"
+								>
+									Until Forever
+								</span>
+							)}
+						</div>
 					</div>
 
 					{/* Color Picker */}

@@ -12,6 +12,7 @@ import Account from "./Account";
 import Accounts from "./Accounts";
 import useData from "../../hooks/Data";
 import Budgets from "./Budgets";
+import Categories from "./Categories";
 import Goals from "./Goals";
 const App = () => {
 	const [hide, setHide] = useState(false);
@@ -76,19 +77,15 @@ const App = () => {
 	const { GetData, isDataFetched, setIsDataFetched } = useData();
 
 	useEffect(() => {
-		if(accessToken && !isDataFetched){
-			console.log("_________________HEllo");
-			
-			GetData()
-			setIsDataFetched(true)
+		if (accessToken && !isDataFetched) {
+			GetData();
+			setIsDataFetched(true);
 		}
 	}, [accessToken, isDataFetched]); //eslint-disable-line
 
-
-
 	// Transaction Model
 
-	const [showModal, setShowModal] = useState(false)
+	const [showModal, setShowModal] = useState(false);
 	return (
 		<>
 			<Header hide={hide} setHide={setHide} GetData={GetData}></Header>
@@ -96,12 +93,18 @@ const App = () => {
 				<Sidebar hide={hide} setHide={setHide}></Sidebar>
 
 				<section
-					className={`flex-1 relative flex flex-col p-4 sm:px-6 h-full overflow-y-auto w-dvw`}
+					className={`flex-1 relative flex flex-col items-center p-4 pb-22 md:pb-4 sm:px-6 h-full overflow-y-auto w-dvw`}
 				>
 					<Routes>
 						<Route
 							path=""
-							element={<Home GetData={GetData} showModal={showModal} setShowModal={setShowModal}></Home>}
+							element={
+								<Home
+									GetData={GetData}
+									showModal={showModal}
+									setShowModal={setShowModal}
+								></Home>
+							}
 						></Route>
 						<Route
 							path="/account/"
@@ -114,6 +117,12 @@ const App = () => {
 						<Route
 							path="/accounts/"
 							element={<Accounts GetData={GetData}></Accounts>}
+						></Route>
+						<Route
+							path="/categories/"
+							element={
+								<Categories GetData={GetData}></Categories>
+							}
 						></Route>
 						<Route
 							path="/goals/"

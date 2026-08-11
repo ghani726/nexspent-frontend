@@ -1,3 +1,11 @@
+// Check if user input is a single emoji
+export const isSingleEmoji = (str) => {
+	const emojiRegex = /^\p{RGI_Emoji}$/v;
+	const result = emojiRegex.test(str.trim());
+	return result;
+};
+
+// Emoji List
 const emojis = [
 	// --- Food & Drinks ---
 	{

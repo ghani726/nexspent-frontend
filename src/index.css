@@ -136,6 +136,27 @@
 	background: var(--color-primary);
 }
 
+/* Dialog Animations */
+
+dialog {
+	opacity: 0;
+	scale: 0;
+	transition:
+		opacity 300ms ease,
+		scale 300ms ease,
+		display 300ms allow-discrete,
+		overlay 300ms allow-discrete;
+}
+dialog[open] {
+	opacity: 1;
+	scale: 1;
+	@starting-style {
+		opacity: 0;
+		scale: 0;
+	}
+}
+
+
 .input-box,
 .input-box-p {
 	position: relative;

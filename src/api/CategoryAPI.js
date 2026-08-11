@@ -3,23 +3,20 @@ import axios from "axios";
 import config from "../config/config.js";
 
 // Add Account API
-export const AddAccount = async ({
+export const CreateCategory = async ({
 	name,
-	balance = 0,
-	decimalPrecision = null,
-	bgColor = "Default",
-	currency = null,
+	bgColor,
+	categoryType,
+	icon,
 	token,
 }) => {
-
 	const res = await axios.post(
-		`${config.BackendURL}/user/accounts/`,
+		`${config.BackendURL}/user/category/`,
 		{
 			name: name,
-			balance: balance,
-			decimalPrecision: decimalPrecision,
 			bgColor: bgColor,
-			currency: currency,
+			categoryType: categoryType,
+			icon: icon,
 			token: token,
 		},
 		{
@@ -28,23 +25,22 @@ export const AddAccount = async ({
 	);
 	return res.data;
 };
-
-export const EditAccount = async ({
+export const UpdateCategory = async ({
 	name,
-	decimalPrecision = null,
-	bgColor = "Default",
-	currency = null,
-	accountID,
+	bgColor,
+	categoryType,
+	icon,
+	categoryID,
 	token,
 }) => {
 	const res = await axios.patch(
-		`${config.BackendURL}/user/accounts/`,
+		`${config.BackendURL}/user/category/`,
 		{
 			name: name,
-			decimalPrecision: decimalPrecision,
 			bgColor: bgColor,
-			currency: currency,
-			accountID: accountID,
+			categoryType: categoryType,
+			icon: icon,
+			categoryID: categoryID,
 			token: token,
 		},
 		{
@@ -53,13 +49,12 @@ export const EditAccount = async ({
 	);
 	return res.data;
 };
-
-export const DeleteAccount = async ({ accountID, token }) => {
+export const DeleteCategory = async ({ categoryID, token }) => {
 	const res = await axios.delete(
-		`${config.BackendURL}/user/accounts/`,
+		`${config.BackendURL}/user/category/`,
 		{
 			data: {
-				accountID: accountID,
+				categoryID: categoryID,
 				token: token,
 			},
 		},

@@ -21,7 +21,7 @@ const Navbar = () => {
 	}, [location.pathname]);
 	return (
 		<nav
-			className={`flex absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full opacity-100  -translate-y md:-translate-y-full md:opacity-0 transition-all ease-in-out duration-300 justify-around items-center bg-surface shadow-medium max-h-16 min-h-16`}
+			className={`flex absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full opacity-100  -translate-y md:-translate-y-full md:opacity-0 transition-all ease-in-out duration-300 justify-around items-center bg-surface shadow-large max-h-16 min-h-16`}
 		>
 			<div
 				style={{
