@@ -162,7 +162,7 @@ const DialPad = ({
   }, [dP]);
   return (
     <div
-      className={`flex ${showModal ? "translate-y-0" : "translate-y-120"} transition-all ms:bottom-4 md:bottom-4 ms:rounded-4xl ease-in-out duration-300 flex-col absolute bottom-0 w-full left-1/2 -translate-x-1/2 max-w-125 p-4 gap-4 z-50 rounded-t-4xl bg-surface shadow-large`}
+      className={`flex ${showModal ? "translate-y-0" : "translate-y-120"} transition-all ms:bottom-4 md:bottom-4 ms:rounded-4xl ease-in-out duration-300 flex-col absolute bottom-0 w-full left-1/2 -translate-x-1/2 max-w-125 p-4 gap-4 z-50 rounded-t-4xl bg-surface dark:bg-gray-800 shadow-large`}
     >
       <h2 className="px-1 font-bold text-3xl text-primary dark:text-primary-300">
         Enter {text}
@@ -171,7 +171,7 @@ const DialPad = ({
         onChange={(e) => {
           setValue(e.target.value);
         }}
-        className={`flex justify-end items-center w-full text-3xl font-bold ${value || secondaryValue.length > 1 ? "text-black" : "text-gray-300"}`}
+        className={`flex justify-end items-center w-full text-3xl font-bold ${value || secondaryValue.length > 1 ? "text-black dark:text-white" : "text-gray-600"}`}
       >
         {currencySymbol}
         {dP > 0 ? value.toFixed(dP) : Math.round(value)}

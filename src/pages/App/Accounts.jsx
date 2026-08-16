@@ -1,15 +1,16 @@
 import AccountCard from "../../components/App/Accounts/AccountCard";
-import { Info } from "lucide-react";
-import AddButton from "../../components/App/AddButton";
+import { Info, Wallet } from "lucide-react";
+import AddButton from "../../components/App/Common/AddButton";
 import { useState } from "react";
 import { useRef } from "react";
 import AccountsModal from "../../components/App/Accounts/Modal";
 import useData from "../../hooks/Data";
-import InfoModal from "../../components/App/Accounts/InfoModal";
-import DeleteModal from "../../components/App/Accounts/DeleteModal";
+import InfoModal from "../../components/App/Common/InfoModal";
+import DeleteModal from "../../components/App/Common/DeleteModal.jsx";
 import toast from "react-hot-toast";
 import { DeleteAccount } from "../../api/AccountsAPI.js";
-import SearchBar from "../../components/App/Account/SearchBar";
+import SearchBar from "../../components/App/Common/SearchBar";
+import MergeModal from "../../components/App/Common/MergeModal.jsx";
 
 const DeleteHandler = async ({
 	objID,
@@ -71,13 +72,14 @@ const Accounts = ({ GetData }) => {
 					obj={e}
 					EditFunc={EditFunc}
 					DeleteFunc={DeleteFunc}
+					MergeFunc={MergeFunc}
 				></AccountCard>
 			);
 		});
 	};
 	// Modal states
 	const [showModal, setShowModal] = useState(false);
-	const [showInfoModal, setShowInfoModal] = useState(false);
+	const [showMergeModal, setShowMergeModal] = useState(false)
 
 	// Edit States
 	const [typeOfModal, setTypeOfModal] = useState("Add");
@@ -89,7 +91,11 @@ const Accounts = ({ GetData }) => {
 
 	// Edit, Delete and Merge States
 	const [accountID, setAccountID] = useState(null);
+	
+	// Merge State
 	const [mergeAccountID, setMergeAccountID] = useState(null);
+	const [mergeObj1, setMergeObj1] = useState(null)
+	const [mergeObj2, setMergeObj2] = useState(null)
 
 	const { accounts, transactions } = useData();
 
@@ -129,7 +135,7 @@ const Accounts = ({ GetData }) => {
 		closeModal();
 	};
 
-	// Modal
+	// Modalbackground: var(--color-gray-900);
 
 	const dialogRef = useRef(null);
 
@@ -137,8 +143,43 @@ const Accounts = ({ GetData }) => {
 
 	const closeModal = () => dialogRef.current?.close();
 
+
+	// Info Modal
+
+	const infoRef = useRef(null)
+
+	const openInfoModal = () => infoRef.current?.showModal();
+
+	const closeInfoModal = () => infoRef.current?.close();
+
+
+
+	// Merge Modal
+
+
+	const MergeFunc = (id, name) => {
+		if (!accountID) {
+			setAccountID(id)
+			setMergeObj1(name)
+			setShowMergeModal(true)
+		} else if (id === accountID) {
+			CancelMerge()
+		} else if (id && (id !== accountID)) {
+			setMergeAccountID(id)
+			setMergeObj2(name)
+		}
+	}
+	const mergeRef = useRef(null);
+
+	const CancelMerge = () => {
+		setAccountID(null)
+		setMergeAccountID(null)
+		setMergeObj1(null)
+		setMergeObj2(null)
+		setShowMergeModal(false)
+	}
+
 	// #endregion
-console.log(accountID);
 
 	//   HTML
 	return (
@@ -148,15 +189,18 @@ console.log(accountID);
 					Accounts
 				</h2>
 				<button
-					onClick={() => setShowInfoModal((prev) => !prev)}
+					onClick={openInfoModal}
 					title="More"
 					className="p-1.5 rounded-full cursor-pointer"
 				>
 					<Info size={20} strokeWidth={2.8}></Info>
 				</button>
 				<InfoModal
-					showInfoModal={showInfoModal}
-					setShowInfoModal={setShowInfoModal}
+					ref={infoRef}
+					closeInfoModal={closeInfoModal}
+					title={"Accounts"}
+					desc={"Every transaction belongs to an account, which represents where your money is stored or spent - like cash, or credit."}
+					icon={<Wallet size={36}></Wallet>}
 				></InfoModal>
 			</div>
 			<SearchBar
@@ -166,14 +210,24 @@ console.log(accountID);
 				searchValue={searchValue}
 				setSearchValue={setSearchValue}
 			></SearchBar>
+		
+			<MergeModal
+				Ref={mergeRef}
+				showMergeModal={showMergeModal}
+				GetData={GetData}
+				Cancel={CancelMerge}
+				type="Account"
+				firstID={accountID}
+				mergeID={mergeAccountID}
+				mergeObj1={mergeObj1}
+				mergeObj2={mergeObj2}
+			></MergeModal>
 			<div
-				onClick={() => setShowInfoModal(false)}
-				className="w-full gap-2 flex flex-col"
+				className={`w-full ${showMergeModal ? 'm-0' : '-mt-12'} gap-2 flex flex-col`}
 			>
 				{acts()}
 			</div>
 			<AddButton
-				onClick={() => setShowInfoModal(false)}
 				title="Add account"
 				showModal={showModal}
 				setShowModal={setShowModal}

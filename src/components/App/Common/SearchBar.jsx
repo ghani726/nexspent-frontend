@@ -23,7 +23,7 @@ const SearchBar = ({ searchValue, setSearchValue, ph, title, full = false }) => 
     }, []);
     return (
         <div className="flex justify-center items-center w-full">
-            <div title={title} className={`bg-white z-5 ${full ? "w-full": "w-xl"} p-2 rounded-full shadow-medium flex justify-between items-center gap-3 border-2 border-transparent focus-within:border-primary ease-in-out duration-300`}>
+            <div title={title} className={`bg-white dark:bg-gray-800 dark:placeholder:text-white z-5 ${full ? "w-full": "w-xl"} p-2 rounded-full shadow-medium flex justify-between items-center gap-3 border-2 border-transparent focus-within:border-primary ease-in-out duration-300`}>
                 <input
                     ref={search}
                     value={searchValue}

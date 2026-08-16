@@ -15,7 +15,7 @@ const ColorBox = ({ e, selectedColor, handleColorChange }) => {
 				className="peer hidden"
 			/>
 			<div
-				className={`rounded-full h-10 aspect-square w-10 ${e.color} peer-checked:ring-2 peer-checked:ring-black`}
+				className={`rounded-full h-10 aspect-square w-10 ${e.color} peer-checked:ring-2 peer-checked:ring-black dark:peer-checked:ring-white`}
 				title={e.name}
 			></div>
 		</label>
@@ -28,7 +28,7 @@ const ColorPicker = ({ heading, selectedColor, setSelectedColor }) => {
 	const handleColorChange = (event) => {
 		setSelectedColor(event.target.value);
 	};
-   
+	
 	return (
 		<div className="w-full flex flex-col gap-2 items-start">
 			<h4 className="font-bold text-xl">{heading}:</h4>

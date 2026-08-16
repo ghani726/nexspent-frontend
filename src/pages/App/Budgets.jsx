@@ -1,14 +1,12 @@
-import { Info } from "lucide-react";
-import AddButton from "../../components/App/AddButton";
-import { useState } from "react";
+import { Info, PieChart } from "lucide-react";
+import AddButton from "../../components/App/Common/AddButton";
+import { useRef, useState } from "react";
 import AccountsModal from "../../components/App/Accounts/Modal";
 import useData from "../../hooks/Data";
-import InfoModal from "../../components/App/Budgets/InfoModal";
-
+import InfoModal from "../../components/App/Common/InfoModal";
 const Budgets = () => {
 	// Modal states
 	const [showModal, setShowModal] = useState(false);
-	const [showInfoModal, setShowInfoModal] = useState(false);
 
 	// Edit States
 	const [typeOfModal, setTypeOfModal] = useState("Add");
@@ -52,27 +50,36 @@ const Budgets = () => {
 		setShowModal(true);
 	};
 
+	// Info Modal
+
+	const infoRef = useRef(null)
+
+	const openInfoModal = () => infoRef.current?.showModal();
+
+	const closeInfoModal = () => infoRef.current?.close();
 	//   HTML
 	return (
-		<div className="relative w-full h-full flex flex-col gap-4">
+		<div className="relative w-full lg:max-w-7/10 flex flex-col gap-4">
 			<div className="flex justify-between items-center">
 				<h2 className="font-bold line-clamp-1 text-3xl text-primary">
 					Budgets
 				</h2>
 				<button
-					onClick={() => setShowInfoModal((prev) => !prev)}
+					onClick={openInfoModal}
 					title="More"
 					className="p-1.5 rounded-full cursor-pointer"
 				>
 					<Info size={20} strokeWidth={2.8}></Info>
 				</button>
 				<InfoModal
-					showInfoModal={showInfoModal}
-					setShowInfoModal={setShowInfoModal}
+					ref={infoRef}
+					closeInfoModal={closeInfoModal}
+					title={"Budgets"}
+					desc={"A budget sets a planned limit for spending or saving within a period. Budgets break down finances by timeframe, provide insights, and help you track and control your money."}
+					icon={<PieChart size={36}></PieChart>}
 				></InfoModal>
 			</div>
 			<div
-				onClick={() => setShowInfoModal(false)}
 				className="w-full gap-2 flex flex-col"
 			>
 				{/* {accounts?.length > 0 &&
@@ -100,7 +107,7 @@ const Budgets = () => {
 				This page would be made at the end
 			</div>
 			{/* <AddButton
-				onClick={() => setShowInfoModal(false)}
+
 				title="Add account"
 				showModal={showModal}
 				setShowModal={setShowModal}

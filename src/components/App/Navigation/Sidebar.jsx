@@ -30,7 +30,7 @@ const Sidebar = ({ hide }) => {
 	return (
 		<aside className="-translate-x-full opacity-0 md:translate-x-0 md:opacity-100 transition-all ease-in-out duration-300 flex flex-col p-0 md:p-3 md:pt-1.5 w-0 md:w-auto">
 			<nav
-				className={`rounded-3xl flex-col p-2 gap-2 ${hide ? "min-w-14" : "min-w-64"} h-[calc(100dvh-3.5rem)] bg-white shadow-medium relative`}
+				className={`rounded-3xl flex-col p-2 gap-2 ${hide ? "min-w-14" : "min-w-64"} h-[calc(100dvh-3.5rem)] bg-surface dark:bg-gray-800 shadow-medium relative`}
 			>
 				<div
 					style={{
@@ -43,7 +43,7 @@ const Sidebar = ({ hide }) => {
 					onClick={() => {
 						setSlider(0);
 					}}
-					className={`p-2.5 flex items-center gap-3 ${hide ? "justify-center" : "justify-start"} rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 0 ? "text-white" : ""}`}
+					className={`p-2.5 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-900 ${hide ? "justify-center" : "justify-start"} rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 0 ? "text-white" : ""}`}
 				>
 					<Home className="h-5 w-5 z-5 shrink-0" size={20}></Home>
 					<p
@@ -57,7 +57,7 @@ const Sidebar = ({ hide }) => {
 					onClick={() => {
 						setSlider(1);
 					}}
-					className={`p-2.5 flex items-center gap-3 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 1 ? "text-white" : ""}`}
+					className={`p-2.5 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-900 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 1 ? "text-white" : ""}`}
 				>
 					<Receipt
 						className="h-5 w-5 z-5 shrink-0"
@@ -74,7 +74,7 @@ const Sidebar = ({ hide }) => {
 					onClick={() => {
 						setSlider(2);
 					}}
-					className={`p-2.5 flex items-center gap-3 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 2 ? "text-white" : ""}`}
+					className={`p-2.5 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-900 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 2 ? "text-white" : ""}`}
 				>
 					<PieChart
 						className="h-5 w-5 z-5 shrink-0"
@@ -91,7 +91,7 @@ const Sidebar = ({ hide }) => {
 					onClick={() => {
 						setSlider(3);
 					}}
-					className={`p-2.5 flex items-center  gap-3 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 3 ? "text-white" : ""}`}
+					className={`p-2.5 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-900 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 3 ? "text-white" : ""}`}
 				>
 					<Wallet className="h-5 w-5 z-5 shrink-0" size={20}></Wallet>
 					<p
@@ -105,7 +105,7 @@ const Sidebar = ({ hide }) => {
 					onClick={() => {
 						setSlider(4);
 					}}
-					className={`p-2.5 flex items-center  gap-3 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 4 ? "text-white" : ""}`}
+					className={`p-2.5 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-900 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 4 ? "text-white" : ""}`}
 				>
 					<Shapes
 						className="h-5 w-5 z-5 shrink-0"
@@ -123,7 +123,7 @@ const Sidebar = ({ hide }) => {
 					onClick={() => {
 						setSlider(5);
 					}}
-					className={`p-2.5 flex items-center  gap-3 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 5 ? "text-white" : ""}`}
+					className={`p-2.5 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-900 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 5 ? "text-white" : ""}`}
 				>
 					<Goal
 						className="h-5 w-5 z-5 shrink-0"
@@ -141,7 +141,7 @@ const Sidebar = ({ hide }) => {
 					onClick={() => {
 						setSlider(6);
 					}}
-					className={`p-2.5 flex items-center  gap-3 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 6 ? "text-white" : ""}`}
+					className={`p-2.5 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-900 ${hide ? "justify-center" : "justify-start"}  rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 6 ? "text-white" : ""}`}
 				>
 					<CircleUserRound
 						className="h-5 w-5 z-5 shrink-0"

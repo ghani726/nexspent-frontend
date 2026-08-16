@@ -69,3 +69,18 @@ export const DeleteAccount = async ({ accountID, token }) => {
 	);
 	return res.data;
 };
+
+export const MergeAccount = async ({ accountID, mergeAccountID, token }) => {
+	const res = await axios.post(
+		`${config.BackendURL}/user/accounts/merge`,
+		{
+			accountID: accountID,
+			mergeAccountID: mergeAccountID,
+			token: token,
+		},
+		{
+			withCredentials: true, // <--- THIS IS REQUIRED
+		},
+	);
+	return res.data;
+};

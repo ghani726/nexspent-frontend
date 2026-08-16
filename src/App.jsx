@@ -25,6 +25,7 @@ const App = () => {
 			</Routes>
 			<Toaster
 				toastOptions={{
+					className: "bg-white dark:!bg-gray-950 dark:!text-white",
 					style: {
 						borderRadius: "2rem",
 						boxShadow: "0 0 10px rgba(0,0,0,0.2)",

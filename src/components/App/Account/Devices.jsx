@@ -84,7 +84,7 @@ const DeviceCard = ({ browser, device, id, currentSession }) => {
 	};
 
 	return (
-		<div className="flex p-4 ms:p-3 px-4 bg-app hover:bg-gray-100 ms:rounded-full rounded-4xl justify-between w-full items-center duration-300 ease-in-out">
+		<div className="flex p-4 ms:p-3 px-4 bg-app dark:bg-gray-700 dark:hover:bg-gray-900 hover:bg-gray-100 ms:rounded-full rounded-4xl justify-between w-full items-center duration-300 ease-in-out">
 			<div className="flex m-0 ms:mx-2 flex-col justify-center items-start">
 				<h4 className="font-semibold text-lg -mb-1">{device}</h4>
 				<p className="text-secondary-700 text-sm">{browser}</p>
@@ -110,7 +110,7 @@ const Devices = () => {
 	const { user, currentSession } = useAuth();
 
 	return (
-		<div className="flex animate-fade-in flex-col justify-center items-center w-full bg-white p-5 rounded-5xl gap-4">
+		<div className="flex animate-fade-in flex-col justify-center items-center w-full bg-white dark:bg-gray-800 p-5 rounded-5xl gap-4">
 			<h2 className="text-2xl font-bold text-primary w-full text-start">
 				Manage your devices:
 			</h2>
@@ -127,7 +127,7 @@ const Devices = () => {
 					);
 				})}
 			</div>
-			<button className="p-3 px-5 font-semibold rounded-2xl bg-primary-700 text-white">
+			<button className="p-3 px-5 font-semibold rounded-full bg-primary text-white">
 				Logout from all devices
 			</button>
 		</div>

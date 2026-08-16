@@ -4,9 +4,9 @@ import { useState } from "react";
 import useAuth from "../../../hooks/Auth";
 import toast from "react-hot-toast";
 import { CreateCategory, UpdateCategory } from "../../../api/CategoryAPI.js";
-import ColorPicker from "../Accounts/ColorPicker";
+import ColorPicker from "../Common/ColorPicker.jsx";
 import useData from "../../../hooks/Data";
-import EmojiPicker from "../EmojiPicker";
+import EmojiPicker from "../Common/EmojiPicker.jsx";
 
 const handleCreation = async ({
 	name,
@@ -162,7 +162,7 @@ const CategoriesModal = ({ typeOfModal, Cancel, editObj = null, GetData}) => {
 	return (
 		<div className="fixed start:scale-0 start:opacity-0 transition-all opacity-100 scale-100 ease-in-out duration-300 inset-0 z-5 backdrop-blur-sm flex justify-center items-center">
 			<div
-				className={`flex max-h-9/10 flex-col bg-surface justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-6 rounded-5xl w-[90%] md:w-2/3 lg:w-1/2 gap-4`}
+				className={`flex max-h-9/10 flex-col bg-surface dark:bg-gray-900 justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-6 rounded-5xl w-[90%] md:w-2/3 lg:w-1/2 gap-4`}
 			>
 				{/* Header */}
 
@@ -186,10 +186,10 @@ const CategoriesModal = ({ typeOfModal, Cancel, editObj = null, GetData}) => {
 					{isTypeEditable && (
 						<div className="flex justify-center items-center w-full">
 							<div
-								className={`flex duration-300 ease-in-out bg-gray-100 justify-center items-center rounded-full relative`}
+								className={`flex duration-300 ease-in-out bg-gray-100 dark:bg-gray-800 justify-center items-center rounded-full relative`}
 							>
 								<div
-									className={`absolute shadow-medium top-0 left-0 w-1/2 h-full rounded-full bg-surface duration-300 ease-in-out`}
+									className={`absolute shadow-medium top-0 left-0 w-1/2 h-full rounded-full bg-surface dark:bg-gray-700 duration-300 ease-in-out`}
 									style={{
 										transform: `translateX(${slider * 100}%)`,
 									}}
@@ -228,7 +228,7 @@ const CategoriesModal = ({ typeOfModal, Cancel, editObj = null, GetData}) => {
 							onChange={(e) => {
 								setName(e.target.value);
 							}}
-							className="border-transparent p-1 focus:bg-app w-full rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold"
+							className="border-transparent p-1 focus:bg-app dark:focus:bg-gray-800 w-full rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold"
 							placeholder="Category Name"
 						/>
 					</div>
@@ -248,7 +248,7 @@ const CategoriesModal = ({ typeOfModal, Cancel, editObj = null, GetData}) => {
 					<button
 						onClick={Cancel}
 						disabled={isLoading}
-						className="px-4 disabled:cursor-not-allowed cursor-pointer active:scale-95 py-2 rounded-full bg-app hover:bg-gray-200  duration-300 ease-in-out"
+						className="px-4 disabled:cursor-not-allowed cursor-pointer active:scale-95 py-2 rounded-full bg-app dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800 duration-300 ease-in-out"
 					>
 						Cancel
 					</button>

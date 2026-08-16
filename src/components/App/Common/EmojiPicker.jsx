@@ -1,9 +1,9 @@
 import { SmileIcon, X } from "lucide-react";
 import toast from "react-hot-toast";
-import { isSingleEmoji } from "../../utils/emoji.js";
+import { isSingleEmoji } from "../../../utils/emoji.js";
 import { FaRegKeyboard } from "react-icons/fa6";
-import SearchBar from "../App/Account/SearchBar";
-import emojis from "../../utils/emoji";
+import SearchBar from "./SearchBar.jsx";
+import emojis from "../../../utils/emoji.js";
 import { useState } from "react";
 
 const EmojiIcon = ({ e, selectedIcon, handleIconChange }) => {
@@ -19,7 +19,7 @@ const EmojiIcon = ({ e, selectedIcon, handleIconChange }) => {
 			/>
 			<div
 				title={e.title}
-				className="w-12 flex justify-center items-center aspect-square text-2xl rounded-full peer-checked:ring-2 peer-checked:ring-black peer-checked:shadow-large"
+				className="w-12 flex justify-center items-center aspect-square text-2xl rounded-full peer-checked:ring-2 peer-checked:ring-black dark:peer-checked:ring-white peer-checked:shadow-large"
 			>
 				{e.icon}
 			</div>
@@ -72,7 +72,7 @@ const EmojiPicker = ({
 	//#endregion
 	return (
 		<div
-			className={`flex resize-none [&::-webkit-resizer]:hidden ${showModal ? "translate-y-0 ms:top-1/2 ms:left-1/2 ms:-translate-1/2 h-fit ms:max-w-9/10" : "translate-y-200"} transition-all overflow-scroll max-h-9/10   ms:rounded-4xl ease-in-out duration-300 flex-col absolute bottom-0 w-full left-1/2 -translate-x-1/2 md:max-w-2xl p-4 gap-4 z-50 rounded-t-4xl bg-surface shadow-large`}
+			className={`flex resize-none [&::-webkit-resizer]:hidden ${showModal ? "translate-y-0 ms:top-1/2 ms:left-1/2 ms:-translate-1/2 h-fit ms:max-w-9/10" : "translate-y-200"} transition-all overflow-scroll max-h-9/10   ms:rounded-4xl ease-in-out duration-300 flex-col absolute bottom-0 w-full left-1/2 -translate-x-1/2 md:max-w-2xl p-4 gap-4 z-50 rounded-t-4xl bg-surface dark:bg-gray-900 shadow-large`}
 		>
 			<div className="w-ful flex justify-between items-center">
 				<h2 className="px-1 font-bold text-3xl text-primary dark:text-primary-300">
@@ -92,7 +92,7 @@ const EmojiPicker = ({
 						value={keyboardInput}
 						onChange={(e) => handleKeyboardInputChange(e)}
 						placeholder="Enter a single emoji..."
-						className="w-full bg-surface shadow-medium h-11.5 px-4 rounded-full focus:border-primary border-2 border-transparent outline-none duration-300 ease-in-out"
+						className="w-full bg-surface dark:bg-gray-800 shadow-medium h-11.5 px-4 rounded-full focus:border-primary border-2 border-transparent outline-none duration-300 ease-in-out"
 					/>
 				) : (
 					<SearchBar
@@ -106,7 +106,7 @@ const EmojiPicker = ({
 				<button
 					onClick={() => setIsKeyboardMode((prev) => !prev)}
 					title={isKeyboardMode ? "Select Icon" : "Enter Emoji"}
-					className="flex cursor-pointer active:scale-90 hover:ring-primary ring-2 ring-transparent justify-center items-center h-11.5 aspect-square rounded-full bg-surface font-semibold hover:bg-primary-600 transition-all duration-300 ease-in-out text-gray-500 hover:text-gray-700 shadow-medium"
+					className="flex cursor-pointer active:scale-90 hover:ring-primary ring-2 ring-transparent justify-center items-center h-11.5 aspect-square rounded-full bg-surface dark:bg-gray-800 font-semibold hover:bg-primary-600 transition-all duration-300 ease-in-out text-gray-500 hover:text-gray-700 dark:hover:text-gray-500 shadow-medium"
 				>
 					{isKeyboardMode ? (
 						<SmileIcon size={24}></SmileIcon>

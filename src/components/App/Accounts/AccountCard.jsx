@@ -1,4 +1,4 @@
-import { Edit, Trash2, Triangle } from "lucide-react";
+import { Edit, Merge, Trash2, Triangle } from "lucide-react";
 import useData from "../../../hooks/Data";
 
 const AccountCard = ({
@@ -11,6 +11,7 @@ const AccountCard = ({
 	obj,
 	EditFunc,
 	DeleteFunc,
+	MergeFunc=null
 }) => {
 	const { colors } = useData();
 
@@ -30,16 +31,67 @@ const AccountCard = ({
 		);
 	};
 
+	const showActionButtons = () => {
+
+		const MergeButton = () => {
+			return <button
+				onClick={(e) => {
+					e.stopPropagation();
+					MergeFunc(obj._id, name);
+				}}
+				title="Merge Account"
+				className="text-blue-500 p-1.5 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900 cursor-pointer"
+			>
+				<Merge size={20}></Merge>
+			</button>
+		}
+		const EditButton = () => {
+			return <button
+				title="Edit Account"
+				onClick={(e)=>{
+					e.stopPropagation()
+					handleEdit()
+				}}
+				className="text-primary	 p-1.5 rounded-full hover:bg-secondary/50 cursor-pointer"
+			>
+				<Edit size={20}></Edit>
+			</button>
+		}
+
+		const DeleteButton = () => {
+			return <button
+				onClick={(e) => {
+					e.stopPropagation();
+					DeleteFunc(obj._id);
+				}}
+				title="Delete"
+				className="text-red-500 p-1.5 rounded-full hover:bg-red-100 cursor-pointer"
+			>
+				<Trash2 size={20}></Trash2>
+			</button>
+		}
+
+		if(accountsLength <= 1) return <EditButton></EditButton>
+
+		if(!transactions?.length){
+			return <><MergeButton></MergeButton>
+			<EditButton></EditButton>
+			<DeleteButton></DeleteButton></>
+		} else {
+			return <><MergeButton></MergeButton>
+			<EditButton></EditButton></>
+		}
+		
+	}
 	return (
 		<div
-			onClick={handleEdit}
 			style={{ borderColor: bgColors }}
-			className={`flex starting:translate-y-full animate-fade-in  cursor-pointer hover:shadow-large hover:scale-[1.02] shadow-medium duration-300 ease-in-out active:scale-98 shrink-0 items-center p-3 px-6 justify-between -space-y-1 w-full bg-surface rounded-full border-l-6`}
+			className={`flex starting:translate-y-full animate-fade-in  cursor-pointer hover:shadow-large hover:scale-[1.02] shadow-medium duration-300 ease-in-out active:scale-99 shrink-0 items-center p-3 px-6 justify-between -space-y-1 w-full bg-surface dark:bg-gray-800 rounded-full border-l-6`}
 		>
 			<div className="flex flex-col -space-y-1">
 				<h3 className="font-bold text-[22px] -my-1.3 mr-7">{name}</h3>
 				<p
-					className={`${balance === 0 ? "text-black" : balance < 0 ? "text-red-500" : "text-primary"} flex justify-start items-center gap-1`}
+					className={`${balance === 0 ? "text-black dark:text-white" : balance < 0 ? "text-red-500" : "text-primary"} flex justify-start items-center gap-1`}
 				>
 					{currency?.symbol}
 					{balance}{" "}
@@ -67,26 +119,7 @@ const AccountCard = ({
 				</p>
 			</div>
 			<div className="flex justify-center items-center">
-				<button
-					onClick={handleEdit}
-					title="Edit"
-					className="text-primary p-1.5 rounded-full cursor-pointer hover:bg-secondary/50"
-				>
-					<Edit size={20}></Edit>
-				</button>
-				{accountsLength === 1 ||
-					(!transactions.length && (
-						<button
-							onClick={(e) => {
-								e.stopPropagation();
-								DeleteFunc(obj._id);
-							}}
-							title="Delete"
-							className="text-red-500 p-1.5 rounded-full cursor-pointer hover:bg-red-100"
-						>
-							<Trash2 size={20}></Trash2>
-						</button>
-					))}
+				{showActionButtons()}
 			</div>
 		</div>
 	);

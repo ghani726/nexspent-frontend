@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+
+@media (prefers-color-scheme: dark) {
+	@theme {
+		/* --shadow-large: 0 0 24px rgba(255, 255, 255, 0.3); */
+
+		--color-app: var(--color-gray-900);
+		--color-surface: var(--color-gray-800);
+	}
+}
+
 @theme {
 	/* Theme Canvas */
 	--color-app: #eaf2f5;
@@ -45,45 +55,54 @@
 		from {
 			opacity: 0;
 		}
+
 		to {
 			opacity: 1;
 		}
 	}
+
 	@keyframes slide-in-up {
 		from {
 			transform: translateY(20px);
 			opacity: 0;
 		}
+
 		to {
 			transform: translateY(0);
 			opacity: 1;
 		}
 	}
+
 	@keyframes slide-in-down {
 		from {
 			transform: translateY(-20px);
 			opacity: 0;
 		}
+
 		to {
 			transform: translateY(0);
 			opacity: 1;
 		}
 	}
+
 	@keyframes slide-in-right {
 		from {
 			transform: translateX(20px);
 			opacity: 0;
 		}
+
 		to {
 			transform: translateX(0);
 			opacity: 1;
 		}
 	}
+
 	@keyframes slide-in-left {
 		from {
 			transform: translateX(-20px);
 			opacity: 0;
 		}
+
 		to {
 			transform: translateX(0);
 			opacity: 1;
@@ -91,47 +110,27 @@
 	}
 }
 
-/* Dark Theme Tokens (Default Recommended for Futuristic Vibe) */
-
-@variant dark {
-	@theme {
-		--bg-app: #020617;
-		--bg-surface: rgba(15, 23, 42, 0.75);
-		--bg-pill: rgba(30, 41, 59, 0.7);
-		--border-subtle: rgba(51, 65, 85, 0.5);
-
-		--brand-primary: #10b981;
-		--brand-primary-hover: #34d399;
-		--brand-glow: rgba(16, 185, 129, 0.25);
-		--brand-secondary: #22d3ee;
-
-		--color-income: #34d399;
-		--color-expense: #fb7185;
-		--color-transfer: #60a5fa;
-
-		--text-main: #f8fafc;
-		--text-muted: #94a3b8;
-	}
-}
 
 #root {
-	background: var(--color-app);
 	width: 100%;
 	min-height: 100dvh;
 }
+
 /* Custom Scrollbar for Smooth UI */
 ::-webkit-scrollbar {
 	width: 6px;
-
 	height: 6px;
 }
+
 ::-webkit-scrollbar-track {
 	background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
 	background: var(--color-secondary);
 	border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
 	background: var(--color-primary);
 }
@@ -147,13 +146,20 @@ dialog {
 		display 300ms allow-discrete,
 		overlay 300ms allow-discrete;
 }
+
 dialog[open] {
 	opacity: 1;
 	scale: 1;
+
 	@starting-style {
 		opacity: 0;
 		scale: 0;
 	}
+}
+
+
+@view-transition {
+	navigation: auto;
 }
 
 
@@ -165,59 +171,85 @@ dialog[open] {
 	border: 2px solid var(--color-gray-200);
 	background-color: var(--color-app);
 	font-size: 1rem;
+
+	@media (prefers-color-scheme: dark) {
+		border: 2px solid transparent;
+		background-color: var(--color-gray-700);
+	}
 }
-.input-box > input,
-.input-box > select {
+
+
+
+.input-box>input,
+.input-box>select {
 	position: absolute;
 	width: 92%;
 	height: 100%;
 }
-.input-box-p > input {
+
+.input-box-p>input {
 	position: absolute;
 	width: 82%;
 	height: 100%;
 }
 
-.input-box > label,
-.input-box-p > label {
+.input-box>label,
+.input-box-p>label {
 	position: absolute;
 	top: 50%;
 	left: 1rem;
 	transform: translateY(-50%);
 	transition: all ease 0.3s;
-	background: var(--color-app);
 	padding: 0.3rem;
-	color: var(--color-gray-500);
 	pointer-events: none;
+	color: var(--color-gray-500);
+	background: var(--color-app);
+
+	@media (prefers-color-scheme: dark) {
+		background-color: var(--color-gray-700);
+	}
 }
 
-.input-box > input:focus + label,
-.input-box > input:not(:placeholder-shown) + label,
-input:-webkit-autofill ~ label {
+.input-box>input:focus+label,
+.input-box>input:not(:placeholder-shown)+label,
+input:-webkit-autofill~label {
 	top: -2%;
 	font-size: 12px;
-	background: linear-gradient(var(--color-white), var(--color-app));
 	color: var(--color-primary);
 	font-weight: 600;
-}
-.input-box > select:focus + label,
-.input-box > select:not(:placeholder-shown) + label,
-select:-webkit-autofill ~ label {
-	top: -2%;
-	font-size: 12px;
 	background: linear-gradient(var(--color-white), var(--color-app));
-	color: var(--color-primary);
-	font-weight: 600;
+
+	@media (prefers-color-scheme: dark) {
+		background: linear-gradient(var(--color-gray-800), var(--color-gray-700));
+	}
 }
 
-.input-box-p > input:focus + label,
-.input-box-p > input:not(:placeholder-shown) + label,
-input:-webkit-autofill ~ label {
+.input-box>select:focus+label,
+.input-box>select:not(:placeholder-shown)+label,
+select:-webkit-autofill~label {
 	top: -2%;
 	font-size: 12px;
 	background: linear-gradient(var(--color-white), var(--color-app));
 	color: var(--color-primary);
 	font-weight: 600;
+
+	@media (prefers-color-scheme: dark) {
+		background: linear-gradient(var(--color-gray-800), var(--color-gray-700));
+	}
+}
+
+.input-box-p>input:focus+label,
+.input-box-p>input:not(:placeholder-shown)+label,
+input:-webkit-autofill~label {
+	top: -2%;
+	font-size: 12px;
+	background: linear-gradient(var(--color-white), var(--color-app));
+	color: var(--color-primary);
+	font-weight: 600;
+
+	@media (prefers-color-scheme: dark) {
+		background: linear-gradient(var(--color-gray-800), var(--color-gray-700));
+	}
 }
 
 .input-box:focus-within,
@@ -225,32 +257,35 @@ input:-webkit-autofill ~ label {
 	border: 2px solid var(--color-primary);
 }
 
-.input-box > input:focus ~ label,
-.input-box-p > input:focus ~ label,
-.input-box > select:focus ~ label {
-	color: var(
-		--color-primary
-	); /* Label text becomes blue ONLY when actively typing */
+.input-box>input:focus~label,
+.input-box-p>input:focus~label,
+.input-box>select:focus~label {
+	color: var(--color-primary);
+	/* Label text becomes blue ONLY when actively typing */
 }
 
 /* 5. Filled-But-Not-Focused Specific Colors */
-.input-box input:not(:placeholder-shown):not(:focus) ~ label {
-	color: var(
-		--color-gray-500
-	); /* Subdued grey when data exists but user clicked away */
+.input-box input:not(:placeholder-shown):not(:focus)~label {
+	color: var(--color-gray-500);
+	/* Subdued grey when data exists but user clicked away */
 }
-.input-box select:not(:placeholder-shown):not(:focus) ~ label {
-	color: var(
-		--color-gray-500
-	); /* Subdued grey when data exists but user clicked away */
+
+.input-box select:not(:placeholder-shown):not(:focus)~label {
+	color: var(--color-gray-500);
+	/* Subdued grey when data exists but user clicked away */
 }
-.input-box-p input:not(:placeholder-shown):not(:focus) ~ label {
-	color: var(
-		--color-gray-500
-	); /* Subdued grey when data exists but user clicked away */
+
+.input-box-p input:not(:placeholder-shown):not(:focus)~label {
+	color: var(--color-gray-500);
+	/* Subdued grey when data exists but user clicked away */
 }
+
 input:autofill {
 	background-color: var(--color-secondary-100);
+
+	@media (prefers-color-scheme: dark) {
+		color: #ffffff;
+	}
 }
 
 /* Prevent auto blue of input box */
@@ -261,8 +296,15 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
 	-webkit-text-fill-color: black !important;
 	color: black !important;
+
+	@media (prefers-color-scheme: dark) {
+		-webkit-text-fill-color: #ffffff !important;
+		color: #ffffff !important;
+	}
+
 	/* Replace #ffffff with your input's background color */
 	box-shadow: 0 0 0 1000px var(--color-secondary-100) inset !important;
-	transition: background-color 5000s ease-in-out 0s; /* Prevents flash */
+	transition: background-color 5000s ease-in-out 0s;
+	/* Prevents flash */
 	border-radius: 30px;
 }

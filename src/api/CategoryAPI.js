@@ -64,3 +64,17 @@ export const DeleteCategory = async ({ categoryID, token }) => {
 	);
 	return res.data;
 };
+export const MergeCategory = async ({ categoryID, mergeCategoryID, token }) => {
+	const res = await axios.post(
+		`${config.BackendURL}/user/category/merge`,
+		{
+			categoryID: categoryID,
+			mergeCategoryID: mergeCategoryID,
+			token: token,
+		},
+		{
+			withCredentials: true, // <--- THIS IS REQUIRED
+		},
+	);
+	return res.data;
+};

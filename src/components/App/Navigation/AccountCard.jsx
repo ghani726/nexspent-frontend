@@ -16,22 +16,16 @@ const AccountCard = ({ isMenuShown, setIsMenuShown }) => {
 	const navigate = useNavigate();
 	const handleLogout = async () => {
 		try {
-			console.log(accessToken);
-
-			console.log(currentSession);
-			
 			const res = await Logout(accessToken, currentSession);
-
-			console.log(res);
 
 			if (res.success) {
 				toast.dismissAll();
 				toast.success("Logged out successfully");
-				navigate("/login", { replace: true });	
+				navigate("/login", { replace: true });
 				setUser({});
 				setAccessToken(null);
 				setCurrentSession(null);
-				setDataToSessionStorage(false, {fullName: "NexSpent"})
+				setDataToSessionStorage(false, { fullName: "NexSpent" })
 			}
 		} catch (error) {
 			if (error.response) {
@@ -43,7 +37,7 @@ const AccountCard = ({ isMenuShown, setIsMenuShown }) => {
 	};
 	return (
 		<div
-			className={`menu z-10 ${isMenuShown ? "translate-y-0 opacity-100":"translate-y-[-170%] opacity-0"} ease-in-out duration-300 flex flex-col items-start justify-center p-2 bg-white absolute right-2 top-15.5 gap-2 rounded-3xl shadow-[0_0_10px_rgba(0,0,0,0.3)] `}
+			className={`menu z-10 ${isMenuShown ? "translate-y-0 opacity-100" : "translate-y-[-170%] opacity-0"} ease-in-out duration-300 flex flex-col items-start justify-center p-2 bg-white dark:bg-gray-800 absolute right-2 top-15.5 gap-2 rounded-3xl shadow-[0_0_10px_rgba(0,0,0,0.3)] `}
 		>
 			<Link
 				to="/app/account/"

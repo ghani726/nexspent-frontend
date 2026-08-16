@@ -1,14 +1,14 @@
 import { Minus, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import DialPad from "../DialPad";
+import DialPad from "../Common/DialPad";
 import useData from "../../../hooks/Data";
-import SearchBar from "../Account/SearchBar";
+import SearchBar from "../Common/SearchBar";
 import CurrencyCard from "../Account/CurrencyCard";
 
 import useAuth from "../../../hooks/Auth";
 import toast from "react-hot-toast";
 import { AddAccount, EditAccount } from "../../../api/AccountsAPI";
-import ColorPicker from "./ColorPicker";
+import ColorPicker from "../Common/ColorPicker";
 
 const handleCreation = async ({
 	setIsLoading,
@@ -187,7 +187,7 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null, GetData }) => {
 	return (
 		<div className="fixed starting:scale-0 starting:opacity-0 transition-all opacity-100 scale-100 ease-in-out duration-300 inset-0 z-5 backdrop-blur-sm flex justify-center items-center">
 			<div
-				className={`flex max-h-9/10 flex-col bg-surface justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-6 rounded-5xl w-[90%] md:w-2/3 lg:w-1/2 gap-4`}
+				className={`flex max-h-9/10 flex-col bg-surface dark:bg-gray-900 justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-6 rounded-5xl w-[90%] md:w-2/3 lg:w-1/2 gap-4`}
 			>
 				{/* Header */}
 
@@ -215,7 +215,7 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null, GetData }) => {
 						onChange={(e) => {
 							setName(e.target.value);
 						}}
-						className="border-transparent p-1 focus:bg-app w-fit field-sizing-content text-center rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold"
+						className="border-transparent p-1 focus:bg-app dark:focus:bg-gray-800 w-fit field-sizing-content text-center rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold"
 						placeholder="Account Name"
 					/>
 
@@ -229,10 +229,13 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null, GetData }) => {
 								typeOfModal === "Add" &&
 									setShowDialPad((prev) => !prev);
 							}}
-							className={`font-bold text-2xl bg-gray-200 p-1 rounded-xl cursor-pointer active:scale-95 duration-300 ease-in-out`}
+							className={`font-bold text-2xl bg-gray-200 dark:bg-gray-800 p-1 rounded-xl cursor-pointer active:scale-95 duration-300 ease-in-out`}
 						>
 							{selectedCurrency?.symbol}
-							{balance.toFixed(dP)}
+							{balance.toLocaleString('en-US', {
+								minimumFractionDigits: dP,
+								maximumFractionDigits: dP
+							})}
 						</button>
 					</div>
 
@@ -248,7 +251,7 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null, GetData }) => {
 									setShowDialPad(false);
 								}}
 								disabled={dP === 0 ? true : false}
-								className="disabled:bg-red-300 bg-red-500  text-white mt-1 cursor-pointer active:scale-95 duration-300 ease-in-out rounded-full p-1"
+								className="disabled:bg-red-300 dark:disabled:bg-red-400 disabled:cursor-not-allowed bg-red-500 text-white mt-1 cursor-pointer active:scale-95 duration-300 ease-in-out rounded-full p-1"
 							>
 								<Minus strokeWidth={3.5} size={12}></Minus>
 							</button>
@@ -264,7 +267,7 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null, GetData }) => {
 									setShowDialPad(false);
 								}}
 								disabled={dP === 9 ? true : false}
-								className="bg-primary text-white mt-1 cursor-pointer active:scale-95 duration-300 ease-in-out rounded-full p-1"
+								className="bg-primary text-white mt-1 cursor-pointer active:scale-95 duration-300 disabled:cursor-not-allowed disabled:bg-secondary ease-in-out rounded-full p-1"
 							>
 								<Plus strokeWidth={3.5} size={12}></Plus>
 							</button>
@@ -350,7 +353,7 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null, GetData }) => {
 					<button
 						onClick={Cancel}
 						disabled={isLoading}
-						className="px-4 disabled:cursor-not-allowed cursor-pointer active:scale-95 py-2 rounded-full bg-app hover:bg-gray-200  duration-300 ease-in-out"
+						className="px-4 disabled:cursor-not-allowed cursor-pointer active:scale-95 py-2 rounded-full bg-app dark:bg-gray-700 hover:bg-gray-200 hover:dark:bg-gray-800  duration-300 ease-in-out"
 					>
 						Cancel
 					</button>

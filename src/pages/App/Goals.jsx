@@ -1,14 +1,13 @@
-import { Info } from "lucide-react";
-import AddButton from "../../components/App/AddButton";
-import { useState } from "react";
+import { Goal, Info } from "lucide-react";
+import AddButton from "../../components/App/Common/AddButton";
+import { useRef, useState } from "react";
 import AccountsModal from "../../components/App/Goals/Modal";
 import useData from "../../hooks/Data";
-import InfoModal from "../../components/App/Goals/InfoModal";
+import InfoModal from "../../components/App/Common/InfoModal";
 
 const Goals = () => {
    // Modal states
    const [showModal, setShowModal] = useState(false);
-   const [showInfoModal, setShowInfoModal] = useState(false);
 
    // Edit States
    const [typeOfModal, setTypeOfModal] = useState("Add");
@@ -52,27 +51,37 @@ const Goals = () => {
       setShowModal(true);
    };
 
+   // Info Modal
+
+	const infoRef = useRef(null)
+
+	const openInfoModal = () => infoRef.current?.showModal();
+
+	const closeInfoModal = () => infoRef.current?.close();
+
    //   HTML
    return (
-      <div className="relative w-full h-full flex flex-col gap-4">
+      <div className="relative w-full lg:max-w-7/10 flex flex-col gap-4">
          <div className="flex justify-between items-center">
             <h2 className="font-bold line-clamp-1 text-3xl text-primary">
                Goals
             </h2>
             <button
-               onClick={() => setShowInfoModal((prev) => !prev)}
+               onClick={openInfoModal}
                title="More"
                className="p-1.5 rounded-full cursor-pointer"
             >
                <Info size={20} strokeWidth={2.8}></Info>
             </button>
             <InfoModal
-               showInfoModal={showInfoModal}
-               setShowInfoModal={setShowInfoModal}
+               ref={infoRef}
+					closeInfoModal={closeInfoModal}
+               title={"Goals"}
+               desc={"A goal is a specific target you want to achieve within a certain timeframe. Goals help you focus your efforts and measure your progress."}
+               icon={<Goal size={36}></Goal>}
             ></InfoModal>
          </div>
          <div
-            onClick={() => setShowInfoModal(false)}
             className="w-full gap-2 flex flex-col"
          >
             {/* {accounts?.length > 0 &&
@@ -97,10 +106,9 @@ const Goals = () => {
                      ></AccountCard>
                   );
                })} */}
-            
+
          </div>
          <AddButton
-            onClick={() => setShowInfoModal(false)}
             title="Add account"
             showModal={showModal}
             setShowModal={setShowModal}

@@ -10,7 +10,7 @@ const Header = ({ hide, setHide, GetData }) => {
 	const [isMenuShown, setIsMenuShown] = useState(false);
 	return (
 		<header className="p-3 pb-1.5">
-			<div className="flex bg-surface shadow-medium rounded-5xl justify-between items-center gap-4 p-4 max-h-14">
+			<div className="flex bg-surface dark:bg-gray-800 shadow-medium rounded-5xl justify-between items-center gap-4 p-4 max-h-14">
 				<div className="flex justify-between items-center gap-4">
 					<div
 						className="hidden md:flex justify-center items-center rounded-lg h-6.5 w-6.5"
@@ -32,7 +32,7 @@ const Header = ({ hide, setHide, GetData }) => {
 					</div>
 
 					<h1 className="text-primary font-bold text-2xl">
-						Nex<span className="text-black">Spent</span>
+						Nex<span className="text-black dark:text-white">Spent</span>
 					</h1>
 				</div>
 				<div className="flex justify-between items-center gap-4">

@@ -1,5 +1,5 @@
 import AccountsCard from "../../components/App/Home/AccountsCard";
-import AddButton from "../../components/App/AddButton";
+import AddButton from "../../components/App/Common/AddButton";
 import useAuth from "../../hooks/Auth";
 import useData from "../../hooks/Data";
 const Home = ({ showModal, setShowModal }) => {

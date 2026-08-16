@@ -21,7 +21,7 @@ const Navbar = () => {
 	}, [location.pathname]);
 	return (
 		<nav
-			className={`flex absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full opacity-100  -translate-y md:-translate-y-full md:opacity-0 transition-all ease-in-out duration-300 justify-around items-center bg-surface shadow-large max-h-16 min-h-16`}
+			className={`flex absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full opacity-100  -translate-y md:-translate-y-full md:opacity-0 transition-all ease-in-out duration-300 justify-around items-center bg-surface dark:bg-gray-800 shadow-large max-h-16 min-h-16`}
 		>
 			<div
 				style={{
@@ -35,7 +35,7 @@ const Navbar = () => {
 					setSlider(0);
 				}}
 				to={"/app/"}
-				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 0 ? "text-surface" : "text-black"}`}
+				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 0 ? "text-surface" : "text-black dark:text-white"}`}
 			>
 				<Home className="h-6 w-6 shrink-0" size={20}></Home>
 				{showLabels && <p className={`font-semibold text-xs `}>Home</p>}
@@ -46,7 +46,7 @@ const Navbar = () => {
 					setSlider(1);
 				}}
 				to={"/app/transactions/"}
-				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 1 ? "text-surface" : "text-black"}`}
+				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 1 ? "text-surface" : "text-black dark:text-white"}`}
 			>
 				<Receipt className="h-6 w-6 shrink-0" size={20}></Receipt>
 				{showLabels && (
@@ -59,7 +59,7 @@ const Navbar = () => {
 					setSlider(2);
 				}}
 				to={"/app/budgets/"}
-				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 2 ? "text-surface" : "text-black"}`}
+				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 2 ? "text-surface" : "text-black dark:text-white"}`}
 			>
 				<PieChart className="h-6 w-6 shrink-0" size={20}></PieChart>
 				{showLabels && (
@@ -72,7 +72,7 @@ const Navbar = () => {
 					setSlider(3);
 				}}
 				to={"/app/accounts/"}
-				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 3 ? "text-surface" : "text-black"}`}
+				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer active:scale-95 ease-in-out duration-200 ${slider === 3 ? "text-surface" : "text-black dark:text-white"}`}
 			>
 				<Wallet className="h-6 w-6 shrink-0" size={20}></Wallet>
 				{showLabels && (
@@ -84,7 +84,7 @@ const Navbar = () => {
 				onClick={() => {
 					setSlider(4);
 				}}
-				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer  active:scale-95 ease-in-out duration-200 ${slider === 4 ? "text-surface" : "text-black"}`}
+				className={`p-2.5 w-16 z-5 h-full aspect-square flex flex-col items-center justify-center rounded-full cursor-pointer  active:scale-95 ease-in-out duration-200 ${slider === 4 ? "text-surface" : "text-black dark:text-white"}`}
 			>
 				<Ellipsis className="h-6 w-6 shrink-0" size={20}></Ellipsis>
 				{showLabels && <p className={`font-semibold text-xs `}>More</p>}

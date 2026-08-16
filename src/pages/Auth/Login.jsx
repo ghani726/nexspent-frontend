@@ -1,4 +1,4 @@
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router";
 import useAuth from "../../hooks/Auth";
@@ -22,7 +22,9 @@ const LoginPage = () => {
 	useEffect(() => {
 		setIsLoggedIn(false);
 		const LoginAuto = async () => {
+
 			try {
+				toast.loading("Logging in. Please wait...")
 				const res = await RefreshToken();
 
 				if (res.success) {
@@ -59,11 +61,12 @@ const LoginPage = () => {
 		};
 
 		LoginAuto();
-	}, [navigate, setAccessToken, setIsLoggedIn, setUser, setCurrentSession]);
+	}, [navigate, setAccessToken, setIsLoggedIn, setUser, setCurrentSession, GetData, setDataToSessionStorage]);
 	const {
 		register,
 		handleSubmit,
 		watch,
+		
 		formState: { errors, isSubmitting },
 	} = useForm();
 
@@ -73,6 +76,7 @@ const LoginPage = () => {
 			const res = await Login(data);
 
 			if (res.success) {
+				toast.dismissAll()
 				setIsLoggedIn(true);
 				setUser(res.data.user);
 				setAccessToken(res.data.token);
@@ -86,6 +90,7 @@ const LoginPage = () => {
 				);
 				navigate("/app/", { replace: true });
 			} else if (!res.success) {
+				toast.dismissAll()
 				return toast.error(res.error.message);
 			}
 		} catch (error) {
@@ -102,7 +107,7 @@ const LoginPage = () => {
 	const [passwordHidden, setPasswordHidden] = useState(true);
 
 	return (
-		<div className="bg-white shadow-[0_0_24px_rgba(0,0,0,0.1)] transition-all duration-500 ease-in-out h-auto min-w-80 w-auto ms:min-w-md lg:w p-6 md:p-8 rounded-5xl absolute top-1/2 left-1/2 -translate-1/2 flex flex-col justify-center items-center gap-6">
+		<div className="bg-white dark:bg-gray-800 shadow-[0_0_24px_rgba(0,0,0,0.1)] transition-all duration-500 ease-in-out h-auto min-w-80 w-auto ms:min-w-md lg:w p-6 md:p-8 rounded-5xl absolute top-1/2 left-1/2 -translate-1/2 flex flex-col justify-center items-center gap-6">
 			<div className="flex flex-col justify-center items-center gap-2">
 				<h1 className="text-3xl font-bold text-primary">NexSpent</h1>
 				<h4 className="font-normal text-sm text-gray-600">
@@ -115,7 +120,7 @@ const LoginPage = () => {
 				className="inputFeilds w-full flex flex-col gap-6"
 			>
 				<div className="flex flex-col ease-in-out duration-300">
-					<div className="input-box text-lg bg-gray-100 rounded-5xl px-4">
+					<div className="input-box text-lg bg-gray-100 dark:bg-gray-700 rounded-5xl px-4">
 						<input
 							type="text"
 							className="outline-none"
@@ -231,8 +236,9 @@ const LoginPage = () => {
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					className="p-3 rounded-5xl text-center bg-primary cursor-pointer disabled:bg-primary/70 disabled:active:scale-100 disabled:cursor-not-allowed active:scale-95  transition-all ease-in-out duration-300 text-white font-semibold"
+					className="p-3 rounded-5xl text-center bg-primary cursor-pointer disabled:bg-primary/50 disabled:active:scale-100 disabled:cursor-not-allowed active:scale-95  transition-all ease-in-out duration-300 text-white font-semibold flex justify-center items-center gap-2 relative"
 				>
+					{isSubmitting && <LoaderCircle className="animate-spin absolute left-6/10"></LoaderCircle>}
 					Sign In
 				</button>
 			</form>

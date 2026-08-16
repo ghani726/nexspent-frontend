@@ -109,7 +109,7 @@ const Actions = ({ setSlider }) => {
 
 	return (
 		<>
-			<div className="flex flex-col animate-fade-in justify-center items-center w-full bg-white rounded-5xl">
+			<div className="flex flex-col animate-fade-in justify-center items-center w-full bg-white dark:bg-gray-800 rounded-5xl">
 				<form
 					onSubmit={handleSubmit(handleEdit)}
 					className="flex animate-fade-in flex-col justify-start items-start w-full p-6 rounded-xl  gap-4"
@@ -233,7 +233,7 @@ const Actions = ({ setSlider }) => {
 								validate: (v) => {
 									if (!anyPassword && !v) return true;
 									if (!v)
-										return "Confirm PAssword is required";
+										return "Confirm Password is required";
 									if (v !== newPass)
 										return "Passwords don't match";
 									return true;
@@ -257,7 +257,7 @@ const Actions = ({ setSlider }) => {
 							onClick={() => {
 								setSlider(0);
 							}}
-							className="px-4 disabled:cursor-not-allowed cursor-pointer active:scale-95 py-2 rounded-full bg-app hover:bg-secondary-200 dark:hover:bg-secondary-900 duration-300 ease-in-out"
+							className="px-4 disabled:cursor-not-allowed cursor-pointer active:scale-95 py-2 rounded-full bg-app dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-900 dark:hover:bg-secondary-900 duration-300 ease-in-out"
 						>
 							Cancel
 						</button>
@@ -271,7 +271,7 @@ const Actions = ({ setSlider }) => {
 					</div>
 				</form>
 			</div>
-			<div className="flex flex-col animate-fade-in justify-center items-center w-full bg-white rounded-5xl p-6 gap-2">
+			<div className="flex flex-col animate-fade-in justify-center items-center w-full bg-white dark:bg-gray-800 rounded-5xl p-6 gap-2">
 				<h2 className="text-2xl font-bold text-primary w-full text-start mb-2">
 					Logout or Delete Account:
 				</h2>

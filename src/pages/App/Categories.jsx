@@ -1,14 +1,15 @@
-import { Info } from "lucide-react";
-import AddButton from "../../components/App/AddButton";
+import { Info, Shapes } from "lucide-react";
+import AddButton from "../../components/App/Common/AddButton.jsx";
 import { useState, useRef } from "react";
-import AccountsModal from "../../components/App/Categories/Modal";
+import CategoriesModal from "../../components/App/Categories/Modal";
 import useData from "../../hooks/Data";
-import InfoModal from "../../components/App/Categories/InfoModal";
+import InfoModal from "../../components/App/Common/InfoModal.jsx";
 import CategoryCard from "../../components/App/Categories/CategoryCard";
-import SearchBar from "../../components/App/Account/SearchBar";
-import DeleteModal from "../../components/App/Accounts/DeleteModal";
+import SearchBar from "../../components/App/Common/SearchBar.jsx";
+import DeleteModal from "../../components/App/Common/DeleteModal.jsx";
 import toast from "react-hot-toast";
 import { DeleteCategory } from "../../api/CategoryAPI.js";
+import MergeCategoryModal from "../../components/App/Common/MergeModal.jsx";
 
 const DeleteHandler = async ({
 	objID,
@@ -44,7 +45,7 @@ const Categories = ({ GetData }) => {
 
 	// Modal states
 	const [showModal, setShowModal] = useState(false);
-	const [showInfoModal, setShowInfoModal] = useState(false);
+	const [showMergeModal, setShowMergeModal] = useState(false)
 
 	// Edit States
 	const [typeOfModal, setTypeOfModal] = useState("Add");
@@ -52,7 +53,15 @@ const Categories = ({ GetData }) => {
 	const [bgColor, setBgColor] = useState("Default");
 	const [icon, setIcon] = useState("🖼");
 	const [categoryType, setCategoryType] = useState("expense");
+
+	// Edit, Delete, and Merge State
 	const [categoryID, setCategoryID] = useState(null);
+
+	// Merge State
+	const [mergeCategoryID, setMergeCategoryID] = useState(null);
+	const [mergeObj1, setMergeObj1] = useState(null)
+	const [mergeObj2, setMergeObj2] = useState(null)
+
 	// Form Details
 
 	const { categories, transactions } = useData();
@@ -96,6 +105,9 @@ const Categories = ({ GetData }) => {
 			return matchesSearch && matchesTab;
 		});
 
+		const incomeCategories = categories.filter((e) => e.categoryType === "income")
+		const expenseCategories = categories.filter((e) => e.categoryType === "expense")
+
 		// 2. Map filtered array to JSX and RETURN it
 		return filteredCategories.map((e) => {
 			const txns = transactions.filter(
@@ -113,11 +125,15 @@ const Categories = ({ GetData }) => {
 					obj={e}
 					EditFunc={EditFunc}
 					DeleteFunc={DeleteFunc}
-					totalCategories={categories.length}
+					totalCategories={{ incomeCategories, expenseCategories }}
+					MergeFunc={MergeFunc}
 				/>
 			);
 		});
 	};
+
+
+	// Delete Modal
 
 	const DeleteFunc = (categoryID) => {
 		setCategoryID(categoryID);
@@ -129,16 +145,45 @@ const Categories = ({ GetData }) => {
 		closeModal();
 	};
 
-	// Modal
-
 	const dialogRef = useRef(null);
 
 	const openModal = () => dialogRef.current?.showModal();
 
 	const closeModal = () => dialogRef.current?.close();
 
-	console.log(categoryID);
-	
+	// Info Modal
+
+	const infoRef = useRef(null)
+
+	const openInfoModal = () => infoRef.current?.showModal();
+
+	const closeInfoModal = () => infoRef.current?.close();
+
+	// Merge Modal
+
+
+	const MergeFunc = (id, name) => {
+		if (!categoryID) {
+			setCategoryID(id)
+			setMergeObj1(name)
+			setShowMergeModal(true)
+		} else if (id === categoryID) {
+			CancelMerge()
+		} else if (id && (id !== categoryID)) {
+			setMergeCategoryID(id)
+			setMergeObj2(name)
+		}
+	}
+	const mergeRef = useRef(null);
+
+	const CancelMerge = () => {
+		setCategoryID(null)
+		setMergeCategoryID(null)
+		setMergeObj1(null)
+		setMergeObj2(null)
+		setShowMergeModal(false)
+	}
+
 	//   HTML
 	return (
 		<div className="relative w-full lg:max-w-7/10 flex flex-col gap-4">
@@ -147,23 +192,26 @@ const Categories = ({ GetData }) => {
 					Categories
 				</h2>
 				<button
-					onClick={() => setShowInfoModal((prev) => !prev)}
+					onClick={openInfoModal}
 					title="More"
 					className="p-1.5 rounded-full cursor-pointer"
 				>
 					<Info size={20} strokeWidth={2.8}></Info>
 				</button>
 				<InfoModal
-					showInfoModal={showInfoModal}
-					setShowInfoModal={setShowInfoModal}
+					ref={infoRef}
+					closeInfoModal={closeInfoModal}
+					title={"Categories"}
+					desc={"Categories help in statistical analysis and to know where you are spending."}
+					icon={<Shapes size={36}></Shapes>}
 				></InfoModal>
 			</div>
 			<div className="flex justify-center items-center w-full">
 				<div
-					className={`flex duration-300 ease-in-out bg-surface/70 justify-center items-center rounded-full relative`}
+					className={`flex duration-300 ease-in-out bg-surface/70 dark:bg-gray-800 justify-center items-center rounded-full relative`}
 				>
 					<div
-						className={`absolute shadow-medium top-0 left-0 w-1/3 h-full rounded-full bg-surface duration-300 ease-in-out`}
+						className={`absolute dark:bg-gray-700 shadow-medium top-0 left-0 w-1/3 h-full rounded-full bg-surface duration-300 ease-in-out`}
 						style={{
 							transform: `translateX(${slider * 100}%)`,
 						}}
@@ -201,20 +249,31 @@ const Categories = ({ GetData }) => {
 				searchValue={searchValue}
 				setSearchValue={setSearchValue}
 			></SearchBar>
+			<MergeCategoryModal
+				Ref={mergeRef}
+				showMergeModal={showMergeModal}
+				GetData={GetData}
+				Cancel={CancelMerge}
+				type="Category"
+				firstID={categoryID}
+				mergeID={mergeCategoryID}
+				mergeObj1={mergeObj1}
+				mergeObj2={mergeObj2}
+			></MergeCategoryModal>
 			<div
-				onClick={() => setShowInfoModal(false)}
-				className="w-full gap-2 flex flex-col"
+				
+				className={`w-full ${showMergeModal ? 'm-0' : '-mt-12'} gap-2 flex flex-col duration-300 ease-in-out`}
 			>
 				{cats()}
 			</div>
 			<AddButton
-				onClick={() => setShowInfoModal(false)}
+			
 				title="Add account"
 				showModal={showModal}
 				setShowModal={setShowModal}
 			></AddButton>
 			{showModal && (
-				<AccountsModal
+				<CategoriesModal
 					Cancel={Cancel}
 					showModal={showModal}
 					setShowModal={setShowModal}
@@ -227,7 +286,7 @@ const Categories = ({ GetData }) => {
 						categoryID,
 					}}
 					GetData={GetData}
-				></AccountsModal>
+				></CategoriesModal>
 			)}
 			<DeleteModal
 				text={"category"}
@@ -237,6 +296,7 @@ const Categories = ({ GetData }) => {
 				handleCancel={CancelDelete}
 				objID={categoryID}
 			></DeleteModal>
+
 		</div>
 	);
 };
