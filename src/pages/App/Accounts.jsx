@@ -1,11 +1,12 @@
 import AccountCard from "../../components/App/Accounts/AccountCard";
-import { Info, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 import AddButton from "../../components/App/Common/AddButton";
 import { useState } from "react";
 import { useRef } from "react";
 import AccountsModal from "../../components/App/Accounts/Modal";
 import useData from "../../hooks/Data";
 import InfoModal from "../../components/App/Common/InfoModal";
+import InfoButton from "../../components/App/Common/InfoButton.jsx";
 import DeleteModal from "../../components/App/Common/DeleteModal.jsx";
 import toast from "react-hot-toast";
 import { DeleteAccount } from "../../api/AccountsAPI.js";
@@ -188,13 +189,7 @@ const Accounts = ({ GetData }) => {
 				<h2 className="font-bold line-clamp-1 text-3xl text-primary">
 					Accounts
 				</h2>
-				<button
-					onClick={openInfoModal}
-					title="More"
-					className="p-1.5 rounded-full cursor-pointer"
-				>
-					<Info size={20} strokeWidth={2.8}></Info>
-				</button>
+				<InfoButton openInfoModal={openInfoModal}></InfoButton>
 				<InfoModal
 					ref={infoRef}
 					closeInfoModal={closeInfoModal}

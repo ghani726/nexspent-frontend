@@ -38,7 +38,7 @@ const LoginPage = () => {
 					toast.success(
 						<span>
 							Welcome back{" "}
-							<strong>{res.data.user.fullName} Meow</strong>
+							<strong>{res.data.user.fullName}</strong>
 						</span>,
 					);
 					navigate("/app/", { replace: true });
@@ -61,7 +61,7 @@ const LoginPage = () => {
 		};
 
 		LoginAuto();
-	}, [navigate, setAccessToken, setIsLoggedIn, setUser, setCurrentSession, GetData, setDataToSessionStorage]);
+	}, [navigate, setAccessToken, setIsLoggedIn, setUser]);
 	const {
 		register,
 		handleSubmit,

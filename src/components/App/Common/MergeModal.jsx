@@ -123,7 +123,7 @@ const MergeModal = ({
 
     return (
         <div
-            className={`flex ${!showMergeModal ? "translate-y-[-200%] scale-0 opacity-0 w-0 h-0 p-0" : "translate-0 scale-100 opacity-100"} duration-300 ease-in-out gap-4 flex-col bg-surface dark:bg-gray-800 text-white justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-4 rounded-5xl w-full`}
+            className={`flex text-black ${!showMergeModal ? "translate-y-[-200%] scale-0 opacity-0 w-0 h-0 p-0" : "translate-0 scale-100 opacity-100"} duration-300 ease-in-out gap-4 flex-col bg-surface dark:bg-gray-800 text-white justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-4 rounded-5xl w-full`}
         >
             {/* Header */}
 
@@ -134,7 +134,7 @@ const MergeModal = ({
                 <button
                     onClick={openInfoModal}
                     title="Info"
-                    className="p-1.5 rounded-full cursor-pointer"
+                    className="p-1.5 text-black dark:text-white rounded-full cursor-pointer"
                 >
                     <Info size={20} strokeWidth={2.8}></Info>
                 </button>
@@ -150,7 +150,7 @@ const MergeModal = ({
             {/* Main Content */}
 
             <div className="flex flex-col items-center justify-center w-full gap-2">
-                <p className="w-full text-center">
+                <p className="w-full text-center text-black dark:text-white">
                     Merge <strong className="text-primary">{mergeObj1}</strong>{" "}
                     with{" "}
                     <strong
@@ -168,7 +168,7 @@ const MergeModal = ({
                 <button
                     onClick={Cancel}
                     disabled={isLoading}
-                    className="p-2 px-3 text-xs duration-300 ease-in-out rounded-full cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-900 dark:bg-gray-800 disabled:cursor-not-allowed active:scale-95 bg-app"
+                    className="p-2 px-3 text-xs duration-300 ease-in-out rounded-full cursor-pointer text-black hover:bg-gray-200 dark:hover:bg-gray-900 dark:bg-gray-800 disabled:cursor-not-allowed active:scale-95 bg-app"
                 >
                     Cancel
                 </button>

@@ -35,18 +35,6 @@ export const DeleteAccount = async (password, accessToken) => {
 	return res.data;
 };
 
-// Automatic login using refreshToken
-export const AutoLogin = async () => {
-	const res = await axios.post(
-		`${config.BackendURL}/auth/login/auto`,
-		{},
-		{
-			withCredentials: true, // <--- THIS IS REQUIRED
-		},
-	);
-	return res.data;
-};
-
 // Regsiter API
 export const Register = async (data) => {
 	const res = await axios.post(

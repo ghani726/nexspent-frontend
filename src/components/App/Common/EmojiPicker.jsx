@@ -72,7 +72,7 @@ const EmojiPicker = ({
 	//#endregion
 	return (
 		<div
-			className={`flex resize-none [&::-webkit-resizer]:hidden ${showModal ? "translate-y-0 ms:top-1/2 ms:left-1/2 ms:-translate-1/2 h-fit ms:max-w-9/10" : "translate-y-200"} transition-all overflow-scroll max-h-9/10   ms:rounded-4xl ease-in-out duration-300 flex-col absolute bottom-0 w-full left-1/2 -translate-x-1/2 md:max-w-2xl p-4 gap-4 z-50 rounded-t-4xl bg-surface dark:bg-gray-900 shadow-large`}
+			className={`flex resize-none [&::-webkit-resizer]:hidden ${showModal ? "translate-y-0 ms:top-1/2 ms:left-1/2 ms:-translate-1/2 h-fit ms:max-w-9/10" : "translate-y-220"} transition-all overflow-scroll max-h-9/10   ms:rounded-4xl ease-in-out duration-300 flex-col absolute bottom-0 w-full left-1/2 -translate-x-1/2 md:max-w-2xl p-4 gap-4 z-50 rounded-t-4xl bg-surface dark:bg-gray-900 shadow-large`}
 		>
 			<div className="w-ful flex justify-between items-center">
 				<h2 className="px-1 font-bold text-3xl text-primary dark:text-primary-300">

@@ -14,6 +14,7 @@ import useData from "../../hooks/Data";
 import Budgets from "./Budgets";
 import Categories from "./Categories";
 import Goals from "./Goals";
+import Transactions from "./Transactions";
 const App = () => {
 	const [hide, setHide] = useState(false);
 
@@ -109,6 +110,11 @@ const App = () => {
 						<Route
 							path="/account/"
 							element={<Account GetData={GetData}></Account>}
+						></Route>
+						<Route
+							path="/transactions/"
+							
+							element={<Transactions GetData={GetData}></Transactions>}
 						></Route>
 						<Route
 							path="/budgets/"

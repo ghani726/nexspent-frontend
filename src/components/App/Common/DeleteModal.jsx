@@ -26,7 +26,7 @@ const DeleteModal = ({
 			id="delete-modal"
 			className={`fixed hidden  top-1/2 left-1/2 -translate-1/2 open:flex dark:bg-gray-900 dark:text-white max-h-9/10 overflow-auto ease-in-out duration-300 animate-fade-in flex-col justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-8 rounded-5xl w-9/10 ms:w-md gap-3 bg-white`}
 		>
-			<div className="flex justify-center items-center p-3 rounded-full aspect-square bg-red-100 dark:bg-red-900/50 dark:text-red-600">
+			<div className="flex justify-center items-center p-3 rounded-full aspect-square bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-600">
 				<TriangleAlert size={30}></TriangleAlert>
 			</div>
 			<h2 className="text-2xl font-bold -mb-1">Delete {UpperCaseText}</h2>

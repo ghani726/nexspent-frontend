@@ -272,7 +272,7 @@ const RegisterPage = () => {
                                     setConfirmPasswordHidden((prev) => !prev);
                                 }}
                             >
-                                {passwordHidden ? <Eye /> : <EyeOff />}
+                                {confirmPasswordHidden ? <Eye /> : <EyeOff />}
                             </div>
                         </div>
                         {/* {password !== confirmPassword && (

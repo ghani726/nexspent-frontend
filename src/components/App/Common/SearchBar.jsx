@@ -28,11 +28,12 @@ const SearchBar = ({ searchValue, setSearchValue, ph, title, full = false }) => 
                     ref={search}
                     value={searchValue}
                     type="text"
-                    placeholder={ph}
+                    placeholder={ph || title}
                     className="outline-none border-none w-full px-1 peer"
                     onChange={(e) => {
                         setSearchValue(e.target.value);
                     }}
+                    id="searchBar"
                 />
                 <span className="flex justify-center items-center peer-focus-within:text-primary hover:text-white hover:bg-primary ease-in-out duration-300 text-gray-500 p-1 rounded-full">
                     <Search size={18}></Search>

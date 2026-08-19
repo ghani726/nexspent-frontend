@@ -1,4 +1,4 @@
-import { Shapes } from "lucide-react";
+import { Filter, Shapes } from "lucide-react";
 import AddButton from "../../components/App/Common/AddButton.jsx";
 import { useState, useRef } from "react";
 import CategoriesModal from "../../components/App/Categories/Modal";
@@ -12,6 +12,8 @@ import { DeleteCategory } from "../../api/CategoryAPI.js";
 import MergeCategoryModal from "../../components/App/Common/MergeModal.jsx";
 import InfoButton from "../../components/App/Common/InfoButton.jsx";
 import TypeSelector from "../../components/App/Common/TypeSelector.jsx";
+import TransactionsCard from "../../components/App/Transactions/TransactionsCard.jsx";
+import { DatePicker } from "react-aria-components";
 
 const DeleteHandler = async ({
     objID,
@@ -42,7 +44,8 @@ const DeleteHandler = async ({
         }
     }
 };
-const Categories = ({ GetData }) => {
+
+const Transactions = ({ GetData }) => {
     const [searchValue, setSearchValue] = useState("");
 
     // Modal states
@@ -68,6 +71,9 @@ const Categories = ({ GetData }) => {
 
     const { categories, transactions } = useData();
 
+    console.log(transactions);
+    
+    
     //   Function to get back
     const Cancel = () => {
         setShowModal(false);
@@ -94,46 +100,33 @@ const Categories = ({ GetData }) => {
 
     const cats = () => {
         // 1. Filter categories based on search text and slider tab
-        const filteredCategories = categories.filter((cat) => {
+        const filteredTransactions = transactions.filter((txn) => {
             const matchesSearch = searchValue.trim()
-                ? cat.name.toLowerCase().includes(searchValue.toLowerCase())
+                ? (txn.title.toLowerCase().includes(searchValue.toLowerCase()) || txn.description.toLowerCase().includes(searchValue.toLowerCase()))
                 : true;
 
             const matchesTab =
                 slider === 0 ||
-                (slider === 1 && cat.categoryType === "expense") ||
-                (slider === 2 && cat.categoryType === "income");
+                (slider === 1 && txn.type === "expense") ||
+                (slider === 2 && txn.type === "income") ||
+                (slider === 3 && txn.type === "transfer");
 
             return matchesSearch && matchesTab;
         });
 
-        const incomeCategories = categories.filter(
-            (e) => e.categoryType === "income",
-        );
-        const expenseCategories = categories.filter(
-            (e) => e.categoryType === "expense",
-        );
-
         // 2. Map filtered array to JSX and RETURN it
-        return filteredCategories.map((e) => {
-            const txns = transactions.filter(
-                (i) => i.category === e._id && i.type === e.categoryType,
-            );
+        return filteredTransactions.map((e) => {
+
 
             return (
-                <CategoryCard
-                    key={e._id}
-                    name={e.name}
-                    transactions={txns}
-                    bgColor={e.bgColor}
-                    categoryType={e.categoryType}
-                    icon={e.icon}
+                <TransactionsCard
+                    key={e?._id}
+                    title={e?.title}
+                    category={e?.category}
+                    account={e?.account}
+                    amount={e?.amount}
                     obj={e}
-                    EditFunc={EditFunc}
-                    DeleteFunc={DeleteFunc}
-                    totalCategories={{ incomeCategories, expenseCategories }}
-                    MergeFunc={MergeFunc}
-                />
+                ></TransactionsCard>
             );
         });
     };
@@ -193,25 +186,35 @@ const Categories = ({ GetData }) => {
         <div className="relative w-full lg:max-w-7/10 flex flex-col gap-4">
             <div className="flex justify-between items-center">
                 <h2 className="font-bold line-clamp-1 break-all pb-0.5 text-3xl text-primary">
-                    Categories
+                    Transactions
                 </h2>
-                <InfoButton openInfoModal={openInfoModal}></InfoButton>
+                <div className="flex">
+                    <button
+                        onClick={openInfoModal}
+                        title="Filters"
+                        className="p-1.5 h-full hover:bg-gray-200 dark:hover:bg-gray-800 aspect-square flex justify-center items-center rounded-full cursor-pointer"
+                    >
+                        <Filter size={20} strokeWidth={2.5}></Filter>
+                    </button>
+                    <InfoButton openInfoModal={openInfoModal}></InfoButton>
+                </div>
                 <InfoModal
                     ref={infoRef}
                     closeInfoModal={closeInfoModal}
-                    title={"Categories"}
+                    title={"Transactions"}
                     desc={
                         "Categories help in statistical analysis and to know where you are spending."
                     }
                     icon={<Shapes size={36}></Shapes>}
                 ></InfoModal>
             </div>
-            <TypeSelector slider={slider} setSlider={setSlider}></TypeSelector>
+            <TypeSelector show4={true} slider={slider} setSlider={setSlider}></TypeSelector>
             <SearchBar
                 title={"Search category..."}
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}
             ></SearchBar>
+            <DatePicker></DatePicker>
             <MergeCategoryModal
                 Ref={mergeRef}
                 showMergeModal={showMergeModal}
@@ -261,4 +264,4 @@ const Categories = ({ GetData }) => {
     );
 };
 
-export default Categories;
+export default Transactions;

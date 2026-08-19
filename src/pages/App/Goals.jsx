@@ -1,9 +1,10 @@
-import { Goal, Info } from "lucide-react";
+import { Goal } from "lucide-react";
 import AddButton from "../../components/App/Common/AddButton";
 import { useRef, useState } from "react";
 import AccountsModal from "../../components/App/Goals/Modal";
 import useData from "../../hooks/Data";
 import InfoModal from "../../components/App/Common/InfoModal";
+import InfoButton from "../../components/App/Common/InfoButton";
 
 const Goals = () => {
    // Modal states
@@ -66,13 +67,7 @@ const Goals = () => {
             <h2 className="font-bold line-clamp-1 text-3xl text-primary">
                Goals
             </h2>
-            <button
-               onClick={openInfoModal}
-               title="More"
-               className="p-1.5 rounded-full cursor-pointer"
-            >
-               <Info size={20} strokeWidth={2.8}></Info>
-            </button>
+            <InfoButton openInfoModal={openInfoModal}></InfoButton>
             <InfoModal
                ref={infoRef}
 					closeInfoModal={closeInfoModal}
