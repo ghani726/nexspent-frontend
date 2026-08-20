@@ -1,56 +1,23 @@
 import { Filter, Shapes } from "lucide-react";
 import AddButton from "../../components/App/Common/AddButton.jsx";
 import { useState, useRef } from "react";
-import CategoriesModal from "../../components/App/Categories/Modal";
+
 import useData from "../../hooks/Data";
 import InfoModal from "../../components/App/Common/InfoModal.jsx";
-import CategoryCard from "../../components/App/Categories/CategoryCard";
 import SearchBar from "../../components/App/Common/SearchBar.jsx";
-import DeleteModal from "../../components/App/Common/DeleteModal.jsx";
-import toast from "react-hot-toast";
-import { DeleteCategory } from "../../api/CategoryAPI.js";
-import MergeCategoryModal from "../../components/App/Common/MergeModal.jsx";
+
 import InfoButton from "../../components/App/Common/InfoButton.jsx";
 import TypeSelector from "../../components/App/Common/TypeSelector.jsx";
 import TransactionsCard from "../../components/App/Transactions/TransactionsCard.jsx";
-import { DatePicker } from "react-aria-components";
+import TransactionsModal from "../../components/App/Transactions/Modal.jsx";
 
-const DeleteHandler = async ({
-    objID,
-    token,
-    CancelDelete,
-    GetData,
-    setIsLoading,
-}) => {
-    setIsLoading(true);
-    try {
-        const res = await DeleteCategory({ categoryID: objID, token });
 
-        if (res.success) {
-            setIsLoading(false);
-            toast.success("Account Deleted successfully.");
-            GetData();
-            CancelDelete();
-        } else {
-            setIsLoading(false);
-            return toast.error(res.error.message);
-        }
-    } catch (err) {
-        setIsLoading(false);
-        if (err.response) {
-            return toast.error(err.response.data.error.message);
-        } else {
-            return toast.error(err.message);
-        }
-    }
-};
 
 const Transactions = ({ GetData }) => {
     const [searchValue, setSearchValue] = useState("");
 
     // Modal states
     const [showModal, setShowModal] = useState(false);
-    const [showMergeModal, setShowMergeModal] = useState(false);
 
     // Edit States
     const [typeOfModal, setTypeOfModal] = useState("Add");
@@ -59,21 +26,13 @@ const Transactions = ({ GetData }) => {
     const [icon, setIcon] = useState("🖼");
     const [categoryType, setCategoryType] = useState("expense");
 
-    // Edit, Delete, and Merge State
+    // Edit, Delete State
     const [categoryID, setCategoryID] = useState(null);
-
-    // Merge State
-    const [mergeCategoryID, setMergeCategoryID] = useState(null);
-    const [mergeObj1, setMergeObj1] = useState(null);
-    const [mergeObj2, setMergeObj2] = useState(null);
 
     // Form Details
 
-    const { categories, transactions } = useData();
+    const { transactions } = useData();
 
-    console.log(transactions);
-    
-    
     //   Function to get back
     const Cancel = () => {
         setShowModal(false);
@@ -102,7 +61,10 @@ const Transactions = ({ GetData }) => {
         // 1. Filter categories based on search text and slider tab
         const filteredTransactions = transactions.filter((txn) => {
             const matchesSearch = searchValue.trim()
-                ? (txn.title.toLowerCase().includes(searchValue.toLowerCase()) || txn.description.toLowerCase().includes(searchValue.toLowerCase()))
+                ? txn.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+                  txn.description
+                      .toLowerCase()
+                      .includes(searchValue.toLowerCase())
                 : true;
 
             const matchesTab =
@@ -116,12 +78,11 @@ const Transactions = ({ GetData }) => {
 
         // 2. Map filtered array to JSX and RETURN it
         return filteredTransactions.map((e) => {
-
-
             return (
                 <TransactionsCard
                     key={e?._id}
                     title={e?.title}
+                    transactionType={e?.type}
                     category={e?.category}
                     account={e?.account}
                     amount={e?.amount}
@@ -131,24 +92,6 @@ const Transactions = ({ GetData }) => {
         });
     };
 
-    // Delete Modal
-
-    const DeleteFunc = (categoryID) => {
-        setCategoryID(categoryID);
-        openModal();
-    };
-
-    const CancelDelete = () => {
-        setCategoryID(null);
-        closeModal();
-    };
-
-    const dialogRef = useRef(null);
-
-    const openModal = () => dialogRef.current?.showModal();
-
-    const closeModal = () => dialogRef.current?.close();
-
     // Info Modal
 
     const infoRef = useRef(null);
@@ -157,30 +100,8 @@ const Transactions = ({ GetData }) => {
 
     const closeInfoModal = () => infoRef.current?.close();
 
-    // Merge Modal
 
-    const MergeFunc = (id, name) => {
-        if (!categoryID) {
-            setCategoryID(id);
-            setMergeObj1(name);
-            setShowMergeModal(true);
-        } else if (id === categoryID) {
-            CancelMerge();
-        } else if (id && id !== categoryID) {
-            setMergeCategoryID(id);
-            setMergeObj2(name);
-        }
-    };
-    const mergeRef = useRef(null);
-
-    const CancelMerge = () => {
-        setCategoryID(null);
-        setMergeCategoryID(null);
-        setMergeObj1(null);
-        setMergeObj2(null);
-        setShowMergeModal(false);
-    };
-
+    
     //   HTML
     return (
         <div className="relative w-full lg:max-w-7/10 flex flex-col gap-4">
@@ -208,26 +129,18 @@ const Transactions = ({ GetData }) => {
                     icon={<Shapes size={36}></Shapes>}
                 ></InfoModal>
             </div>
-            <TypeSelector show4={true} slider={slider} setSlider={setSlider}></TypeSelector>
+            <TypeSelector
+                show4={true}
+                slider={slider}
+                setSlider={setSlider}
+            ></TypeSelector>
             <SearchBar
-                title={"Search category..."}
+                title={"Search transactions..."}
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}
             ></SearchBar>
-            <DatePicker></DatePicker>
-            <MergeCategoryModal
-                Ref={mergeRef}
-                showMergeModal={showMergeModal}
-                GetData={GetData}
-                Cancel={CancelMerge}
-                type="Category"
-                firstID={categoryID}
-                mergeID={mergeCategoryID}
-                mergeObj1={mergeObj1}
-                mergeObj2={mergeObj2}
-            ></MergeCategoryModal>
             <div
-                className={`w-full ${showMergeModal ? "m-0" : "-mt-12"} gap-2 flex flex-col duration-300 ease-in-out`}
+                className={`w-full gap-2 flex flex-col duration-300 ease-in-out`}
             >
                 {cats()}
             </div>
@@ -237,7 +150,8 @@ const Transactions = ({ GetData }) => {
                 setShowModal={setShowModal}
             ></AddButton>
             {showModal && (
-                <CategoriesModal
+
+                <TransactionsModal
                     Cancel={Cancel}
                     showModal={showModal}
                     setShowModal={setShowModal}
@@ -250,16 +164,9 @@ const Transactions = ({ GetData }) => {
                         categoryID,
                     }}
                     GetData={GetData}
-                ></CategoriesModal>
+                ></TransactionsModal>
             )}
-            <DeleteModal
-                text={"category"}
-                GetData={GetData}
-                DeleteHandler={DeleteHandler}
-                dialogRef={dialogRef}
-                handleCancel={CancelDelete}
-                objID={categoryID}
-            ></DeleteModal>
+            
         </div>
     );
 };
