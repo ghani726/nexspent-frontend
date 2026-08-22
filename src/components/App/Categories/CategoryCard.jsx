@@ -101,7 +101,7 @@ const CategoryCard = ({
 					{icon}
 				</div>
 				<div className={`flex flex-col justify-center items-start`}>
-					<h3 className={`text-[22px] -my-1.5 font-bold`}>{name}</h3>
+					<h3 className={`text-[22px] -my-1.5 font-bold line-clamp-1 break-all`}>{name}</h3>
 					<p className={`text-xs text-gray-600`}>
 						{categoryType?.[0].toUpperCase() +
 							categoryType?.slice(1)}

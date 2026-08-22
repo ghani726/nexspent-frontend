@@ -112,7 +112,7 @@ const AccountCard = ({
 
 				<p
 					style={{ color: bgColors }}
-					className={`text-xs flex justify-start items-center gap-1`}
+					className={`text-xs flex justify-start items-center gap-1 text-shadow-2xs`}
 				>
 					{transactions.length}{" "}
 					{transactions.length === 1 ? "transaction" : "transactions"}

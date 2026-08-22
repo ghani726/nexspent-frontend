@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@source "./tailgrids";
 
 @media (prefers-color-scheme: dark) {
 	@theme {
@@ -177,9 +177,6 @@ dialog[open] {
 		background-color: var(--color-gray-700);
 	}
 }
-
-
-
 .input-box>input,
 .input-box>select {
 	position: absolute;

@@ -15,7 +15,7 @@ const ColorBox = ({ e, selectedColor, handleColorChange }) => {
 				className="peer hidden"
 			/>
 			<div
-				className={`rounded-full h-10 aspect-square w-10 ${e.color} peer-checked:ring-2 peer-checked:ring-black dark:peer-checked:ring-white`}
+				className={`rounded-full h-10 aspect-square w-10 ${e.color} peer-checked:ring-2 peer-checked:ring-black peer-checked:ring-offset-2 dark:peer-checked:ring-offset-black dark:peer-checked:ring-white`}
 				title={e.name}
 			></div>
 		</label>
@@ -32,7 +32,7 @@ const ColorPicker = ({ heading, selectedColor, setSelectedColor }) => {
 	return (
 		<div className="w-full flex flex-col gap-2 items-start">
 			<h4 className="font-bold text-xl">{heading}:</h4>
-			<div className="flex py-1 pr-2 flex-nowrap overflow-scroll w-full gap-0.5 justify-start items-center">
+			<div className="flex py-1 pr-2 flex-nowrap overflow-scroll w-full gap-1 justify-start items-center">
 				{colors.map((e) => {
 					return (
 						<ColorBox

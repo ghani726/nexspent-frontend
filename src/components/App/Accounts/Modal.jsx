@@ -187,7 +187,7 @@ const AccountsModal = ({ typeOfModal, Cancel, editObj = null, GetData }) => {
 	return (
 		<div className="fixed starting:scale-0 starting:opacity-0 transition-all opacity-100 scale-100 ease-in-out duration-300 inset-0 z-5 backdrop-blur-sm flex justify-center items-center">
 			<div
-				className={`flex max-h-9/10 flex-col bg-surface dark:bg-gray-900 justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-6 rounded-5xl w-[90%] md:w-2/3 lg:w-1/2 gap-4`}
+				className={`flex max-h-9/10 overflow-scroll flex-col bg-surface dark:bg-gray-900 justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-6 rounded-5xl w-[90%] md:w-2/3 lg:w-1/2 gap-4`}
 			>
 				{/* Header */}
 
