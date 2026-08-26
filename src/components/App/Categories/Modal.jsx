@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { CreateCategory, UpdateCategory } from "../../../api/CategoryAPI.js";
 import ColorPicker from "../Common/ColorPicker.jsx";
 import useData from "../../../hooks/Data";
-import EmojiPicker from "../Common/EmojiPicker.jsx";
+import EmojiPicker from "../Common/EmojiPicker.tsx";
 
 const handleCreation = async ({
 	name,

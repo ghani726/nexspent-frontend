@@ -1,7 +1,6 @@
 import { Calendar as CalendarIcon } from "lucide-react";
 import { today, parseDate, getLocalTimeZone } from "@internationalized/date";
 import { I18nProvider } from "react-aria-components";
-
 import {
     Calendar,
     CalendarCell,
@@ -21,17 +20,25 @@ import {
 } from "../core/date-picker";
 import { useState } from "react";
 import dayjs from "dayjs";
-const DatePickerComponent = ({ dt, setDT }) => {
+import { DateValue } from "@react-types/calendar";
+
+const DatePickerComponent = ({
+    dt,
+    setDT,
+}: {
+    dt: Date;
+    setDT: (data: Date) => void;
+}) => {
     const now = dayjs(dt);
     const dateString = now.format("YYYY-MM-DD");
 
-    const [date, setDate] = useState(parseDate(dateString));
-
+    const [date, setDate] = useState<DateValue | null>(parseDate(dateString));
 
     const currentDate = today(getLocalTimeZone());
     const maxDate = currentDate.add({ months: 1 });
 
-    const [calenderKey, setCalenderKey] = useState(0)
+    const [calenderKey, setCalenderKey] = useState(0);
+
     return (
         <I18nProvider>
             <DatePicker
@@ -39,6 +46,8 @@ const DatePickerComponent = ({ dt, setDT }) => {
                 maxValue={maxDate}
                 value={date}
                 onChange={(calenderDate) => {
+                    if (!calenderDate) return;
+
                     setDate(calenderDate);
                     const newDate = new Date(
                         calenderDate?.year,
@@ -90,7 +99,7 @@ const DatePickerComponent = ({ dt, setDT }) => {
                             <button
                                 type="button"
                                 onClick={() => {
-                                    setDate(today(getLocalTimeZone()))
+                                    setDate(today(getLocalTimeZone()));
                                     setCalenderKey((prev) => prev + 1);
                                     setDT(new Date());
                                 }}

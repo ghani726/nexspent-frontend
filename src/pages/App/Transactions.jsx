@@ -7,9 +7,9 @@ import InfoModal from "../../components/App/Common/InfoModal.jsx";
 import SearchBar from "../../components/App/Common/SearchBar.jsx";
 
 import InfoButton from "../../components/App/Common/InfoButton.jsx";
-import TypeSelector from "../../components/App/Common/TypeSelector.jsx";
+import TypeSelector from "../../components/App/Common/TypeSelector.tsx";
 import TransactionsCard from "../../components/App/Transactions/TransactionsCard.jsx";
-import TransactionsModal from "../../components/App/Transactions/Modal.jsx";
+import TransactionsModal from "../../components/App/Transactions/Modal.tsx";
 
 
 
@@ -131,6 +131,7 @@ const Transactions = ({ GetData }) => {
             </div>
             <TypeSelector
                 show4={true}
+                showAll={true}
                 slider={slider}
                 setSlider={setSlider}
             ></TypeSelector>
@@ -156,13 +157,7 @@ const Transactions = ({ GetData }) => {
                     showModal={showModal}
                     setShowModal={setShowModal}
                     typeOfModal={typeOfModal}
-                    editObj={{
-                        name,
-                        bgColor,
-                        categoryType,
-                        icon,
-                        categoryID,
-                    }}
+                    
                     GetData={GetData}
                 ></TransactionsModal>
             )}

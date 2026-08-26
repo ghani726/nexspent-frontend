@@ -70,7 +70,7 @@ const TransactionsCard = ({
                 <div
                     className={`flex flex-col justify-center items-start gap-1`}
                 >
-                    <h3 className={`text-lg -my-1 font-medium`}>{title}</h3>
+                    <h3 className={`text-lg -my-1 font-medium line-clamp-1`}>{title}</h3>
                     <div className="flex justify-start items-center">
                         <span
                             className={`${colors.find((e) => e.name === foundAccount?.bgColor)?.color} ${foundAccount?.bgColor === "White" ? "text-black": "text-white"} text-xs p-1 px-2 rounded-full`}

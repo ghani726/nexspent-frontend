@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import { DeleteCategory } from "../../api/CategoryAPI.js";
 import MergeCategoryModal from "../../components/App/Common/MergeModal.jsx";
 import InfoButton from "../../components/App/Common/InfoButton.jsx";
-import TypeSelector from "../../components/App/Common/TypeSelector.jsx";
+import TypeSelector from "../../components/App/Common/TypeSelector.tsx";
 
 const DeleteHandler = async ({
     objID,
@@ -206,7 +206,7 @@ const Categories = ({ GetData }) => {
                     icon={<Shapes size={36}></Shapes>}
                 ></InfoModal>
             </div>
-            <TypeSelector slider={slider} setSlider={setSlider}></TypeSelector>
+            <TypeSelector slider={slider} setSlider={setSlider} show4={true}></TypeSelector>
             <SearchBar
                 title={"Search category..."}
                 searchValue={searchValue}

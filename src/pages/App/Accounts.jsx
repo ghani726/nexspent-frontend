@@ -10,7 +10,7 @@ import InfoButton from "../../components/App/Common/InfoButton.jsx";
 import DeleteModal from "../../components/App/Common/DeleteModal.jsx";
 import toast from "react-hot-toast";
 import { DeleteAccount } from "../../api/AccountsAPI.js";
-import SearchBar from "../../components/App/Common/SearchBar";
+import SearchBar from "../../components/App/Common/SearchBar.js";
 import MergeModal from "../../components/App/Common/MergeModal.jsx";
 
 const DeleteHandler = async ({
@@ -180,6 +180,7 @@ const Accounts = ({ GetData }) => {
 		setShowMergeModal(false)
 	}
 
+	// 
 	// #endregion
 
 	//   HTML
@@ -205,7 +206,6 @@ const Accounts = ({ GetData }) => {
 				searchValue={searchValue}
 				setSearchValue={setSearchValue}
 			></SearchBar>
-		
 			<MergeModal
 				Ref={mergeRef}
 				showMergeModal={showMergeModal}
