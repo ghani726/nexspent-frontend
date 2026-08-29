@@ -40,6 +40,7 @@ const EmojiIcon = ({
         </label>
     );
 };
+
 const EmojiPicker = ({
     showModal = true,
     setShowModal,
@@ -94,11 +95,15 @@ const EmojiPicker = ({
     return (
         <div
             onClick={() => setShowModal(false)}
-            className={`${showModal ? "flex" : "invisible w-0 h-0"} justify-center items-end fixed w-full ms:justify-center ms:items-center bg-gray-900/50 h-full z-50 backdrop-blur-sm `}
+            className={`fixed inset-0 z-50 flex justify-center items-end ms:items-center bg-gray-900/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
+                showModal
+                    ? "opacity-100 pointer-events-auto"
+                    : "opacity-0 pointer-events-none"
+            }`}
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className={`flex ${showModal ? "translate-y-0" : "translate-y-220"} overflow-auto max-h-9/10  ms:rounded-4xl ease-in-out duration-300 flex-col w-full ms:max-w-9/10 md:max-w-2xl p-4 gap-4 rounded-t-4xl bg-surface dark:bg-gray-900 shadow-large`}
+                className={`flex ${showModal ? "translate-y-0" : "translate-y-220"} transition-transform overflow-auto max-h-9/10 ms:rounded-4xl ease-in-out duration-300 flex-col absolute w-full ms:max-w-9/10 md:max-w-2xl p-4 gap-4 z-50 rounded-t-4xl bg-surface dark:bg-gray-900 shadow-large`}
             >
                 <div className="w-ful flex justify-between items-center">
                     <h2 className="px-1 font-bold text-3xl text-primary dark:text-primary-300">

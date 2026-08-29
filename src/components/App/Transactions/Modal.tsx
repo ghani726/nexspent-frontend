@@ -7,6 +7,7 @@ import TimePickerComponent from "../../tailgrids/components/TimePicker.tsx";
 import OptionPicker from "./OptionPicker.tsx";
 import TypeSelector from "../Common/TypeSelector.tsx";
 import DialPad from "../Common/DialPad.tsx";
+import CategoryPicker from "./CategoryPicker.tsx";
 
 // const handleCreation = async ({
 //     name,
@@ -167,9 +168,38 @@ const TransactionsModal = ({
     GetData: () => void | string;
 }) => {
     // Global Data
-    const { categories, transactions, accounts, budgets, goals } = useData();
+    const {
+        categories,
+        accounts,
+        budgets,
+        goals,
+        colors,
+    }: {
+        categories: Category[];
+        colors: Color[];
+        accounts: abgObj[];
+        budgets: abgObj[];
+        goals: abgObj[];
+    } = useData();
     const { accessToken } = useAuth();
 
+    interface Category {
+        _id: string;
+        bgColor: string;
+        categoryType: "expense" | "income";
+        icon: string;
+        name: string;
+    }
+
+    interface Color {
+        name: string;
+        color: string;
+    }
+    interface abgObj {
+        _id: string;
+        name: string;
+        bgColor: string;
+    }
     // States
     const [isLoading, setIsLoading] = useState(false);
 
@@ -232,7 +262,26 @@ const TransactionsModal = ({
     const [showDialPad, setShowDialPad] = useState<boolean>(false);
     const [input, setInput] = useState<number>(0);
 
-    const {user} = useAuth()
+    const [showCategoryModal, setShowCategoryModal] = useState<boolean>(false);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(
+        null,
+    );
+
+    const { user } = useAuth();
+
+    const cat =
+        categories.filter((e: Category) => e._id === selectedCategory)[0] ||
+        null;
+
+    const color = colors.filter((e: Color) => e.name === cat?.bgColor)[0]
+        ?.color;
+
+    const [disabledOnes, setDisabledOnes] = useState<object>({
+        b: false,
+        c: false,
+    });
+
+
     return (
         <div className="fixed start:scale-0 start:opacity-0 transition-all opacity-100 scale-100 ease-in-out duration-300 inset-0 z-5 backdrop-blur-sm flex justify-center items-center">
             <div
@@ -262,29 +311,45 @@ const TransactionsModal = ({
                             slider={slider}
                             setSlider={setSlider}
                             show4={accounts?.length > 1 ? true : false}
+                            disabledOnes={disabledOnes}
+                            extraFunc={(val) =>
+                                val &&
+                                val >= 2 &&
+                                setDisabledOnes({ b: false, c: false })
+                            }
                         ></TypeSelector>
                     )}
 
                     {/* Icon and Account Name */}
-                    <div className="flex justify-between items-center w-full bg-app dark:bg-gray-800 rounded-4xl overflow-hidden cursor-pointer">
+                    <div
+                        className={`flex justify-between items-center w-full bg-app dark:bg-gray-800 rounded-4xl overflow-hidden cursor-pointer`}
+                    >
                         {slider < 2 && (
                             <div
                                 className={`w-30 h-30 shrink-0 hover:bg-gray-200 dark:hover:bg-gray-700 text-4xl flex justify-center items-center cursor-pointer `}
                             >
-                                <button className="cursor-pointer bg-white h-25 w-25 rounded-full"></button>
+                                <button
+                                    onClick={() => setShowCategoryModal(true)}
+                                    className={`cursor-pointer ${color || "bg-surface"} h-25 w-25 rounded-full text-5xl`}
+                                >
+                                    {cat?.icon}
+                                </button>
                             </div>
                         )}
                         <button
                             onClick={() => setShowDialPad((prev) => !prev)}
-                            className=" cursor-pointer w-full h-30 hover:bg-gray-200 flex flex-col justify-center items-end p-10 dark:hover:bg-gray-700"
+                            className="cursor-pointer w-full h-30 focus-visible:border-2 hover:bg-gray-200 flex flex-col justify-center items-end p-10 dark:hover:bg-gray-700"
                         >
                             {slider > 1 && (
                                 <h3 className="w-full text-start text-2xl font-bold">
                                     Transfer Balance:
                                 </h3>
                             )}
-                            <div className="text-3xl font-bold">{user?.defaultCurrency?.symbol}{input}</div>
-                            <p className=""></p>
+                            <div className="text-3xl font-bold">
+                                {user?.defaultCurrency?.symbol}
+                                {input}
+                            </div>
+                            <p className="">{cat?.name}</p>
                         </button>
                     </div>
 
@@ -320,6 +385,15 @@ const TransactionsModal = ({
                         showModal={showDialPad}
                         setShowModal={setShowDialPad}
                     ></DialPad>
+                    <CategoryPicker
+                        showModal={showCategoryModal}
+                        setShowModal={setShowCategoryModal}
+                        selectedCategory={selectedCategory}
+                        setSelectedCategory={setSelectedCategory}
+                        slider={slider}
+                        setSlider={setSlider}
+                        setDisabledOnes={setDisabledOnes}
+                    ></CategoryPicker>
                     {/* Title and Notes */}
                     <input
                         type="text"

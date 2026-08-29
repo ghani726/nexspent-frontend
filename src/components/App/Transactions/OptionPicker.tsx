@@ -30,8 +30,6 @@ const OptionPicker = ({
         goals,
         colors,
     }: {
-        categories: object[];
-        transactions: object[];
         accounts: abgObj[];
         budgets: abgObj[];
         goals: abgObj[];
