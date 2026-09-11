@@ -34,6 +34,7 @@
 	--color-muted: #64748b;
 
 	--breakpoint-xs: 375px;
+	--breakpoint-media-400: 400px;
 	--breakpoint-ms: 500px;
 
 	--radius-5xl: 2.5rem;

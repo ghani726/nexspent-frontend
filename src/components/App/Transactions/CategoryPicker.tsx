@@ -2,6 +2,9 @@ import { X } from "lucide-react";
 import useData from "../../../hooks/Data";
 import TypeSelector from "../Common/TypeSelector";
 import { useState } from "react";
+import colors from "@/utils/color";
+import { ICategory } from "@/types/category";
+
 const CategoryPicker = ({
     showModal,
     setShowModal,
@@ -10,6 +13,8 @@ const CategoryPicker = ({
     slider,
     setSlider,
     setDisabledOnes,
+    setCat,
+    isEdit = false,
 }: {
     showModal: boolean;
     setShowModal: (value: boolean) => void;
@@ -18,43 +23,28 @@ const CategoryPicker = ({
     slider: number;
     setSlider: (value: number) => void;
     setDisabledOnes: ({ b, c }: { b: boolean; c: boolean }) => void;
+    setCat?: (value: ICategory) => void;
+    isEdit?: boolean;
 }) => {
-    interface Category {
-        _id: string;
-        bgColor: string;
-        categoryType: "expense" | "income";
-        icon: string;
-        name: string;
-    }
 
-    interface Color {
-        name: string;
-        color: string;
-    }
-    const {
-        categories,
-        colors,
-    }: {
-        categories: Category[];
-        colors: Color[];
-    } = useData();
+    const { categories } = useData();
 
     const [value, setValue] = useState<number>(slider);
 
     const ShowCategories = () => {
-        let filtered: Category[] = [];
+        let filtered: ICategory[] = [];
         if (!value) {
             filtered = categories.filter(
-                (e: Category) => e.categoryType === "expense",
+                (e) => e.categoryType === "expense",
             );
         } else if (value) {
             filtered = categories.filter(
-                (e: Category) => e.categoryType === "income",
+                (e) => e.categoryType === "income",
             );
         }
 
-        return filtered.map((e: Category) => {
-            const bgColor = colors.filter((c: Color) => c.name === e.bgColor)[0]
+        return filtered.map((e: ICategory) => {
+            const bgColor = colors.filter((c) => c.name === e.bgColor)[0]
                 .color;
             return (
                 <label
@@ -70,6 +60,7 @@ const CategoryPicker = ({
                         checked={selectedCategory === e._id}
                         onChange={(evt) => {
                             setSelectedCategory(evt.target.value);
+                            setCat?.(e);
                             if (e.categoryType === "expense") {
                                 setSlider(0);
                                 setDisabledOnes({ b: false, c: true });
@@ -97,7 +88,7 @@ const CategoryPicker = ({
     return (
         <div
             onClick={() => setShowModal(false)}
-            className={`fixed inset-0 z-10 flex justify-center items-end ms:items-center bg-gray-900/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
+            className={`fixed inset-0 z-10 flex justify-center items-end ms:items-center bg-gray-900/50  backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
                 showModal
                     ? "opacity-100 pointer-events-auto"
                     : "opacity-0 pointer-events-none"
@@ -105,7 +96,7 @@ const CategoryPicker = ({
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className={`flex ${showModal ? "translate-y-0" : "translate-y-220"} transition-transform overflow-auto max-h-9/10 ms:rounded-4xl ease-in-out duration-300 flex-col absolute w-full ms:max-w-9/10 md:max-w-2xl p-4 gap-4 z-50 rounded-t-4xl bg-surface dark:bg-gray-900 shadow-large`}
+                className={`flex ${showModal ? "translate-y-0" : "translate-y-220"} transition-transform overflow-auto max-h-9/10 ms:rounded-4xl ease-in-out duration-300 flex-col absolute w-full ms:max-w-9/10 md:max-w-2xl p-4 gap-4 z-50 dark:shadow-primary dark:shadow-small rounded-t-4xl bg-emerald-50 dark:bg-gray-900 shadow-large`}
             >
                 <div className="w-ful flex justify-between items-center">
                     <h2 className="px-1 font-bold text-3xl text-primary dark:text-primary-300">
@@ -119,10 +110,17 @@ const CategoryPicker = ({
                     </button>
                 </div>
 
-                <TypeSelector
-                    slider={value}
-                    setSlider={setValue}
-                ></TypeSelector>
+                {!isEdit && (
+                    <TypeSelector
+                        slider={value}
+                        setSlider={setValue}
+                    ></TypeSelector>
+                )}
+                {/* {isEdit} */}
+                {isEdit && <h4 className={`w-full -mb-2 text-center text-xl font-bold`}>
+                    {slider ? "Income" : "Expense"} Categories Only
+                </h4>}
+
                 <div
                     className={`gap-1 p-2 flex justify-start items-start flex-wrap w-full rounded-4xl`}
                 >

@@ -100,7 +100,8 @@ const LoginPage = () => {
         } catch (error) {
             toast.dismissAll();
             if (error.response) {
-                toast.error(error.response.data.error.error);
+
+
                 return toast.error(error.response.data.error.message);
             } else {
                 if (error.message === "Network Error")
@@ -116,7 +117,7 @@ const LoginPage = () => {
     const [passwordHidden, setPasswordHidden] = useState(true);
 
     return (
-        <div className="bg-white dark:bg-gray-800 shadow-[0_0_24px_rgba(0,0,0,0.1)] transition-all duration-500 ease-in-out h-auto min-w-80 w-auto ms:min-w-md lg:w p-6 md:p-8 rounded-5xl absolute top-1/2 left-1/2 -translate-1/2 flex flex-col justify-center items-center gap-6">
+        <div className="bg-white dark:bg-gray-800 shadow-medium transition-all duration-500 ease-in-out h-auto min-w-80 w-auto ms:min-w-md lg:w p-6 md:p-8 rounded-5xl absolute top-1/2 left-1/2 -translate-1/2 flex flex-col justify-center items-center gap-6">
             <div className="flex flex-col justify-center items-center gap-2">
                 <h1 className="text-3xl font-bold text-primary">NexSpent</h1>
                 <h4 className="font-normal text-sm text-gray-600">

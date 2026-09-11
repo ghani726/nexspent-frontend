@@ -22,7 +22,7 @@ const EmojiIcon = ({
     handleIconChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
     return (
-        <label className="relative cursor-pointer p-1 flex h-11 w-11">
+        <label className="relative cursor-pointer p-1 flex aspect-square w-full">
             <input
                 type="radio"
                 name="icons"
@@ -103,7 +103,7 @@ const EmojiPicker = ({
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className={`flex ${showModal ? "translate-y-0" : "translate-y-220"} transition-transform overflow-auto max-h-9/10 ms:rounded-4xl ease-in-out duration-300 flex-col absolute w-full ms:max-w-9/10 md:max-w-2xl p-4 gap-4 z-50 rounded-t-4xl bg-surface dark:bg-gray-900 shadow-large`}
+                className={`flex ${showModal ? "translate-y-0" : "translate-y-220"} transition-transform overflow-auto max-h-9/10 ms:rounded-4xl ease-in-out duration-300 flex-col absolute w-full ms:max-w-9/10 md:max-w-2xl p-4 gap-4 z-50 rounded-t-4xl bg-emerald-50 dark:bg-gray-900 shadow-primary shadow-large`}
             >
                 <div className="w-ful flex justify-between items-center">
                     <h2 className="px-1 font-bold text-3xl text-primary dark:text-primary-300">
@@ -147,7 +147,7 @@ const EmojiPicker = ({
                     </button>
                 </div>
                 {!isKeyboardMode && (
-                    <div className="ease-in-out ms:h-full rounded-t-3xl -mb-4 ms:rounded-3xl ms:m-0 w-full overflow-y-auto duration-300 content-start gap-2 h-auto grid grid-cols-[repeat(auto-fit,minmax(48px,1fr))] min-h-100 relative">
+                    <div className="ease-in-out ms:h-full rounded-t-3xl -mb-4 ms:rounded-3xl ms:m-0 w-full overflow-y-auto duration-300 content-start h-auto grid grid-cols-[repeat(auto-fit,minmax(48px,1fr))] min-h-100 relative">
                         {searchValue.trim().length > 0 ? (
                             filteredEmojis.length === 0 ? (
                                 <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-gray-400">

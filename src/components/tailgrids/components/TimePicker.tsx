@@ -58,7 +58,7 @@ const TimePickerComponent = ({time = new Date, setTime}: {
             setTime(newDate)
         }} selectedTime={selectedTime}>
             
-            <TimePickerTrigger className="flex justify-center items-center gap-2 px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-hover transition outline-none focus:ring-2 focus:ring-emerald-200 focus:ring-offset-2">
+            <TimePickerTrigger className="flex cursor-pointer justify-center items-center gap-2 px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-hover transition outline-none focus:ring-2 focus:ring-emerald-200 focus:ring-offset-2">
                 {ShowClock()}
                 <span className="font-medium">
                     {selectedTime ? formatTime(selectedTime) : "Select Time"}

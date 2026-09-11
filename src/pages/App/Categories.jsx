@@ -1,47 +1,49 @@
 import { Shapes } from "lucide-react";
-import AddButton from "../../components/App/Common/AddButton.jsx";
+import AddButton from "@/components/App/Common/AddButton";
 import { useState, useRef } from "react";
-import CategoriesModal from "../../components/App/Categories/Modal";
-import useData from "../../hooks/Data";
-import InfoModal from "../../components/App/Common/InfoModal.jsx";
-import CategoryCard from "../../components/App/Categories/CategoryCard";
-import SearchBar from "../../components/App/Common/SearchBar.jsx";
-import DeleteModal from "../../components/App/Common/DeleteModal.jsx";
+import CategoriesModal from "@/components/App/Categories/Modal";
+import useData from "@/hooks/Data";
+import InfoModal from "@/components/App/Common/InfoModal";
+import CategoryCard from "@/components/App/Categories/CategoryCard";
+import SearchBar from "@/components/App/Common/SearchBar";
+import DeleteModal from "@/components/App/Common/DeleteModal";
 import toast from "react-hot-toast";
-import { DeleteCategory } from "../../api/CategoryAPI.js";
-import MergeCategoryModal from "../../components/App/Common/MergeModal.jsx";
-import InfoButton from "../../components/App/Common/InfoButton.jsx";
-import TypeSelector from "../../components/App/Common/TypeSelector.tsx";
+import { DeleteCategory } from "@/api/CategoryAPI";
+import MergeCategoryModal from "@/components/App/Common/MergeModal";
+import InfoButton from "@/components/App/Common/InfoButton";
+import TypeSelector from "@/components/App/Common/TypeSelector";
 
 const DeleteHandler = async ({
-    objID,
+    _id,
     token,
-    CancelDelete,
+    Cancel,
     GetData,
     setIsLoading,
 }) => {
-    setIsLoading(true);
-    try {
-        const res = await DeleteCategory({ categoryID: objID, token });
+    setIsLoading(true); 
+
+    try {        
+        const res = await DeleteCategory({ categoryID: _id, token });
 
         if (res.success) {
             setIsLoading(false);
-            toast.success("Account Deleted successfully.");
+            toast.success("Category Deleted successfully.");
             GetData();
-            CancelDelete();
+            Cancel();
         } else {
             setIsLoading(false);
             return toast.error(res.error.message);
         }
     } catch (err) {
         setIsLoading(false);
-        if (err.response) {
+        if (err.response) {            
             return toast.error(err.response.data.error.message);
         } else {
             return toast.error(err.message);
         }
     }
 };
+
 const Categories = ({ GetData }) => {
     const [searchValue, setSearchValue] = useState("");
 
@@ -80,13 +82,13 @@ const Categories = ({ GetData }) => {
     };
 
     //   Function to control edit.
-    const EditFunc = ({ name, bgColor, categoryType, icon, categoryID }) => {
+    const EditFunc = ({ name, bgColor, categoryType, icon, _id }) => {
         setTypeOfModal("Edit");
         setName(name);
         setBgColor(bgColor);
         setIcon(icon);
         setCategoryType(categoryType);
-        setCategoryID(categoryID);
+        setCategoryID(_id);
         setShowModal(true);
     };
 
@@ -206,7 +208,7 @@ const Categories = ({ GetData }) => {
                     icon={<Shapes size={36}></Shapes>}
                 ></InfoModal>
             </div>
-            <TypeSelector slider={slider} setSlider={setSlider} show4={true}></TypeSelector>
+            <TypeSelector slider={slider} setSlider={setSlider} showAll={true}></TypeSelector>
             <SearchBar
                 title={"Search category..."}
                 searchValue={searchValue}
@@ -224,7 +226,7 @@ const Categories = ({ GetData }) => {
                 mergeObj2={mergeObj2}
             ></MergeCategoryModal>
             <div
-                className={`w-full ${showMergeModal ? "m-0" : "-mt-12"} gap-2 flex flex-col duration-300 ease-in-out`}
+                className={`w-full ${showMergeModal ? "m-0" : "-mt-12"} gap-2 flex flex-col duration-300 ease-in-out pb-13 ms:pb-0`}
             >
                 {cats()}
             </div>
@@ -255,7 +257,7 @@ const Categories = ({ GetData }) => {
                 DeleteHandler={DeleteHandler}
                 dialogRef={dialogRef}
                 handleCancel={CancelDelete}
-                objID={categoryID}
+                _id={categoryID}
             ></DeleteModal>
         </div>
     );

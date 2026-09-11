@@ -1,12 +1,13 @@
 import { X, LoaderCircle } from "lucide-react";
 import { useState } from "react";
 
-import useAuth from "../../../hooks/Auth";
+import useAuth from "@/hooks/Auth";
 import toast from "react-hot-toast";
-import { CreateCategory, UpdateCategory } from "../../../api/CategoryAPI.js";
-import ColorPicker from "../Common/ColorPicker.jsx";
-import useData from "../../../hooks/Data";
-import EmojiPicker from "../Common/EmojiPicker.tsx";
+import { CreateCategory, UpdateCategory } from "@/api/CategoryAPI";
+import ColorPicker from "@/components/App/Common/ColorPicker";
+import useData from "@/hooks/Data";
+import EmojiPicker from "@/components/App/Common/EmojiPicker";
+import colors from "@/utils/color";
 
 const handleCreation = async ({
 	name,
@@ -103,7 +104,7 @@ const handleEdit = async ({
 
 const CategoriesModal = ({ typeOfModal, Cancel, editObj = null, GetData}) => {
 	// Global Data
-	const { colors, transactions } = useData();
+	const { transactions } = useData();
 	const { accessToken } = useAuth();
 
 	// States

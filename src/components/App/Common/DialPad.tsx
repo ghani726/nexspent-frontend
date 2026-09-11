@@ -182,28 +182,28 @@ const DialPad = ({
     return (
         <div
             onClick={() => setShowModal(false)}
-            className={`${showModal ? "flex" : "invisible w-0 h-0"} justify-center items-end fixed w-full bg-gray-900/50 h-full z-10 backdrop-blur-sm`}
+            className={`${showModal ? "flex" : "invisible w-0 h-0"} justify-center items-end fixed inset-0 w-full bg-gray-900/50 h-dvh z-10 backdrop-blur-sm`}
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className={`flex absolute ${showModal ? "translate-y-0" : "translate-y-120"} transition-all ms:bottom-4 md:bottom-4 ms:rounded-4xl ease-in-out duration-300 flex-col bottom-0 w-full left-1/2 -translate-x-1/2 max-w-125 p-4 gap-4 z-50 rounded-t-4xl bg-surface dark:bg-gray-900 shadow-large`}
+                className={`flex absolute ${showModal ? "translate-y-0" : "translate-y-120"} transition-all ms:bottom-4 md:bottom-4 ms:rounded-4xl ease-in-out duration-300 flex-col bottom-0 w-full left-1/2 -translate-x-1/2 max-w-125 p-4 gap-4 z-50 rounded-t-4xl bg-emerald-50 dark:bg-gray-900 shadow-large`}
             >
                 <h2 className="px-1 font-bold text-3xl text-primary dark:text-primary-300">
                     Enter {text}
                 </h2>
                 <div
-                    className={`flex justify-end items-center w-full text-3xl font-bold ${value || secondaryValue.length > 1 ? "text-black dark:text-white" : "text-gray-600"}`}
+                    className={`flex justify-end items-center  max-w-full line-clamp-1 wrap-anywhere w-full text-3xl font-bold ${value || secondaryValue.length > 1 ? "text-black dark:text-white" : "text-gray-600"}`}
                 >
                     {currencySymbol}
                     {dP > 0 ? value.toFixed(dP) : Math.round(value)}
                 </div>
                 {showDisplayValue && (
-                    <div className="w-full -my-3 leading-snug">
+                    <div className="w-full -my-3 leading-snug max-w-full wrap-anywhere">
                         {displayValue}
                     </div>
                 )}
                 <div
-                    className={`gap-1 p-2 grid ${showTools ? "grid-cols-4" : "grid-cols-3"} grid-rows-4 w-full rounded-4xl bg-secondary`}
+                    className={`gap-1 p-2 grid ${showTools ? "grid-cols-4" : "grid-cols-3"} grid-rows-4 w-full rounded-4xl bg-emerald-300/50 dark:bg-emerald-700/50`}
                 >
                     <button
                         title="7"

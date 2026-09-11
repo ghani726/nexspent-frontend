@@ -60,8 +60,8 @@ const RegisterPage = () => {
     const password = watch("password"); //eslint-disable-line
 
     return (
-        <div className="flex overflow-auto justify-center items-center w-full min-h-dvh py-8">
-            <div className="bg-white dark:bg-gray-800 max-h-9/10 animate-fade-in shadow-[0_0_24px_rgba(0,0,0,0.1)] transition-all duration-500 ease-in-out h-auto min-w-80 w-auto ms:min-w-md lg:w p-6 md:p-8 rounded-5xl flex flex-col justify-center items-center gap-6">
+        <div className="flex overflow-auto justify-center items-center w-full min-h-dvh h-auto py-8">
+            <div className="bg-white dark:bg-gray-800 max-h-9/10 animate-fade-in shadow-[0_0_24px_rgba(0,0,0,0.1)] transition-all duration-500 ease-in-out h-auto min-w-80 max-w-9/10 w-auto ms:min-w-md lg:w p-6 md:p-8 rounded-5xl flex flex-col justify-center items-center gap-6">
                 <div className="flex flex-col justify-center items-center gap-2">
                     <h1 className="text-3xl font-bold text-primary text-center">
                         Welcome to NexSpent

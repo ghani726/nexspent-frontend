@@ -38,7 +38,7 @@ const TypeSelector = ({
                                 return 0;
                             })
                         }
-                        className={`${show4 && showAll ? "w-1/4" : !showAll && !show4 ? "w-1/2" : "w-1/3"} disabled:cursor-not-allowed p-3 px-7 z-3 flex justify-center items-center shrink-0 rounded-ful3 cursor-pointer duration-300 ease-in-out ${slider === 0 && "font-bold"}`}
+                        className={`${show4 && showAll ? "w-1/4" : !showAll && !show4 ? "w-1/2" : "w-1/3"} disabled:cursor-not-allowed p-3 px-7 z-3 flex justify-center items-center shrink-0 rounded-full cursor-pointer duration-300 ease-in-out ${slider === 0 && "font-bold"}`}
                     >
                         All
                     </button>

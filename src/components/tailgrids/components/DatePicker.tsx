@@ -71,7 +71,7 @@ const DatePickerComponent = ({
                             />
                         )}
                     </DateInput>
-                    <DatePickerTrigger className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-lg transition-colors">
+                    <DatePickerTrigger className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-lg transition-colors">
                         <CalendarIcon className="size-5" />
                     </DatePickerTrigger>
                 </DatePickerGroup>
