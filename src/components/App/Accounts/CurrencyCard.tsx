@@ -1,7 +1,7 @@
 import type { ICurrency } from "@/types/common";
 import { ChangeEvent } from "react";
 
-const CurrencyCard = ({e, selectedCurrency, handleCurrencyChange}: {e: ICurrency, selectedCurrency: ICurrency, handleCurrencyChange: (evt: ChangeEvent)=> void }) => {
+const CurrencyCard = ({e, selectedCurrency, handleCurrencyChange}: {e: ICurrency, selectedCurrency: ICurrency, handleCurrencyChange: (evt: ChangeEvent<HTMLInputElement>)=> void }) => {
 	return (
 		<label className="relative cursor-pointer p-1 w-full inline-block h-full">
 			<input

@@ -5,7 +5,7 @@ const Details = () => {
 
 	return (
 		<>
-			<div className="flex animate-fade-in flex-col justify-center items-center w-full bg-white dark:bg-gray-800 p-4 rounded-5xl">
+			<div className="flex animate-fade-in flex-col justify-center items-center w-full bg-white shadow-medium dark:bg-gray-800 p-4 rounded-5xl">
 				<h2 className="text-3xl whitespace-break-spaces text-primary wrap-anywhere w-full text-center font-bold">
 					{user?.fullName}
 				</h2>
@@ -16,7 +16,7 @@ const Details = () => {
 					@{user?.userName}
 				</h3>
 			</div>
-			<div className="flex flex-col justify-center items-center w-full bg-white dark:bg-gray-800 p-4 rounded-4xl gap-4">
+			<div className="flex flex-col justify-center items-center w-full bg-white shadow-medium dark:bg-gray-800 p-4 rounded-4xl gap-4">
 				<h3 className="font-bold text-xl w-full text-start text-primary">
 					Info:
 				</h3>

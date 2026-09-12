@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import useAuth from "../../../hooks/Auth";
 import { ApiError } from "@/types/common";
 import LogoutUtility from "@/utils/logout";
+import { useEffect, useRef, useState } from "react";
 const AccountCard = ({
     isMenuShown,
     setIsMenuShown,
@@ -26,7 +27,7 @@ const AccountCard = ({
 
     const handleLogout = async () => {
         try {
-            const res = await Logout(accessToken, currentSession);
+            const res = await Logout(accessToken ?? "", currentSession ?? "");
             if (res.success)
                 LogoutUtility({
                     setAccessToken,
@@ -46,8 +47,29 @@ const AccountCard = ({
             }
         }
     };
+
+    const ref = useRef<HTMLDivElement>(null);
+
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        const handleOutsideClick = (e: MouseEvent) => {
+            if (ref.current && !ref.current.contains(e.target as Node)) {
+                setCount((prev) => prev + 1);
+                if (count > 0) {
+                    setCount(0);
+                    setIsMenuShown(false);
+                }
+            }
+        };
+
+        document.addEventListener("click", handleOutsideClick);
+
+        return () => document.removeEventListener("click", handleOutsideClick);
+    });
+
     return (
         <div
+            ref={ref}
             className={`menu z-10 ${isMenuShown ? "translate-y-0 opacity-100" : "translate-y-[-170%] opacity-0"} ease-in-out duration-300 flex flex-col items-start justify-center p-2 bg-white dark:bg-gray-800 absolute right-2 top-15.5 gap-2 rounded-3xl shadow-[0_0_10px_rgba(0,0,0,0.3)] `}
         >
             <Link

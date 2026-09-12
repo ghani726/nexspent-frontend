@@ -18,7 +18,7 @@ const Header = ({
     const [isMenuShown, setIsMenuShown] = useState(false);
     return (
         <header className="p-3 pb-1.5">
-            <div className="flex bg-surface dark:bg-gray-800 shadow-medium rounded-5xl justify-between items-center gap-4 p-4 max-h-14">
+            <div className="flex bg-surface dark:bg-gray-800 shadow-medium rounded-5xl justify-between items-center gap-4 p-3 max-h-14">
                 <div className="flex justify-between items-center gap-4">
                     <div
                         className="hidden md:flex justify-center items-center rounded-lg h-6.5 w-6.5"
@@ -39,7 +39,7 @@ const Header = ({
                         )}
                     </div>
 
-                    <h1 className="text-primary font-bold text-2xl">
+                    <h1 className="text-primary font-bold px-2 text-2xl">
                         Nex
                         <span className="text-black dark:text-white">
                             Spent
@@ -63,7 +63,7 @@ const Header = ({
                         ></CloudBackup>
                     </div>
                     <div
-                        className="flex justify-center items-center cursor-pointer bg-primary font-bold text-white p-4 rounded-full h-4 w-4"
+                        className="flex justify-center items-center cursor-pointer bg-primary font-bold text-lg text-white p-5 -mr-1 rounded-full h-4 w-4"
                         onClick={() => {
                             setIsMenuShown((prev) => !prev);
                         }}

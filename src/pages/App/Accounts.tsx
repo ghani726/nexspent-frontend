@@ -229,7 +229,6 @@ const Accounts = ({ GetData }: {GetData: ()=> void}) => {
                 <AccountsModal
                     Cancel={Cancel}
                     showModal={showModal}
-                    setShowModal={setShowModal}
                     typeOfModal={typeOfModal}
                     editObj={{
                         name,

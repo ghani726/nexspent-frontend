@@ -13,7 +13,9 @@ const DeleteModal = ({
 }: {
     text: string;
     handleCancel: () => void;
-    DeleteHandler: (value: IDeleteHandlerProps) => (void | string);
+    DeleteHandler: (
+        value: IDeleteHandlerProps,
+    ) => (void | string) | Promise<string | undefined>;
     dialogRef: RefObject<HTMLDialogElement | null>;
     _id: string;
     GetData: () => void;

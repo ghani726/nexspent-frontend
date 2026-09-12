@@ -1,5 +1,5 @@
-import { Minus, Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Minus, Plus } from "lucide-react";
+import { ChangeEvent, useEffect, useState } from "react";
 import DialPad from "../Common/DialPad";
 import SearchBar from "../Common/SearchBar";
 import CurrencyCard from "./CurrencyCard";
@@ -9,17 +9,20 @@ import toast from "react-hot-toast";
 import { AddAccount, EditAccount } from "@/api/AccountsAPI";
 import ColorPicker from "../Common/ColorPicker";
 import currencies, { baseCurrency } from "@/utils/currencies";
-import { ApiError, IAccount } from "@/types/common";
+import { ApiError, IAccount, ICurrency } from "@/types/common";
+import BaseModal from "@/components/App/Common/BaseModal";
+import useBack from "@/hooks/useBack";
 
-interface CreateInterface extends IAccount {
-    setIsLoading: (value: boolean) => void
-    accessToken: string
-    GetData: () => void
-    Cancel: () => void
+interface CreateInterface extends Omit<IAccount, "_id"> {
+    _id?: string;
+    setIsLoading: (value: boolean) => void;
+    accessToken: string;
+    GetData: () => void;
+    Cancel: () => void;
 }
 
 interface Update extends Omit<CreateInterface, "balance"> {
-    accountID: string
+    accountID: string;
 }
 const handleCreation = async ({
     setIsLoading,
@@ -55,7 +58,7 @@ const handleCreation = async ({
             return toast.error(res.error.message);
         }
     } catch (err) {
-        const error = err as ApiError
+        const error = err as ApiError;
         setIsLoading(false);
         if (error?.response?.data?.error?.message) {
             return toast.error(error.response.data.error.message);
@@ -76,8 +79,6 @@ const handleEdit = async ({
     GetData,
     Cancel,
 }: Update) => {
-    console.log(accountID);
-    
     if (!name.trim()) {
         return toast.error("Account name is required");
     }
@@ -98,11 +99,11 @@ const handleEdit = async ({
             Cancel();
             return;
         } else {
-            setIsLoading(false)
+            setIsLoading(false);
             return toast.error(res.error.message);
         }
     } catch (err) {
-        const error = err as ApiError
+        const error = err as ApiError;
         setIsLoading(false);
         if (error?.response?.data?.error?.message) {
             return toast.error(error.response.data.error.message);
@@ -113,11 +114,13 @@ const handleEdit = async ({
 };
 
 const AccountsModal = ({
+    showModal,
     typeOfModal,
     Cancel,
     editObj,
     GetData,
 }: {
+    showModal: boolean
     typeOfModal: "Add" | "Edit";
     Cancel: () => void;
     editObj: IAccount;
@@ -142,14 +145,15 @@ const AccountsModal = ({
     const [selectedColor, setSelectedColor] = useState(
         typeOfModal === "Edit" ? editObj.bgColor : "Default",
     );
-    const [selectedCurrency, setSelectedCurrency] = useState(
-        typeOfModal === "Edit" ? editObj.currency || baseCurrency : user?.defaultCurrency,
+    const [selectedCurrency, setSelectedCurrency] = useState<ICurrency>(
+        (typeOfModal === "Edit" ? editObj.currency : user?.defaultCurrency) ??
+            baseCurrency,
     );
 
     //   By Default select user's default currency
 
     useEffect(() => {
-        setSelectedCurrency(user?.defaultCurrency); //eslint-disable-line
+        setSelectedCurrency(user?.defaultCurrency ?? baseCurrency); //eslint-disable-line
 
         if (user?.defaultCurrency) {
             const indexOfCurrency = currencies.findIndex(
@@ -166,7 +170,7 @@ const AccountsModal = ({
 
     const [searchValue, setSearchValue] = useState("");
 
-    const handleCurrencyChange = (event: InputEvent) => {
+    const handleCurrencyChange = (event: ChangeEvent<HTMLInputElement>) => {
         const currency = JSON.parse(event?.target?.value);
         setSelectedCurrency(currency);
 
@@ -210,29 +214,51 @@ const AccountsModal = ({
         }
     };
 
+    const showCurrencyCards = () => {
+        // 1. Filter currencies if search value exists
+        let filteredCurrencies;
+
+        if (searchValue?.trim().length > 0) {
+            filteredCurrencies = currencies.filter(
+                (e) =>
+                    e?.code
+                        ?.toLowerCase()
+                        .includes(searchValue.toLowerCase()) ||
+                    e?.country
+                        ?.toLowerCase()
+                        .includes(searchValue.toLowerCase()),
+            );
+        } else {
+            filteredCurrencies = currencies;
+        }
+
+        // 2. Return the mapped JSX array directly
+        return filteredCurrencies.map((e) => (
+            <CurrencyCard
+                key={e.code}
+                e={e}
+                selectedCurrency={selectedCurrency}
+                handleCurrencyChange={handleCurrencyChange}
+            />
+        ));
+    };
+
+    useBack({
+        isOpen: showModal,
+        close: Cancel,
+        name: "MainTransactionsModal",
+    });
+
     return (
-        <div className="fixed starting:scale-0 starting:opacity-0 transition-all opacity-100 scale-100 ease-in-out duration-300 inset-0 z-5 backdrop-blur-sm flex justify-center items-center">
-            <div
-                className={`flex max-h-9/10 overflow-scroll flex-col bg-surface dark:bg-gray-900 justify-between items-center shadow-[0_0_10px_rgba(0,0,0,0.3)] p-6 rounded-5xl w-[90%] md:w-2/3 lg:w-1/2 gap-4`}
-            >
-                {/* Header */}
-
-                <div className="flex justify-between items-center w-full">
-                    <h2 className="px-1 font-bold text-3xl text-primary">
-                        {typeOfModal === "Add" ? "Add" : "Edit"} Account
-                    </h2>
-                    <button
-                        onClick={Cancel}
-                        disabled={isLoading}
-                        className="text-secondary-600 disabled:cursor-not-allowed hover:text-red-600 duration-300 ease-in-out"
-                    >
-                        <X></X>
-                    </button>
-                </div>
-
-                {/* Main Content */}
-
-                <div className="flex flex-col justify-center items-center w-full gap-2">
+        <BaseModal
+            Cancel={Cancel}
+            typeOfModal={typeOfModal}
+            isLoading={isLoading}
+            handleButtonClick={handleButtonClick}
+            isAdd={true}
+            text="Account"
+            children={
+                <>
                     {/* Account Name */}
                     <input
                         type="text"
@@ -308,7 +334,7 @@ const AccountsModal = ({
 
                     {/* Currency */}
 
-                    <div className="w-full flex flex-col gap-2 items-start max-h-70 md:max-h-90 overflow-scroll">
+                    <div className="w-full flex flex-col gap-2 items-start max-h-120 md:max-h-90 overflow-scroll">
                         <h4 className="font-bold text-xl">Currency:</h4>
                         <div className="flex relative justify-between px-2 gap-2 items-center w-full">
                             <SearchBar
@@ -326,81 +352,21 @@ const AccountsModal = ({
                         <div
                             className={`ease-in-out w-full overflow-y-auto duration-300 h-auto grid grid-cols-[repeat(auto-fit,minmax(125px,1fr))] `}
                         >
-                            {searchValue?.trim().length > 0
-                                ? currencies.map((e) => {
-                                      if (
-                                          e?.code
-                                              ?.toLowerCase()
-                                              .includes(
-                                                  searchValue.toLowerCase(),
-                                              ) ||
-                                          e?.country
-                                              ?.toLowerCase()
-                                              .includes(
-                                                  searchValue.toLowerCase(),
-                                              )
-                                      ) {
-                                          return (
-                                              <CurrencyCard
-                                                  key={e.code}
-                                                  e={e}
-                                                  selectedCurrency={
-                                                      selectedCurrency
-                                                  }
-                                                  handleCurrencyChange={
-                                                      handleCurrencyChange
-                                                  }
-                                              ></CurrencyCard>
-                                          );
-                                      }
-                                  })
-                                : currencies.map((e) => {
-                                      return (
-                                          <CurrencyCard
-                                              key={e.code}
-                                              e={e}
-                                              selectedCurrency={
-                                                  selectedCurrency
-                                              }
-                                              handleCurrencyChange={
-                                                  handleCurrencyChange
-                                              }
-                                          ></CurrencyCard>
-                                      );
-                                  })}
+                            {showCurrencyCards()}
                         </div>
                     </div>
-                </div>
-
-                {/* Buttons */}
-
-                <div className="flex justify-end items-center w-full gap-2">
-                    <button
-                        onClick={Cancel}
-                        disabled={isLoading}
-                        className="px-4 disabled:cursor-not-allowed cursor-pointer active:scale-95 py-2 rounded-full bg-app dark:bg-gray-700 hover:bg-gray-200 hover:dark:bg-gray-800  duration-300 ease-in-out"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        disabled={isLoading}
-                        onClick={handleButtonClick}
-                        className="px-4 disabled:bg-primary-400 disabled:active:scale-100 disabled:cursor-not-allowed cursor-pointer active:scale-95 py-2 rounded-full bg-primary hover:bg-primary-hover text-white hover:bg-primary-800 duration-300 ease-in-out"
-                    >
-                        {typeOfModal === "Add" ? "Create" : "Update"} Account
-                    </button>
-                </div>
-            </div>
-            <DialPad
-                dP={dP}
-                text="Balance"
-                input={balance}
-                showModal={showDialPad}
-                setShowModal={setShowDialPad}
-                setInput={setBalance}
-                currencySymbol={selectedCurrency?.symbol}
-            ></DialPad>
-        </div>
+                    <DialPad
+                        dP={dP}
+                        text="Balance"
+                        input={balance}
+                        showModal={showDialPad}
+                        setShowModal={setShowDialPad}
+                        setInput={setBalance}
+                        currencySymbol={selectedCurrency?.symbol}
+                    ></DialPad>
+                </>
+            }
+        ></BaseModal>
     );
 };
 

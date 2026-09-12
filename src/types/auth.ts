@@ -1,13 +1,11 @@
+import { ICurrency } from "@/types/common";
+
 export interface IUser {
     fullName: string;
     email: string;
     userName: string;
     sessions: ISession[];
-    defaultCurrency: {
-        code: string;
-        country: string;
-        symbol: string;
-    };
+    defaultCurrency: ICurrency
     defaultDecimalPrecision: number;
 }
 export interface ISession {

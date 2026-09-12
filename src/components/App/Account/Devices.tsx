@@ -24,7 +24,7 @@ const handleLogout = async ({
     navigate,
 }: LogoutHandlerProps) => {
     try {
-        const res = await Logout(accessToken, currentSession);
+        const res = await Logout(accessToken ?? "", currentSession ?? "");
 
         if (res.success) {
             LogoutUtility({
@@ -86,7 +86,7 @@ const handleLogoutAll = async ({
     navigate,
 }: LogoutHandlerProps) => {
     try {
-        const res = await LogoutAll(accessToken);
+        const res = await LogoutAll(accessToken ?? "");
 
         if (res.success) {
             LogoutUtility({
@@ -189,7 +189,7 @@ const Devices = () => {
 
     const navigate = useNavigate();
     return (
-        <div className="flex animate-fade-in flex-col justify-center items-center w-full bg-white dark:bg-gray-800 p-5 rounded-5xl gap-4">
+        <div className="flex animate-fade-in flex-col justify-center items-center w-full bg-white shadow-medium dark:bg-gray-800 p-5 rounded-5xl gap-4">
             <h2 className="text-2xl font-bold text-primary w-full text-start">
                 Manage your devices:
             </h2>

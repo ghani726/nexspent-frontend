@@ -114,7 +114,7 @@ const App = () => {
                             path=""
                             element={
                                 <Home
-                                    GetData={GetData}
+                                    // GetData={GetData}
                                     showModal={showModal}
                                     setShowModal={setShowModal}
                                 ></Home>

@@ -801,7 +801,7 @@ const currencies: ICurrency[] = [
     },
 ];
 
-export const baseCurrency = {
+export const baseCurrency: ICurrency = {
     code: "USD",
     country: "United States",
     symbol: "$",

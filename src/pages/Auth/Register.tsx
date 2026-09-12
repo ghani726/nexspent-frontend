@@ -1,11 +1,12 @@
-import { Eye, EyeOff, LoaderCircle } from "lucide-react";
-import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router";
-import useAuth from "../../hooks/Auth";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
-import { Register } from "../../api/AuthAPI";
-import useData from "../../hooks/Data";
+import toast from "react-hot-toast";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
+import useAuth from "@/hooks/Auth";
+import useData from "@/hooks/Data";
+import { Register } from "@/api/AuthAPI";
+import type { ApiError } from "@/types/common";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -18,7 +19,7 @@ const RegisterPage = () => {
 
     const { GetData } = useData();
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data: object) => {
         try {
             const res = await Register(data);
 
@@ -30,16 +31,16 @@ const RegisterPage = () => {
                 setCurrentSession(res.data.currentSession);
                 toast.success(<span>Registered successfully</span>);
                 setDataToSessionStorage(true, res.data.user);
-                GetData(res.data.token);
+                GetData();
                 navigate("/app", { replace: true });
             } else if (!res.success) {
                 toast.dismissAll();
                 return toast.error(res.data.error.message);
             }
-        } catch (error) {
+        } catch (err) {
+            const error = err as ApiError
             toast.dismissAll();
-            if (error.response) {
-                toast.error(error.response.data.error.error);
+            if (error?.response?.data?.error?.message) {
                 return toast.error(error.response.data.error.message);
             } else {
                 return toast.error(error.message);
@@ -106,7 +107,7 @@ const RegisterPage = () => {
                         </div>
                         {errors.fullName && (
                             <p className="text-red-500 font-normal px-4">
-                                {errors.fullName.message}
+                                {errors?.fullName?.message as string}
                             </p>
                         )}
                     </div>
@@ -132,7 +133,7 @@ const RegisterPage = () => {
                         </div>
                         {errors.email && (
                             <p className="text-red-500 font-normal px-4">
-                                {errors.email.message}
+                                {errors.email.message as string}
                             </p>
                         )}
                     </div>
@@ -168,7 +169,7 @@ const RegisterPage = () => {
                         </div>
                         {errors.userName && (
                             <p className="text-red-500 font-normal px-4">
-                                {errors.userName.message}
+                                {errors.userName.message as string}
                             </p>
                         )}
                     </div>
@@ -282,7 +283,7 @@ const RegisterPage = () => {
                         )} */}
                         {errors.confirmPassword && (
                             <p className="text-red-500 font-normal px-4">
-                                {errors.confirmPassword.message}
+                                {errors.confirmPassword.message as string}
                             </p>
                         )}
                     </div>
