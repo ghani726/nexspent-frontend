@@ -3,9 +3,9 @@ import axios from "axios";
 import config from "@/config/config";
 import type { IAccount } from "@/types/common";
 
-interface IAdd extends Omit<IAccount, '_id'> {
+interface IAdd extends Omit<IAccount, "_id"> {
     token: string;
-    _id?: string
+    _id?: string;
 }
 interface IUpdate extends Omit<IAdd, "balance"> {
     accountID: string;
@@ -24,20 +24,14 @@ export const AddAccount = async ({
     currency,
     token,
 }: IAdd) => {
-    const res = await axios.post(
-        `${config.BackendURL}/user/accounts/`,
-        {
-            name: name,
-            balance: balance,
-            decimalPrecision: decimalPrecision,
-            bgColor: bgColor,
-            currency: currency,
-            token: token,
-        },
-        {
-            withCredentials: true, // <--- THIS IS REQUIRED
-        },
-    );
+    const res = await axios.post(`${config.BackendURL}/user/accounts/`, {
+        name: name,
+        balance: balance,
+        decimalPrecision: decimalPrecision,
+        bgColor: bgColor,
+        currency: currency,
+        token: token,
+    });
     return res.data;
 };
 
@@ -49,20 +43,14 @@ export const EditAccount = async ({
     accountID,
     token,
 }: IUpdate) => {
-    const res = await axios.patch(
-        `${config.BackendURL}/user/accounts/`,
-        {
-            name: name,
-            decimalPrecision: decimalPrecision,
-            bgColor: bgColor,
-            currency: currency,
-            accountID: accountID,
-            token: token,
-        },
-        {
-            withCredentials: true, // <--- THIS IS REQUIRED
-        },
-    );
+    const res = await axios.patch(`${config.BackendURL}/user/accounts/`, {
+        name: name,
+        decimalPrecision: decimalPrecision,
+        bgColor: bgColor,
+        currency: currency,
+        accountID: accountID,
+        token: token,
+    });
     return res.data;
 };
 
@@ -81,17 +69,11 @@ export const MergeAccount = async ({
     mergeAccountID,
     token,
 }: IDeleteOrMerge) => {
-    const res = await axios.post(
-        `${config.BackendURL}/user/accounts/merge`,
-        {
-            accountID: accountID,
-            mergeAccountID: mergeAccountID,
-			
-            token: token,
-        },
-        {
-            withCredentials: true, // <--- THIS IS REQUIRED
-        },
-    );
+    const res = await axios.post(`${config.BackendURL}/user/accounts/merge`, {
+        accountID: accountID,
+        mergeAccountID: mergeAccountID,
+
+        token: token,
+    });
     return res.data;
 };

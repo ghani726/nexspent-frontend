@@ -102,7 +102,7 @@ export const LogoutAll = async (accessToken: string) => {
 
 export const GetDataNow = async (accessToken: string) => {
 	const res = await axios.get(
-		`${config.BackendURL}/auth/user`,
+		`${config.BackendURL}/user?all=true`,
 		{
 			headers: {
 				Authorization: `Bearer ${accessToken}`,

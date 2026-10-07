@@ -1,11 +1,16 @@
+import { IBudget } from "@/types/budget";
 import { ICategory } from "@/types/category";
+import { IGoal } from "@/types/goal";
 import { ITransaction } from "@/types/transaction";
 
 export interface ApiError {
     response?: {
         data?: {
-            error?: {
-                message?: string;
+            success: boolean;
+            isLoggedOut?: boolean;
+            error: {
+                message: string;
+                errorMessage?: string;
             };
         };
     };
@@ -30,25 +35,23 @@ export interface ICurrency {
     symbol: string;
 }
 
-export interface IabgObj {
-    _id: string;
+export interface IAccount {
+    _id?: string;
     name: string;
-    bgColor: string;
-}
-
-export interface IAccount extends IabgObj {
+    userID: string;
+    decimalPrecision: number;
     currency: ICurrency;
-    balance: number;
-    decimalPrecision?: number;
+    balance?: number;
+    bgColor?: string;
 }
 
 export interface IDataContext {
     accounts: IAccount[];
     setAccounts: (value: IAccount[]) => void;
-    budgets: IabgObj[];
-    setBudgets: (value: IabgObj[]) => void;
-    goals: IabgObj[];
-    setGoals: (value: IabgObj[]) => void;
+    budgets: IBudget[];
+    setBudgets: (value: IBudget[]) => void;
+    goals: IGoal[];
+    setGoals: (value: IGoal[]) => void;
     categories: ICategory[];
     setCategories: (value: ICategory[]) => void;
     transactions: ITransaction[];

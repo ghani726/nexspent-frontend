@@ -317,7 +317,7 @@ export function CalendarGridHeader({ className }: { className?: string }) {
 }
 
 const calendarCellButtonStyles = cva(
-  "flex size-10 items-center justify-center rounded-full text-sm font-medium text-title-50 outline-none transition forced-color-adjust-none [-webkit-tap-highlight-color:transparent] hover:bg-datepicker-selected-hover-background group-data-[outside-month=true]:pointer-events-none group-data-[outside-month=true]:text-text-200 group-data-[disabled=true]:cursor-not-allowed group-[&[data-disabled=true]:not([data-outside-month]):not([data-today])]:text-text-100 group-[[data-unavailable=true]:not([data-today=true])]:text-text-100 group-data-[today=true]:bg-datepicker-selected-background/90 group-data-[today=true]:text-white data-[selected=true]:bg-datepicker-selected-background data-[selected=true]:text-white-100 group-data-[pressed=true]:scale-95 data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-button-primary-focus-ring group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background-50 sm:size-11 [&[data-disabled=true]:not([data-outside-month])]:line-through group-data-[today=true]:hover:bg-datepicker-selected-background/90"
+  "flex size-10 items-center justify-center rounded-full text-sm font-medium text-title-50 outline-none transition forced-color-adjust-none [-webkit-tap-highlight-color:transparent] hover:bg-datepicker-selected-hover-background group-data-[outside-month=true]:pointer-events-none group-data-[outside-month=true]:text-text-200 group-data-[disabled=true]:cursor-not-allowed group-[&[data-disabled=true]:not([data-outside-month]):not([data-today])]:text-text-100 group-[[data-unavailable=true]:not([data-today=true])]:text-text-100 group-data-[today=true]:bg-primary/10 group-data-[today=true]:text-white data-[selected=true]:bg-datepicker-selected-background data-[selected=true]:text-white-100 group-data-[pressed=true]:scale-95 data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-button-primary-focus-ring group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background-50 sm:size-11 [&[data-disabled=true]:not([data-outside-month])]:line-through [&[data-disabled=true]:not([data-outside-month])]:text-gray-300 [&[data-disabled=true]:not([data-outside-month])]:dark:text-gray-700 group-data-[today=true]:hover:bg-datepicker-selected-background/90"
 );
 
 interface CalendarCellProps extends Omit<
@@ -348,7 +348,7 @@ export function CalendarCell({
   return (
     <AriaCalendarCell
       {...props}
-      className="group p-0 outline-none bg-background-50"
+      className="group p-0 outline-none"
     >
       {({
         formattedDate,

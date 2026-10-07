@@ -7,6 +7,7 @@ import { MergeCategory } from "@/api/CategoryAPI";
 import { MergeAccount } from "@/api/AccountsAPI";
 import InfoModal from "./InfoModal.js";
 import { ApiError } from "@/types/common.js";
+import HandleErrorMessage from "@/utils/networkError.js";
 
 interface MergePropsForHandlers {
     firstID: string;
@@ -41,14 +42,13 @@ const handleMergeCategory = async ({
             setIsLoading(false);
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
+    } catch (error) {
         setIsLoading(false);
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 const handleMergeAccount = async ({
@@ -76,14 +76,13 @@ const handleMergeAccount = async ({
             setIsLoading(false);
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
+    } catch (error) {
         setIsLoading(false);
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 

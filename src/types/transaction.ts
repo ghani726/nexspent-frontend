@@ -1,17 +1,30 @@
 export interface ITransaction {
-    account: string;
+    // Basic
+    _id?: string;
+    userID?: string;
+    title?: string;
+    description?: string;
+    type: "expense" | "income" | "transfer";
     amount: number;
-    bgColor?: string;
-    category?: string;
-    goal?: string;
-    budget?: string;
+    date?: Date | string;
+
+    // Expense Only + First 2 for Income
+
+    account?: string; //Expense + Income
+    category?: string; //Expense + Income
+    budget?: string; // Expense Only
+    goal?: string; //Expense Only
+
+    // Transfer Only
+
     fromAccount?: string;
     toAccount?: string;
-    createdAt?: string;
-    date?: string;
-    description?: string;
+
+    bgColor?: string;
     icon?: string;
-    title: string;
-    type: "income" | "expense" | "transfer";
-    _id?: string;
+}
+
+export interface IFinalTxn {
+    date: string;
+    trasactions: (ITransaction | undefined)[];
 }

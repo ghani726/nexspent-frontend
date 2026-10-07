@@ -1,12 +1,13 @@
 import { ReactNode, useState } from "react";
 import AuthContext from "./AuthContext";
-import { IUser } from "@/types/auth";
+import { ISession, IUser } from "@/types/auth";
 
 const AuthProvider = ({ children }: {children: ReactNode}) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [accessToken, setAccessToken] = useState<string | null>(null);
 
     const [currentSession, setCurrentSession] = useState<string | null>(null);
+    const [sessions, setSessions] = useState<ISession[] | null>(null);
     const [user, setUser] = useState<IUser | null>(null);
 
     const setDataToSessionStorage = (is_logged_in: boolean, u: IUser) => {
@@ -33,6 +34,8 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
                     user,
                     setUser,
                     currentSession,
+                    sessions,
+                    setSessions,
                     setCurrentSession,
                     setDataToSessionStorage,
                     getDatafromSessionStorage,

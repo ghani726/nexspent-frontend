@@ -12,8 +12,14 @@ import DeleteModal from "@/components/App/Common/DeleteModal";
 import { DeleteAccount } from "@/api/AccountsAPI";
 import SearchBar from "@/components/App/Common/SearchBar";
 import MergeModal from "@/components/App/Common/MergeModal";
-import type { ApiError, IAccount, ICurrency, IDeleteHandlerProps } from "@/types/common";
+import type {
+    ApiError,
+    IAccount,
+    ICurrency,
+    IDeleteHandlerProps,
+} from "@/types/common";
 import { baseCurrency } from "@/utils/currencies";
+import HandleErrorMessage from "@/utils/networkError";
 
 const DeleteHandler = async ({
     _id,
@@ -36,16 +42,15 @@ const DeleteHandler = async ({
             return toast.error(res.error.message);
         }
     } catch (error) {
-		const err = error as ApiError
         setIsLoading(false);
-        if (err?.response?.data?.error?.message) {
-            return toast.error(err.response.data.error.message);
-        } else {
-            return toast.error(err.message);
-        }
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
-const Accounts = ({ GetData }: {GetData: ()=> void}) => {
+const Accounts = ({ GetData }: { GetData: () => void }) => {
     //#region
 
     // Search
@@ -62,11 +67,16 @@ const Accounts = ({ GetData }: {GetData: ()=> void}) => {
 
         // 2. Map filtered array to JSX and RETURN it
         return filteredAccounts.map((e) => {
-            const txns = transactions.filter((i) => i.account === e._id);
-			
+            const txns = transactions.filter(
+                (i) =>
+                    i.account === e._id ||
+                    i.fromAccount === e._id ||
+                    i.toAccount === e._id,
+            );
+
             return (
                 <AccountCard
-					_id={e._id}
+                    _id={e._id}
                     key={e._id}
                     name={e.name}
                     balance={e.balance}
@@ -87,7 +97,7 @@ const Accounts = ({ GetData }: {GetData: ()=> void}) => {
     const [showMergeModal, setShowMergeModal] = useState(false);
 
     // Edit States
-    const [typeOfModal, setTypeOfModal] = useState<"Add" | "Edit">("Add");
+    const [typeOfModal, setTypeOfModal] = useState<"Create" | "Update">("Create");
     const [name, setName] = useState("");
     const [balance, setBalance] = useState(0);
     const [decimalPrecision, setDecimalPrecision] = useState(0);
@@ -107,7 +117,7 @@ const Accounts = ({ GetData }: {GetData: ()=> void}) => {
     //   Function to get back
     const Cancel = () => {
         setShowModal(false);
-        setTypeOfModal("Add");
+        setTypeOfModal("Create");
         setName("");
         setBalance(0);
         setBgColor("Default");
@@ -117,11 +127,18 @@ const Accounts = ({ GetData }: {GetData: ()=> void}) => {
     };
 
     //   Function to control edit.
-    const EditFunc = ({name, balance, decimalPrecision, bgColor, currency, _id}: IAccount) => {
-        setTypeOfModal("Edit");
+    const EditFunc = ({
+        name,
+        balance,
+        decimalPrecision,
+        bgColor,
+        currency,
+        _id,
+    }: IAccount) => {
+        setTypeOfModal("Update");
         setName(name);
         setBalance(balance);
-        setDecimalPrecision(decimalPrecision?? 0);
+        setDecimalPrecision(decimalPrecision ?? 0);
         setBgColor(bgColor);
         setCurrency(currency);
         setAccountID(_id);
@@ -155,7 +172,7 @@ const Accounts = ({ GetData }: {GetData: ()=> void}) => {
     const openInfoModal = () => infoRef.current?.showModal();
 
     // Merge Modal
-	
+
     const MergeFunc = (id: string, name: string) => {
         if (!accountID) {
             setAccountID(id);
@@ -228,7 +245,6 @@ const Accounts = ({ GetData }: {GetData: ()=> void}) => {
             {showModal && (
                 <AccountsModal
                     Cancel={Cancel}
-                    showModal={showModal}
                     typeOfModal={typeOfModal}
                     editObj={{
                         name,
@@ -246,6 +262,7 @@ const Accounts = ({ GetData }: {GetData: ()=> void}) => {
                 GetData={GetData}
                 DeleteHandler={DeleteHandler}
                 dialogRef={dialogRef}
+                Cancel={Cancel}
                 handleCancel={CancelDelete}
                 _id={accountID}
             ></DeleteModal>

@@ -53,6 +53,8 @@ const Home = ({
                         const txns = transactions.filter((i) => {
                             if (i.type === "expense" || i.type === "income") {
                                 return i.account === e._id;
+                            } else if(i.type === "transfer"){
+                                return (i.fromAccount === e._id) || (i.toAccount === e._id)
                             }
                         });
                         return (

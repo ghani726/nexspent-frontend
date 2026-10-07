@@ -18,6 +18,7 @@ import Transactions from "./Transactions";
 import LogoutUtility from "@/utils/logout";
 import { ApiError } from "@/types/common";
 import More from "@/pages/App/More";
+import HandleErrorMessage from "@/utils/networkError";
 
 const App = () => {
     const [hide, setHide] = useState(false);
@@ -30,6 +31,7 @@ const App = () => {
         setCurrentSession,
         setDataToSessionStorage,
         getDatafromSessionStorage,
+        setSessions,
     } = useAuth();
 
     const navigate = useNavigate();
@@ -41,26 +43,17 @@ const App = () => {
                 try {
                     const res = await RefreshToken();
 
-                    if (res.success) {
-                        setIsLoggedIn(true);
-                        setUser(res.data.user);
-                        setAccessToken(res.data.token);
-                        setCurrentSession(res.data.currentSession);
-                        setDataToSessionStorage(true, res.data.user);
-                    } else if (!res.success) {
-                        if (res?.isLoggedOut)
-                            LogoutUtility({
-                                setAccessToken,
-                                setIsLoggedIn,
-                                setUser,
-                                setCurrentSession,
-                                setDataToSessionStorage,
-                                navigate,
-                            });
-                        else toast.error(res.error.message);
-                    }
-                } catch (err) {
-                    const error = err as ApiError;
+                    setIsLoggedIn(true);
+                    setUser(res.data.user);
+                    setAccessToken(res.data.token);
+                    setCurrentSession(res.data.currentSession);
+                    setSessions(res.data.user.sessions);
+                    setDataToSessionStorage(true, res.data.user);
+                } catch (error) {
+                    toast.dismissAll();
+                    const err = error as ApiError;
+                    const res = err?.response?.data;
+
                     LogoutUtility({
                         setAccessToken,
                         setIsLoggedIn,
@@ -69,15 +62,12 @@ const App = () => {
                         setDataToSessionStorage,
                         navigate,
                     });
-                    if (error?.response?.data?.error?.message) {
-                        return toast.error(error.response.data.error.message);
-                    } else {
-                        if (error.message === "Network Error")
-                            return toast.error(
-                                "Server is down. Please try again later.",
-                            );
-                        return toast.error(error.message);
-                    }
+
+                    if (res) {
+                        if (res?.isLoggedOut)
+                            toast.success("You were logged out successfully");
+                        toast.error(res.error.message);
+                    } else HandleErrorMessage(err);
                 }
             }
         };

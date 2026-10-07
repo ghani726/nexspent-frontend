@@ -1,11 +1,10 @@
 import type { IUser } from "@/types/auth";
 import toast from "react-hot-toast";
 
-export const BaseUserJSON = {
+export const BaseUserJSON: IUser = {
     fullName: "NexSpent",
     email: "info@nextspent.com",
     userName: "nexspent",
-    sessions: [],
     defaultDecimalPrecision: 2,
     defaultCurrency: {
         symbol: "$",

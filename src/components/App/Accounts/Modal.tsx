@@ -1,17 +1,17 @@
 import { Minus, Plus } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
-import DialPad from "../Common/DialPad";
-import SearchBar from "../Common/SearchBar";
+import DialPad from "@/components/App/Common/DialPad";
+import SearchBar from "@/components/App/Common/SearchBar";
 import CurrencyCard from "./CurrencyCard";
 
 import useAuth from "@/hooks/Auth";
 import toast from "react-hot-toast";
 import { AddAccount, EditAccount } from "@/api/AccountsAPI";
-import ColorPicker from "../Common/ColorPicker";
+import ColorPicker from "@/components/App/Common/ColorPicker";
 import currencies, { baseCurrency } from "@/utils/currencies";
 import { ApiError, IAccount, ICurrency } from "@/types/common";
 import BaseModal from "@/components/App/Common/BaseModal";
-import useBack from "@/hooks/useBack";
+import HandleErrorMessage from "@/utils/networkError";
 
 interface CreateInterface extends Omit<IAccount, "_id"> {
     _id?: string;
@@ -57,14 +57,13 @@ const handleCreation = async ({
         } else {
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
-        setIsLoading(false);
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+    } catch (error) {
+        setIsLoading(false)
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 
@@ -102,26 +101,24 @@ const handleEdit = async ({
             setIsLoading(false);
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
+    } catch (error) {
         setIsLoading(false);
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 
 const AccountsModal = ({
-    showModal,
+
     typeOfModal,
     Cancel,
     editObj,
     GetData,
 }: {
-    showModal: boolean
-    typeOfModal: "Add" | "Edit";
+    typeOfModal: "Create" | "Update";
     Cancel: () => void;
     editObj: IAccount;
     GetData: () => void;
@@ -134,19 +131,19 @@ const AccountsModal = ({
 
     // Form Details
     const [name, setName] = useState(
-        typeOfModal === "Edit" ? editObj.name : "",
+        typeOfModal === "Update" ? editObj.name : "",
     );
     const [balance, setBalance] = useState(
-        typeOfModal === "Edit" ? editObj.balance : 0,
+        typeOfModal === "Update" ? editObj.balance : 0,
     );
     const [dP, setDP] = useState(
-        typeOfModal === "Edit" ? editObj?.decimalPrecision || 0 : 0,
+        typeOfModal === "Update" ? editObj?.decimalPrecision || 0 : 0,
     );
     const [selectedColor, setSelectedColor] = useState(
-        typeOfModal === "Edit" ? editObj.bgColor : "Default",
+        typeOfModal === "Update" ? editObj.bgColor : "Default",
     );
     const [selectedCurrency, setSelectedCurrency] = useState<ICurrency>(
-        (typeOfModal === "Edit" ? editObj.currency : user?.defaultCurrency) ??
+        (typeOfModal === "Update" ? editObj.currency : user?.defaultCurrency) ??
             baseCurrency,
     );
 
@@ -187,7 +184,7 @@ const AccountsModal = ({
     };
 
     const handleButtonClick = () => {
-        if (typeOfModal === "Add") {
+        if (typeOfModal === "Create") {
             handleCreation({
                 setIsLoading,
                 name,
@@ -199,7 +196,7 @@ const AccountsModal = ({
                 GetData,
                 Cancel,
             });
-        } else if (typeOfModal === "Edit") {
+        } else if (typeOfModal === "Update") {
             handleEdit({
                 setIsLoading,
                 name,
@@ -243,20 +240,13 @@ const AccountsModal = ({
         ));
     };
 
-    useBack({
-        isOpen: showModal,
-        close: Cancel,
-        name: "MainTransactionsModal",
-    });
-
     return (
         <BaseModal
             Cancel={Cancel}
             typeOfModal={typeOfModal}
             isLoading={isLoading}
-            handleButtonClick={handleButtonClick}
-            isAdd={true}
-            text="Account"
+            handleUpdate={handleButtonClick}
+            title="Account"
             children={
                 <>
                     {/* Account Name */}
@@ -266,18 +256,18 @@ const AccountsModal = ({
                         onChange={(e) => {
                             setName(e.target.value);
                         }}
-                        className="border-transparent p-1 focus:bg-app dark:focus:bg-gray-800 w-fit field-sizing-content text-center rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold max-w-full"
+                        className="border-gray-600 p-1 focus:bg-app dark:focus:bg-gray-800 w-fit field-sizing-content text-center rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold max-w-full"
                         placeholder="Account Name"
                     />
 
                     {/* Balance */}
                     <div className="w-full font-medium text-lg flex justify-center items-end gap-2">
-                        {typeOfModal === "Edit"
+                        {typeOfModal === "Update"
                             ? "Current Balance"
                             : "Starting from"}
                         <button
                             onClick={() =>
-                                typeOfModal === "Add" &&
+                                typeOfModal === "Create" &&
                                 setShowDialPad((prev) => !prev)
                             }
                             className={`font-bold text-2xl bg-gray-200 dark:bg-gray-800 p-1 rounded-xl cursor-pointer active:scale-95 duration-300 ease-in-out`}
@@ -327,14 +317,13 @@ const AccountsModal = ({
 
                     {/* Color Picker */}
                     <ColorPicker
-                        heading="Color"
                         selectedColor={selectedColor}
                         setSelectedColor={setSelectedColor}
                     ></ColorPicker>
 
                     {/* Currency */}
 
-                    <div className="w-full flex flex-col gap-2 items-start max-h-120 md:max-h-90 overflow-scroll">
+                    <div className="w-full flex flex-col gap-2 items-start overflow-auto">
                         <h4 className="font-bold text-xl">Currency:</h4>
                         <div className="flex relative justify-between px-2 gap-2 items-center w-full">
                             <SearchBar

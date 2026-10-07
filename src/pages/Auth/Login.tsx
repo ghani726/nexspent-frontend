@@ -3,11 +3,11 @@ import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
-import useData from "@/hooks/Data";
 import useAuth from "@/hooks/Auth";
 import { Login, RefreshToken } from "@/api/AuthAPI";
 import { BaseUserJSON } from "@/utils/logout";
 import type { ApiError } from "@/types/common";
+import HandleErrorMessage from "@/utils/networkError";
 const LoginPage = () => {
     const navigate = useNavigate();
 
@@ -17,52 +17,44 @@ const LoginPage = () => {
         setAccessToken,
         setCurrentSession,
         setDataToSessionStorage,
+        setSessions,
     } = useAuth();
 
-    const { GetData } = useData();
     useEffect(() => {
         setIsLoggedIn(false);
         const LoginAuto = async () => {
+            const loadingToast = toast.loading("Logging in. Please wait...");
             try {
-                toast.loading("Logging in. Please wait...");
                 const res = await RefreshToken();
 
-                if (res.success) {
-                    setIsLoggedIn(true);
-                    setUser(res.data.user);
-                    setAccessToken(res.data.token);
-                    setCurrentSession(res.data.currentSession);
-                    setDataToSessionStorage(true, res.data.user);
-                    toast.dismissAll();
-                    GetData();
-                    toast.success(
-                        <span>
-                            Welcome back{" "}
-                            <strong>{res.data.user.fullName}</strong>
-                        </span>,
-                    );
-                    navigate("/app/", { replace: true });
-                } else if (!res.success) {
-                    toast.dismissAll();
+                setIsLoggedIn(true);
+                setUser(res.data.user);
+                setAccessToken(res.data.token);
+                setCurrentSession(res.data.currentSession);
+                setSessions(res.data.user.sessions);
+                setDataToSessionStorage(true, res.data.user);
+                toast.dismiss(loadingToast);
+                toast.success(
+                    <span>
+                        Welcome back <strong>{res.data.user.fullName}</strong>
+                    </span>,
+                );
+                navigate("/app/", { replace: true });
+            } catch (error) {
+                toast.dismiss(loadingToast);
+
+                const err = error as ApiError;
+                const res = err?.response?.data;
+
+                if (res) {
                     setDataToSessionStorage(false, BaseUserJSON);
                     if (res?.isLoggedOut) {
-                        return toast.success(res.error.message);
+                        return toast.success(
+                            "You were logged out successfully",
+                        );
                     }
                     return toast.error(res.error.message);
-                }
-            } catch (err) {
-                const error = err as ApiError;
-                toast.dismissAll();
-                if (error?.response?.data?.error?.message) {
-                    return toast.error(error.response.data.error.message);
-                } else {
-                    if (error.message === "Network Error")
-                        return toast.error(
-                            "Server is down. Please try again later.",
-                        );
-
-                    return toast.error(error.message);
-                }
+                } else HandleErrorMessage(err);
             }
         };
 
@@ -108,6 +100,7 @@ const LoginPage = () => {
         }
     };
     const onSubmit = async (data: { first?: string; password?: string }) => {
+        const loadingToast = toast.loading("Logging in. Please wait...");
         try {
             validateFirstFeild();
             let finalObj: {
@@ -130,37 +123,29 @@ const LoginPage = () => {
 
             const res = await Login(finalObj);
 
-            if (res.success) {
-                toast.dismissAll();
-                setIsLoggedIn(true);
-                setUser(res.data.user);
-                setAccessToken(res.data.token);
-                setCurrentSession(res.data.currentSession);
-                setDataToSessionStorage(true, res.data.user);
-                GetData();
-                toast.success(
-                    <span>
-                        Welcome back <strong>{res.data.user.fullName}</strong>
-                    </span>,
-                );
-                navigate("/app/", { replace: true });
-            } else if (!res.success) {
-                toast.dismissAll();
-                return toast.error(res.error.message);
-            }
-        } catch (err) {
-            const error = err as ApiError;
-            toast.dismissAll();
-            if (error?.response?.data?.error?.message) {
-                return toast.error(error.response.data.error.message);
-            } else {
-                if (error.message === "Network Error")
-                    return toast.error(
-                        "Server is down. Please try again later.",
-                    );
+            toast.dismiss(loadingToast);
+            setIsLoggedIn(true);
+            setUser(res.data.user);
+            setAccessToken(res.data.token);
+            setCurrentSession(res.data.currentSession);
+            setSessions(res.data.user.sessions);
+            setDataToSessionStorage(true, res.data.user);
+            toast.success(
+                <span>
+                    Welcome back <strong>{res.data.user.fullName}</strong>
+                </span>,
+            );
+            navigate("/app/", { replace: true });
+        } catch (error) {
+            toast.dismiss(loadingToast);
+            const err = error as ApiError;
+            const res = err?.response?.data;
 
-                return toast.error(error.message);
-            }
+            if (res) {
+                if (res?.isLoggedOut)
+                    toast.success("You were logged out successfully");
+                toast.error(res.error.message);
+            } else HandleErrorMessage(err);
         }
     };
 
@@ -185,12 +170,12 @@ const LoginPage = () => {
                             type="text"
                             className="outline-none"
                             placeholder=" "
-                            {...register("first", 
-                                {required: {
+                            {...register("first", {
+                                required: {
                                     value: true,
                                     message: "Username or Email is required.",
-                                },}
-                            )}
+                                },
+                            })}
                         />
                         <label htmlFor="userName">Username or Email</label>
                     </div>

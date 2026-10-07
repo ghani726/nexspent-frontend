@@ -49,12 +49,7 @@ const Header = ({
                 <div className="flex justify-between items-center gap-4">
                     <div
                         className="flex justify-center items-center cursor-pointer rounded-lg h-7.5 w-7.5"
-                        onClick={() => {
-                            toast.loading("Fetching Data");
-                            GetData();
-                            toast.dismissAll();
-                            toast.success("Data fetched successfully");
-                        }}
+                        onClick={GetData}
                     >
                         <CloudBackup
                             className="h-7.5 w-7.5 shrink-0"

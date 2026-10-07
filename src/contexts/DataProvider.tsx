@@ -4,46 +4,45 @@ import useAuth from "../hooks/Auth";
 import toast from "react-hot-toast";
 import { GetDataNow } from "../api/AuthAPI";
 import { ApiError } from "@/types/common";
-import type { IabgObj, IAccount } from "@/types/common";
+import type { IAccount } from "@/types/common";
 import { ICategory } from "@/types/category";
 import { ITransaction } from "@/types/transaction";
+import HandleErrorMessage from "@/utils/networkError";
+import { IGoal } from "@/types/goal";
+import { IBudget } from "@/types/budget";
 const DataProvider = ({ children }: { children: ReactNode }) => {
     // GetData
 
     const [accounts, setAccounts] = useState<IAccount[]>([]);
-    const [budgets, setBudgets] = useState<IabgObj[]>([]);
-    const [goals, setGoals] = useState<IabgObj[]>([]);
+    const [budgets, setBudgets] = useState<IBudget[]>([]);
+    const [goals, setGoals] = useState<IGoal[]>([]);
     const [categories, setCategories] = useState<ICategory[]>([]);
     const [transactions, setTransactions] = useState<ITransaction[]>([]);
 
     const [isDataFetched, setIsDataFetched] = useState(false);
     const { accessToken } = useAuth();
 
+    const { setSessions } = useAuth();
     const GetData = async () => {
-        toast.loading("Fetching data...");
+        const loadingToast = toast.loading("Fetching data...");
         try {
             const res = await GetDataNow(accessToken ?? "");
+            
+            toast.dismiss(loadingToast)
+            toast.success("Data fetched successfully.");
+            setAccounts(res.data.accounts);
+            setBudgets(res.data.budgets);
+            setGoals(res.data.goals);
+            setCategories(res.data.categories);
+            setTransactions(res.data.transactions);
+            setSessions(res.data.sessions);
+        } catch (error) {
+            toast.dismiss(loadingToast);
+            const err = error as ApiError;
+            const res = err?.response?.data;
 
-            if (res.success) {
-                toast.dismissAll();
-                toast.success("Data fetched successfully.");
-                setAccounts(res.data.accounts);
-                setBudgets(res.data.budgets);
-                setGoals(res.data.goals);
-                setCategories(res.data.categories);
-                setTransactions(res.data.transactions);
-            } else {
-                toast.dismissAll();
-                return toast.error(res.error.message);
-            }
-        } catch (err) {
-            toast.dismissAll();
-            const error = err as ApiError;
-            if (error?.response?.data?.error?.message) {
-                return toast.error(error?.response?.data?.error?.message);
-            } else {
-                return toast.error(error.message);
-            }
+            if (res) toast.error(res.error.message);
+            else HandleErrorMessage(err);
         }
     };
 

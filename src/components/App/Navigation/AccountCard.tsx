@@ -6,6 +6,7 @@ import useAuth from "../../../hooks/Auth";
 import { ApiError } from "@/types/common";
 import LogoutUtility from "@/utils/logout";
 import { useEffect, useRef, useState } from "react";
+import HandleErrorMessage from "@/utils/networkError";
 const AccountCard = ({
     isMenuShown,
     setIsMenuShown,
@@ -38,13 +39,12 @@ const AccountCard = ({
                     navigate,
                 });
             else toast.error(res?.error?.message);
-        } catch (err) {
-            const error = err as ApiError;
-            if (error?.response?.data?.error?.message) {
-                return toast.error(error.response.data.error.message);
-            } else {
-                return toast.error(error.message);
-            }
+        } catch (error) {
+            const err = error as ApiError;
+            const res = err?.response?.data;
+
+            if (res) toast.error(res.error.message);
+            else HandleErrorMessage(err);
         }
     };
 

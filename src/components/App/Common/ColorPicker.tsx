@@ -1,8 +1,16 @@
 import colors from "@/utils/color";
-import { ChangeEvent } from "react";
+import React from "react";
 import type { IColor } from "@/types/common";
 
-const ColorBox = ({ e, selectedColor, handleColorChange }: {e: IColor, selectedColor: string, handleColorChange: (event : ChangeEvent)=> void}) => {
+const ColorBox = ({
+    e,
+    selectedColor,
+    handleColorChange,
+}: {
+    e: IColor;
+    selectedColor: string;
+    handleColorChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
     return (
         <label
             key={e.name}
@@ -24,23 +32,20 @@ const ColorBox = ({ e, selectedColor, handleColorChange }: {e: IColor, selectedC
     );
 };
 const ColorPicker = ({
-    heading,
     selectedColor,
     setSelectedColor,
 }: {
-    heading: string;
     selectedColor: string;
     setSelectedColor: (val: string) => void;
 }) => {
     // Color Change Handler
-    const handleColorChange = (event: ChangeEvent) => {
+    const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedColor(event?.target?.value);
     };
 
     return (
         <div className="w-full flex flex-col gap-2 items-start">
-            <h4 className="font-bold text-xl">{heading}:</h4>
-            <div className="flex py-1 pr-2 flex-nowrap overflow-scroll w-full gap-1 justify-start items-center">
+            <div className="flex py-1 pr-2 flex-nowrap overflow-x-auto w-full gap-1 justify-start items-center">
                 {colors.map((e) => {
                     return (
                         <ColorBox

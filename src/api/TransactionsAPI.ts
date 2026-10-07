@@ -3,9 +3,8 @@ import config from "@/config/config";
 import type { ITransaction } from "@/types/transaction.js";
 
 interface CreateOrEdit extends ITransaction {
-    token: string
+    token: string;
 }
-
 
 // Add Account API
 export const CreateTransaction = async ({
@@ -21,29 +20,24 @@ export const CreateTransaction = async ({
     fromAccount,
     toAccount,
     token,
-}: CreateOrEdit) => {    
-    const res = await axios.post(
-        `${config.BackendURL}/user/transaction/`,
-        {
-            title: title,
-            description: description,
-            type: type,
-            amount: amount,
-            date: date,
-            account: account,
-            category: category,
-            budget: budget,
-            goal: goal,
-            fromAccount: fromAccount,
-            toAccount: toAccount,
-            token: token,
-        },
-        {
-            withCredentials: true, // <--- THIS IS REQUIRED
-        },
-    );
+}: CreateOrEdit) => {
+    const res = await axios.post(`${config.BackendURL}/user/transaction/`, {
+        title: title,
+        description: description,
+        type: type,
+        amount: amount,
+        date: date,
+        account: account,
+        category: category,
+        budget: budget,
+        goal: goal,
+        fromAccount: fromAccount,
+        toAccount: toAccount,
+        token: token,
+    });
     return res.data;
 };
+
 export const UpdateTransaction = async ({
     _id,
     title,
@@ -59,27 +53,21 @@ export const UpdateTransaction = async ({
     toAccount,
     token,
 }: CreateOrEdit) => {
-    const res = await axios.patch(
-        `${config.BackendURL}/user/transaction/`,
-        {
-            title: title,
-            description: description,
-            type: type,
-            amount: amount,
-            date: date,
-            account: account,
-            category: category,
-            budget: budget,
-            goal: goal,
-            fromAccount: fromAccount,
-            toAccount: toAccount,
-            transactionID: _id,
-            token: token,
-        },
-        {
-            withCredentials: true, // <--- THIS IS REQUIRED
-        },
-    );
+    const res = await axios.patch(`${config.BackendURL}/user/transaction/`, {
+        title: title,
+        description: description,
+        type: type,
+        amount: amount,
+        date: date,
+        account: account,
+        category: category,
+        budget: budget,
+        goal: goal,
+        fromAccount: fromAccount,
+        toAccount: toAccount,
+        transactionID: _id,
+        token: token,
+    });
     return res.data;
 };
 export const DeleteTransaction = async ({

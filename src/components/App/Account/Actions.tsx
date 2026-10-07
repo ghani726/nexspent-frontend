@@ -8,6 +8,7 @@ import { EditAccount, Logout } from "@/api/AuthAPI";
 import DeleteAccount from "./DeleteAccount";
 import { ApiError } from "@/types/common";
 import LogoutUtility from "@/utils/logout";
+import HandleErrorMessage from "@/utils/networkError";
 
 const Actions = ({ setSlider }: { setSlider: (value: number) => void }) => {
     const { user } = useAuth();
@@ -58,7 +59,7 @@ const Actions = ({ setSlider }: { setSlider: (value: number) => void }) => {
 
     const navigate = useNavigate();
     const handleLogout = async () => {
-        toast.loading("Logging you out...");
+        const loading = toast.loading("Logging you out...");
         try {
             const res = await Logout(accessToken ?? "", currentSession ?? "");
 
@@ -80,18 +81,17 @@ const Actions = ({ setSlider }: { setSlider: (value: number) => void }) => {
             } else {
                 return toast.error(res.error.message);
             }
-        } catch (err) {
-            const error = err as ApiError;
-            toast.dismissAll();
-            if (error?.response?.data?.error?.message) {
-                return toast.error(error.response.data.error.message);
-            } else {
-                return toast.error(error.message);
-            }
+        } catch (error) {
+            toast.dismiss(loading);
+            const err = error as ApiError;
+            const res = err?.response?.data;
+
+            if (res) toast.error(res.error.message);
+            else HandleErrorMessage(err);
         }
     };
     const handleEdit = async (data: object) => {
-        toast.loading("Updating your details...");
+        const loading = toast.loading("Updating your details...");
         try {
             const res = await EditAccount(data, accessToken ?? "");
 
@@ -103,14 +103,13 @@ const Actions = ({ setSlider }: { setSlider: (value: number) => void }) => {
             } else {
                 return toast.error(res.error.message);
             }
-        } catch (err) {
-            const error = err as ApiError;
-            toast.dismissAll();
-            if (error?.response?.data?.error?.message) {
-                return toast.error(error.response.data.error.message);
-            } else {
-                return toast.error(error.message);
-            }
+        } catch (error) {
+            toast.dismiss(loading);
+            const err = error as ApiError;
+            const res = err?.response?.data;
+
+            if (res) toast.error(res.error.message);
+            else HandleErrorMessage(err);
         }
     };
 

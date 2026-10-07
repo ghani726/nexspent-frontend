@@ -3,7 +3,7 @@
 // }
 
 const config = {
-  BackendURL: `http://${window.location.hostname}:5000/api`,
+  BackendURL: `http://${window.location.hostname}:5000/api/v2`,
 };
 
 export default config;

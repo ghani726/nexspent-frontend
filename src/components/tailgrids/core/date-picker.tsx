@@ -79,13 +79,11 @@ export function DatePickerTrigger({
     );
 }
 
-export interface DatePickerPopoverProps extends AriaPopoverProps {}
-
 export function DatePickerPopover({
     className,
     children,
     ...props
-}: DatePickerPopoverProps) {
+}: AriaPopoverProps) {
     return (
         <AriaPopover
             placement="bottom start"

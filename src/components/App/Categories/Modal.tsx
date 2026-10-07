@@ -11,7 +11,7 @@ import BaseModal from "@/components/App/Common/BaseModal";
 import { ICategory } from "@/types/category";
 import { ApiError } from "@/types/common";
 import TypeSelector from "@/components/App/Common/TypeSelector";
-import useBack from "@/hooks/useBack";
+import HandleErrorMessage from "@/utils/networkError";
 
 interface ICreate {
     name: string;
@@ -42,31 +42,26 @@ const handleCreation = async ({
     }
     setIsLoading(true);
     try {
-        const res = await CreateCategory({
+        await CreateCategory({
             name: name,
             bgColor: selectedColor,
             categoryType: slider === 0 ? "expense" : "income",
             icon: selectedIcon,
             token: accessToken,
         });
-        if (res.success) {
-            toast.success("Category created successfully!");
-            setIsLoading(false);
-            GetData();
-            Cancel();
-            return;
-        } else {
-            setIsLoading(false);
-            return toast.error(res.error.message);
-        }
-    } catch (err) {
-        const error = err as ApiError;
+
+        toast.success("Category created successfully!");
         setIsLoading(false);
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+        GetData();
+        Cancel();
+        return;
+    } catch (error) {
+        setIsLoading(false);
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 
@@ -88,7 +83,7 @@ const handleEdit = async ({
     setIsLoading(true);
 
     try {
-        const res = await UpdateCategory({
+        await UpdateCategory({
             name: name,
             bgColor: selectedColor,
             categoryType: isTypeEditable && slider === 0 ? "expense" : "income",
@@ -97,36 +92,29 @@ const handleEdit = async ({
             categoryID: _id,
             token: accessToken,
         });
-        if (res.success) {
-            toast.success("Category updated successfully!");
-            setIsLoading(false);
-            GetData();
-            Cancel();
-            return;
-        } else {
-            setIsLoading(false);
-            return toast.error(res.error.message);
-        }
-    } catch (err) {
-        const error = err as ApiError;
+
+        toast.success("Category updated successfully!");
         setIsLoading(false);
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+        GetData();
+        Cancel();
+        return;
+    } catch (error) {
+        setIsLoading(false);
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 
 const CategoriesModal = ({
-    showModal,
     typeOfModal,
     Cancel,
     editObj,
     GetData,
 }: {
-    showModal: boolean
-    typeOfModal: "Add" | "Edit";
+    typeOfModal: "Create" | "Update";
     editObj?: ICategory;
     Cancel: () => void;
     GetData: () => void;
@@ -143,23 +131,23 @@ const CategoriesModal = ({
     const isTypeEditable =
         transactions.filter((e) => e.category === editObj?._id).length === 0
             ? true
-            : typeOfModal === "Add"
+            : typeOfModal === "Create"
               ? true
               : false;
 
     // Form Details
     const [name, setName] = useState(
-        typeOfModal === "Edit" ? editObj?.name : "",
+        typeOfModal === "Update" ? editObj?.name : "",
     );
     const [selectedColor, setSelectedColor] = useState(
-        typeOfModal === "Edit" ? editObj?.bgColor : "Secondary",
+        typeOfModal === "Update" ? editObj?.bgColor : "Secondary",
     );
     const [selectedIcon, setSelectedIcon] = useState(
-        typeOfModal === "Edit" ? editObj?.icon : "🖼",
+        typeOfModal === "Update" ? editObj?.icon : "🖼",
     );
 
     const [slider, setSlider] = useState(
-        typeOfModal === "Edit"
+        typeOfModal === "Update"
             ? editObj?.categoryType === "expense"
                 ? 0
                 : 1
@@ -167,7 +155,7 @@ const CategoriesModal = ({
     );
     // Button Click Handler
     const handleButtonClick = () => {
-        if (typeOfModal === "Add") {
+        if (typeOfModal === "Create") {
             handleCreation({
                 name: name ?? "",
                 selectedColor: selectedColor ?? "",
@@ -178,7 +166,7 @@ const CategoriesModal = ({
                 accessToken: accessToken ?? "",
                 GetData,
             });
-        } else if (typeOfModal === "Edit") {
+        } else if (typeOfModal === "Update") {
             handleEdit({
                 name: name ?? "",
                 selectedColor: selectedColor ?? "",
@@ -194,16 +182,14 @@ const CategoriesModal = ({
         }
     };
 
-    useBack({ isOpen: showModal, close: Cancel, name: "MainCategoryModal" });
-    
     return (
         <>
             <BaseModal
                 Cancel={Cancel}
                 typeOfModal={typeOfModal}
                 isLoading={isLoading}
-                handleButtonClick={handleButtonClick}
-                text="Category"
+                handleUpdate={handleButtonClick}
+                title="Category"
                 children={
                     <>
                         {/* Category Type Selector */}
@@ -230,7 +216,7 @@ const CategoriesModal = ({
                                 onChange={(e) => {
                                     setName(e.target.value);
                                 }}
-                                className="border-transparent p-1 focus:bg-app dark:focus:bg-gray-800 w-full rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold"
+                                className="border-gray-600 p-1 focus:bg-white dark:focus:bg-gray-800 w-full rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold"
                                 placeholder="Category Name"
                             />
                         </div>
@@ -238,7 +224,6 @@ const CategoriesModal = ({
                         {/* Color Picker */}
 
                         <ColorPicker
-                            heading="Color"
                             selectedColor={selectedColor ?? ""}
                             setSelectedColor={setSelectedColor}
                         ></ColorPicker>

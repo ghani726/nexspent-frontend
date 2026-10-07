@@ -18,9 +18,9 @@ import type { ICategory } from "@/types/category";
 import type { ApiError, IColor, IDeleteHandlerProps } from "@/types/common";
 import type { ITransaction } from "@/types/transaction";
 import colors from "@/utils/color";
-import useBack from "@/hooks/useBack";
 import DeleteModal from "@/components/App/Common/DeleteModal";
 import BaseModal from "@/components/App/Common/BaseModal";
+import HandleErrorMessage from "@/utils/networkError";
 
 // #region => Interfaces
 
@@ -76,16 +76,16 @@ const handleCreation = async ({
             setIsLoading(false);
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
+    } catch (error) {
         setIsLoading(false);
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error?.response?.data?.error?.message);
-        } else {
-            return toast.error(error.message);
-        }
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
+
 const handleUpdate = async ({
     _id,
     title,
@@ -131,16 +131,16 @@ const handleUpdate = async ({
             setIsLoading(false);
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
+    } catch (error) {
         setIsLoading(false);
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error?.response?.data?.error?.message);
-        } else {
-            return toast.error(error.message);
-        }
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
+
 const handleDelete = async ({
     _id,
     token,
@@ -164,32 +164,41 @@ const handleDelete = async ({
             setIsLoading(false);
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
+    } catch (error) {
         setIsLoading(false);
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error?.response?.data?.error?.message);
-        } else {
-            return toast.error(error.message);
-        }
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 
 const TransactionsModal = ({
     typeOfModal,
-    showModal,
     Cancel,
     editObj,
     GetData,
+    showTypeSelector,
+    allowedGoal,
+    allowedBudget,
 }: {
-    typeOfModal: "Add" | "Edit";
-    showModal: boolean;
+    typeOfModal: "Create" | "Update";
     Cancel: () => void;
     editObj?: ITransaction;
     GetData: () => void | string;
+    showTypeSelector?: boolean;
+    allowedGoal?: string;
+    allowedBudget?: string;
 }) => {
+    const edi =
+        typeOfModal === "Update"
+            ? false
+            : showTypeSelector === undefined
+              ? true
+              : showTypeSelector;
     // Global Data
-    const { categories, accounts, budgets, goals } = useData();
+    const { categories, accounts } = useData();
     const { accessToken, user } = useAuth();
 
     // States
@@ -212,14 +221,14 @@ const TransactionsModal = ({
 
     // #region => Form Details
     const [title, setTitle] = useState(
-        typeOfModal === "Edit" ? editObj?.title : "",
+        typeOfModal === "Update" ? editObj?.title : "",
     );
     const [description, setDescription] = useState(
-        typeOfModal === "Edit" ? editObj?.description : "",
+        typeOfModal === "Update" ? editObj?.description : "",
     );
 
     const [slider, setSlider] = useState(
-        editObj?.type === "expense" ? 0 : editObj?.type === "income" ? 1 : 2,
+        editObj?.type === "transfer" ? 2 : editObj?.type === "income" ? 1 : 0,
     );
 
     const [input, setInput] = useState<number>(editObj?.amount || 0);
@@ -241,10 +250,10 @@ const TransactionsModal = ({
         editObj?.toAccount || accounts?.[1]?._id || "",
     );
     const [selectedBudget, setSelectedBudget] = useState<string>(
-        editObj?.budget || budgets?.[0]?._id || "",
+        editObj?.budget || "",
     );
     const [selectedGoal, setSelectedGoal] = useState<string>(
-        editObj?.goal || goals?.[0]?._id || "",
+        editObj?.goal || "",
     );
 
     // #endregion
@@ -281,7 +290,7 @@ const TransactionsModal = ({
         const finalDate = new Date(date);
         finalDate.setHours(time.getHours(), time.getMinutes(), 0);
 
-        if (typeOfModal === "Add") {
+        if (typeOfModal === "Create") {
             handleCreation({
                 title: title ?? "",
                 description,
@@ -303,7 +312,7 @@ const TransactionsModal = ({
                 Cancel,
                 GetData,
             });
-        } else if (typeOfModal === "Edit") {
+        } else if (typeOfModal === "Update") {
             handleUpdate({
                 _id: editObj?._id,
                 title: title ?? "",
@@ -330,32 +339,29 @@ const TransactionsModal = ({
         }
     };
 
-    useBack({
-        isOpen: showModal,
-        close: Cancel,
-        name: "MainTransactionsModal",
-    });
-
     // Delete Modal
     const dialogRef = useRef<HTMLDialogElement>(null);
 
     const openModal = () => dialogRef.current?.showModal();
 
-    const closeModal = () => dialogRef.current?.close();
+    const closeModal = () => {
+        dialogRef.current?.close();
+        // Cancel();
+    };
 
     return (
         <BaseModal
             Cancel={Cancel}
-            showDelete={true}
+            showDelete={typeOfModal === "Update" ? true : false}
             openModal={openModal}
             typeOfModal={typeOfModal}
             isLoading={isLoading}
-            handleButtonClick={handleButtonClick}
-            text="Transaction"
+            handleUpdate={handleButtonClick}
+            title="Transaction"
             children={
                 <>
                     {/* Category Type Selector */}
-                    {typeOfModal === "Add" && (
+                    {edi && (
                         <TypeSelector
                             slider={slider}
                             setSlider={setSlider}
@@ -373,14 +379,14 @@ const TransactionsModal = ({
 
                     {/* Icon and Account Name */}
                     <div
-                        className={`flex justify-between items-center w-full bg-white dark:bg-gray-800 rounded-4xl overflow-hidden cursor-pointer shadow-sm shrink-0`}
+                        className={`flex justify-between items-center w-full bg-white dark:bg-gray-800 rounded-4xl overflow-hidden cursor-pointer border border-gray-200 dark:border-transparent shrink-0`}
                     >
                         {slider < 2 && (
                             <div
+                                onClick={() => setShowCategoryModal(true)}
                                 className={`w-30 h-30 shrink-0 hover:bg-gray-200 dark:hover:bg-gray-700 text-4xl flex justify-center items-center cursor-pointer `}
                             >
                                 <button
-                                    onClick={() => setShowCategoryModal(true)}
                                     className={`cursor-pointer ${color || "bg-app"} h-25 w-25 rounded-full text-5xl`}
                                 >
                                     {cat?.icon}
@@ -406,7 +412,7 @@ const TransactionsModal = ({
 
                     {/* Date and Time */}
 
-                    <div className="flex justify-center items-center w-full bg-white dark:bg-gray-800 p-2 rounded-3xl media-400:rounded-4xl flex-col media-400:flex-row gap-2 shadow-sm">
+                    <div className="flex justify-center items-center w-full bg-white dark:bg-gray-800 p-2 rounded-3xl media-400:rounded-4xl flex-col media-400:flex-row gap-2 border border-gray-200 dark:border-transparent">
                         <DatePickerComponent
                             dt={date}
                             setDT={setDate}
@@ -420,6 +426,14 @@ const TransactionsModal = ({
                     {/* Account, Budget and Goal */}
 
                     <OptionPicker
+                        allowedGoal={{
+                            type: typeOfModal,
+                            _id: allowedGoal ?? "",
+                        }}
+                        allowedBudget={{
+                            type: typeOfModal,
+                            _id: allowedBudget ?? "",
+                        }}
                         slider={slider}
                         selectedAccount={selectedAccount}
                         setSelectedAccount={setSelectedAccount}
@@ -445,7 +459,7 @@ const TransactionsModal = ({
                         setSlider={setSlider}
                         setDisabledOnes={setDisabledOnes}
                         setCat={setCat}
-                        isEdit={typeOfModal === "Edit" ? true : false}
+                        isEdit={typeOfModal === "Update" ? true : false}
                     ></CategoryPicker>
                     {/* Title and Notes */}
                     <input
@@ -453,13 +467,13 @@ const TransactionsModal = ({
                         placeholder="Title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="bg-white shrink-0 shadow-sm dark:bg-gray-800 w-full p-2 px-6 rounded-full outline-2 focus:outline-primary outline-transparent"
+                        className="bg-white shrink-0 border border-gray-200 dark:border-transparent dark:bg-gray-800 w-full p-2 px-6 rounded-full outline-2 focus:outline-primary outline-transparent"
                     />
                     <textarea
                         placeholder="Notes"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="bg-white shrink-0 shadow-sm field-sizing-content max-h-[10lh] dark:bg-gray-800 w-full p-2 px-6 rounded-3xl outline-2 focus:outline-primary outline-transparent"
+                        className="bg-white shrink-0 border border-gray-200 dark:border-transparent field-sizing-content max-h-[10lh] dark:bg-gray-800 w-full p-2 px-6 rounded-3xl outline-2 focus:outline-primary outline-transparent"
                     ></textarea>
 
                     <DeleteModal
@@ -467,6 +481,7 @@ const TransactionsModal = ({
                         GetData={GetData}
                         DeleteHandler={handleDelete}
                         dialogRef={dialogRef}
+                        Cancel={Cancel}
                         handleCancel={closeModal}
                         _id={editObj?._id ?? ""}
                     ></DeleteModal>

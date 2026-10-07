@@ -4,6 +4,8 @@ import { Logout, LogoutAll, LogoutFromSpecificDevice } from "@/api/AuthAPI";
 import toast from "react-hot-toast";
 import LogoutUtility from "@/utils/logout";
 import { ApiError } from "@/types/common";
+import { ISession } from "@/types/auth";
+import HandleErrorMessage from "@/utils/networkError";
 
 type TypeHook = ReturnType<typeof useAuth>;
 interface LogoutHandlerProps extends Omit<
@@ -23,6 +25,7 @@ const handleLogout = async ({
     setDataToSessionStorage,
     navigate,
 }: LogoutHandlerProps) => {
+    const loading = toast.loading("Logging you out...")
     try {
         const res = await Logout(accessToken ?? "", currentSession ?? "");
 
@@ -38,13 +41,13 @@ const handleLogout = async ({
         } else {
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+    } catch (error) {
+        toast.dismiss(loading)
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 
@@ -53,6 +56,8 @@ const handleLogoutFromSpecificDevice = async ({
     accessToken,
     browser,
 }: Record<string, string>) => {
+    const brow = browser.replace("undefined", "").trim();
+    const loading = toast.loading(`Logging out from "${brow}"`);
     try {
         const res = await LogoutFromSpecificDevice(id, accessToken);
 
@@ -60,19 +65,19 @@ const handleLogoutFromSpecificDevice = async ({
             toast.dismissAll();
             toast.success(
                 <span>
-                    Logged out successfully from <strong>{browser.replace("undefined", "").trim()}</strong>
+                    Logged out successfully from <strong>{brow}</strong>
                 </span>,
             );
         } else {
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+    } catch (error) {
+        toast.dismiss(loading);
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 
@@ -85,6 +90,7 @@ const handleLogoutAll = async ({
     setDataToSessionStorage,
     navigate,
 }: LogoutHandlerProps) => {
+    const loading = toast.loading("Logging out from all devices");
     try {
         const res = await LogoutAll(accessToken ?? "");
 
@@ -100,13 +106,13 @@ const handleLogoutAll = async ({
         } else {
             return toast.error(res.error.message);
         }
-    } catch (err) {
-        const error = err as ApiError;
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+    } catch (error) {
+        toast.dismiss(loading);
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 
@@ -126,7 +132,7 @@ const DeviceCard = ({
     } = useAuth();
 
     const navigate = useNavigate();
-    
+
     const isCurrent = currentSession === id;
 
     const handleLogoutClick = () => {
@@ -134,12 +140,12 @@ const DeviceCard = ({
             handleLogout({
                 accessToken,
                 currentSession,
-                setIsLoggedIn,
                 setUser,
                 setAccessToken,
                 setCurrentSession,
-                navigate,
+                setIsLoggedIn,
                 setDataToSessionStorage,
+                navigate,
             });
         } else {
             handleLogoutFromSpecificDevice({
@@ -153,7 +159,9 @@ const DeviceCard = ({
     return (
         <div className="flex p-4 ms:p-3 px-4 bg-app dark:bg-gray-700 dark:hover:bg-gray-900 hover:bg-gray-100 ms:rounded-full rounded-4xl justify-between w-full items-center duration-300 ease-in-out">
             <div className="flex m-0 ms:mx-2 flex-col justify-center items-start">
-                <h4 className="font-semibold text-lg -mb-1">{device[0].toUpperCase().concat(device.slice(1))}</h4>
+                <h4 className="font-semibold text-lg -mb-1">
+                    {device[0].toUpperCase().concat(device.slice(1))}
+                </h4>
                 <p className="text-secondary-700 text-sm">
                     {browser.replace("undefined", "").trim()}
                 </p>
@@ -176,7 +184,7 @@ const DeviceCard = ({
     );
 };
 const Devices = () => {
-    const { user, currentSession } = useAuth();
+    const { sessions, currentSession } = useAuth();
 
     const {
         setUser,
@@ -194,13 +202,13 @@ const Devices = () => {
                 Manage your devices:
             </h2>
             <div className="flex flex-col justify-center items-center w-full gap-4">
-                {user?.sessions.map((s) => {
+                {sessions?.map((s: ISession) => {
                     return (
                         <DeviceCard
-                            key={s._id}
-                            id={s._id}
-                            browser={s.device.browser}
-                            device={s.device.device ?? ""}
+                            key={s?._id ?? ""}
+                            id={s?._id ?? ""}
+                            browser={s.deviceInfo.browser ?? ""}
+                            device={s.deviceInfo.device ?? ""}
                             currentSession={currentSession ?? ""}
                         ></DeviceCard>
                     );

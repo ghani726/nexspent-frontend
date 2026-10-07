@@ -14,6 +14,7 @@ import InfoButton from "@/components/App/Common/InfoButton";
 import TypeSelector from "@/components/App/Common/TypeSelector";
 import { ICategory } from "@/types/category";
 import { ApiError, IDeleteHandlerProps } from "@/types/common";
+import HandleErrorMessage from "@/utils/networkError";
 
 const DeleteHandler = async ({
     _id,
@@ -25,25 +26,19 @@ const DeleteHandler = async ({
     setIsLoading(true);
 
     try {
-        const res = await DeleteCategory({ categoryID: _id, token });
+        await DeleteCategory({ categoryID: _id, token });
 
-        if (res.success) {
-            setIsLoading(false);
-            toast.success("Category Deleted successfully.");
-            GetData();
-            Cancel();
-        } else {
-            setIsLoading(false);
-            return toast.error(res.error.message);
-        }
-    } catch (err) {
         setIsLoading(false);
-        const error = err as ApiError;
-        if (error?.response?.data?.error?.message) {
-            return toast.error(error.response.data.error.message);
-        } else {
-            return toast.error(error.message);
-        }
+        toast.success("Category Deleted successfully.");
+        GetData();
+        Cancel();
+    } catch (error) {
+        setIsLoading(false);
+        const err = error as ApiError;
+        const res = err?.response?.data;
+
+        if (res) toast.error(res.error.message);
+        else HandleErrorMessage(err);
     }
 };
 
@@ -55,7 +50,9 @@ const Categories = ({ GetData }: { GetData: () => void }) => {
     const [showMergeModal, setShowMergeModal] = useState(false);
 
     // Edit States
-    const [typeOfModal, setTypeOfModal] = useState<"Add" | "Edit">("Add");
+    const [typeOfModal, setTypeOfModal] = useState<"Create" | "Update">(
+        "Create",
+    );
     const [name, setName] = useState("");
     const [bgColor, setBgColor] = useState("Default");
     const [icon, setIcon] = useState("🖼");
@@ -78,7 +75,7 @@ const Categories = ({ GetData }: { GetData: () => void }) => {
     //   Function to get back
     const Cancel = () => {
         setShowModal(false);
-        setTypeOfModal("Add");
+        setTypeOfModal("Create");
         setName("");
         setBgColor("Default");
         setIcon("🖼");
@@ -94,7 +91,7 @@ const Categories = ({ GetData }: { GetData: () => void }) => {
         icon,
         _id,
     }: ICategory) => {
-        setTypeOfModal("Edit");
+        setTypeOfModal("Update");
         setName(name);
         setBgColor(bgColor);
         setIcon(icon);
@@ -248,7 +245,6 @@ const Categories = ({ GetData }: { GetData: () => void }) => {
             {showModal && (
                 <CategoriesModal
                     Cancel={Cancel}
-                    showModal={showModal}
                     typeOfModal={typeOfModal}
                     editObj={{
                         name,

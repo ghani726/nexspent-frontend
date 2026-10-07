@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import useAuth from "@/hooks/Auth";
-import useData from "@/hooks/Data";
 import { Register } from "@/api/AuthAPI";
 import type { ApiError } from "@/types/common";
 
@@ -17,7 +16,6 @@ const RegisterPage = () => {
         formState: { errors, isSubmitting },
     } = useForm();
 
-    const { GetData } = useData();
 
     const onSubmit = async (data: object) => {
         try {
@@ -29,16 +27,16 @@ const RegisterPage = () => {
                 setUser(res.data.user);
                 setAccessToken(res.data.token);
                 setCurrentSession(res.data.currentSession);
+                setSessions(res.data.user.sessions);
                 toast.success(<span>Registered successfully</span>);
                 setDataToSessionStorage(true, res.data.user);
-                GetData();
                 navigate("/app", { replace: true });
             } else if (!res.success) {
                 toast.dismissAll();
                 return toast.error(res.data.error.message);
             }
         } catch (err) {
-            const error = err as ApiError
+            const error = err as ApiError;
             toast.dismissAll();
             if (error?.response?.data?.error?.message) {
                 return toast.error(error.response.data.error.message);
@@ -53,6 +51,7 @@ const RegisterPage = () => {
         setAccessToken,
         setCurrentSession,
         setDataToSessionStorage,
+        setSessions,
     } = useAuth();
 
     const [passwordHidden, setPasswordHidden] = useState(true);

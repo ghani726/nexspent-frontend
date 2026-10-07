@@ -8,9 +8,10 @@ import SearchBar from "@/components/App/Common/SearchBar";
 
 import InfoButton from "@/components/App/Common/InfoButton";
 import TypeSelector from "@/components/App/Common/TypeSelector";
-import TransactionsCard from "@/components/App/Transactions/TransactionsCard";
 import TransactionsModal from "@/components/App/Transactions/Modal";
 import { ITransaction } from "@/types/transaction";
+import { formatTransactions } from "@/utils/transaction";
+import TransactionBlock from "@/components/App/Transactions/TransactionBlock";
 
 const Transactions = ({ GetData }: { GetData: () => void | string }) => {
     const [searchValue, setSearchValue] = useState("");
@@ -19,12 +20,15 @@ const Transactions = ({ GetData }: { GetData: () => void | string }) => {
     const [showModal, setShowModal] = useState(false);
 
     // Edit States
-    
-    const [typeOfModal, setTypeOfModal] = useState<"Add" | "Edit">("Add");
+
+    const [typeOfModal, setTypeOfModal] = useState<"Create" | "Update">(
+        "Create",
+    );
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [type, setType] = useState<"expense"| "income" | "transfer">("expense");
-    
+    const [type, setType] = useState<"expense" | "income" | "transfer">(
+        "expense",
+    );
 
     const [input, setInput] = useState<number>(0);
     const [date, setDate] = useState("");
@@ -40,18 +44,18 @@ const Transactions = ({ GetData }: { GetData: () => void | string }) => {
 
     // Form Details
 
-    const { transactions }: {transactions: ITransaction[]} = useData();
+    const { transactions }: { transactions: ITransaction[] } = useData();
 
     //   Function to get back
     const Cancel = () => {
         setShowModal(false);
-        setTypeOfModal("Add");
+        setTypeOfModal("Create");
         setTitle("");
         setDescription("");
         setSlider(0);
         setInput(0);
         setDate("");
-        setType("expense")
+        setType("expense");
         setSelectedCategory("");
         setSelectedAccount("");
         setSelectedAccountTo("");
@@ -75,12 +79,12 @@ const Transactions = ({ GetData }: { GetData: () => void | string }) => {
         fromAccount,
         _id,
     }: ITransaction) => {
-        setTypeOfModal("Edit");
-        setTitle(title);
+        setTypeOfModal("Update");
+        setTitle(title!);
         setDescription(description ?? "");
-        setType(type)
+        setType(type);
         setInput(amount);
-        setDate(date ?? "");
+        setDate(date?.toLocaleString() ?? "");
         setSelectedCategory(category ?? "");
         setSelectedAccount(account || (fromAccount ?? ""));
         setSelectedAccountTo(toAccount ?? "");
@@ -97,9 +101,9 @@ const Transactions = ({ GetData }: { GetData: () => void | string }) => {
         const filteredTransactions = transactions.filter(
             (txn: ITransaction) => {
                 const matchesSearch = searchValue.trim()
-                    ? txn.title
-                          .toLowerCase()
-                          .includes(searchValue.toLowerCase()) ||
+                    ? txn?.title
+                          ?.toLowerCase()
+                          ?.includes(searchValue.toLowerCase()) ||
                       (txn?.description &&
                           txn.description
                               .toLowerCase()
@@ -116,22 +120,16 @@ const Transactions = ({ GetData }: { GetData: () => void | string }) => {
             },
         );
 
-        // 2. Map filtered array to JSX and RETURN it
-        return filteredTransactions.map((e: ITransaction) => {
-            
+        // 2. Format those transactions
+        const finalTxns = formatTransactions(filteredTransactions);
+
+        // 3. Map the final formated Transactions
+        return finalTxns.map((e) => {
             return (
-                <TransactionsCard
-                    key={e?._id}
-                    title={e?.title}
-                    type={e?.type}
-                    category={e?.category}
-                    account={e?.account}
-                    amount={e?.amount}
+                <TransactionBlock
                     obj={e}
-                    bgColor={e?.bgColor}
-                    icon={e?.icon}
                     EditFunc={EditFunc}
-                ></TransactionsCard>
+                ></TransactionBlock>
             );
         });
     };
@@ -191,7 +189,6 @@ const Transactions = ({ GetData }: { GetData: () => void | string }) => {
             ></AddButton>
             {showModal && (
                 <TransactionsModal
-                    showModal={showModal}
                     Cancel={Cancel}
                     typeOfModal={typeOfModal}
                     GetData={GetData}
