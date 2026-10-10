@@ -1,6 +1,6 @@
 import { Info } from "lucide-react";
 
-const InfoButton = ({ openInfoModal }) => {
+const InfoButton = ({ openInfoModal }: { openInfoModal: () => void }) => {
     return (
         <button
             onClick={openInfoModal}

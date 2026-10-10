@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router";
 import { Toaster } from "react-hot-toast";
-import AppNotes from "./pages/App/App";
+import MainApp from "./pages/App/App";
 import Website from "./pages/Website/Website";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -15,13 +15,13 @@ const App = () => {
 					path="/app/*"
 					element={
 						<ProtectedRoute>
-							<AppNotes></AppNotes>
+							<MainApp></MainApp>
 						</ProtectedRoute>
 					}
 				></Route>
 				<Route path="/login" element={<Login></Login>}></Route>
 				<Route path="/register" element={<Register></Register>}></Route>
-				<Route path="*" element={<Error></Error>}></Route>\
+				<Route path="*" element={<Error></Error>}></Route>
 			</Routes>
 			<Toaster
 				toastOptions={{

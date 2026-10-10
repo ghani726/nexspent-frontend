@@ -73,8 +73,10 @@ const GoalViewModal = ({
     // 5. Small util vairables
     const progress = (Goal.savedAmount! / Goal.goalAmount) * 100;
     const currentColor = colors.find((e) => e.name === Goal.bgColor);
-    const amount = ((Goal.goalAmount - Goal.savedAmount!) / diffES).toFixed(
-        user!.defaultDecimalPrecision > 2 ? 2 : user?.defaultDecimalPrecision,
+    const amount = parseFloat(
+        ((Goal.goalAmount - Goal.savedAmount!) / diffES).toFixed(
+            user?.decimalPrecision,
+        ),
     );
     const transacts = transactions.filter((txn) => txn.goal === Goal._id);
 
@@ -171,7 +173,10 @@ const GoalViewModal = ({
     const CancelTxn = () => {
         setShowTxnModal(false);
         setTypeOfModal("Create");
+        setTxn(null);
     };
+
+    console.log(Goal.status);
 
     return (
         <ViewModal
@@ -179,6 +184,11 @@ const GoalViewModal = ({
             Cancel={Cancel}
             handleUpdate={() => setShowModal(true)}
             showDelete={true}
+            showUpdate={
+                Goal.status === "completed" || Goal.status === "failed"
+                    ? false
+                    : true
+            }
             openModal={() => dialogRef.current?.showModal()}
             children={
                 <>
@@ -195,16 +205,31 @@ const GoalViewModal = ({
                                 <h3
                                     className={`text-3xl font-bold line-clamp-1 break-all`}
                                 >
-                                    {Math.round(progress)}%
+                                    {/* {Math.round(progress)}% */}
+                                    {Goal.status === "failed"
+                                        ? "Failed"
+                                        : `${parseFloat(
+                                              progress.toFixed(
+                                                  user?.decimalPrecision,
+                                              ),
+                                          )}%`}
                                 </h3>
                                 <div className="flex justify-between gap-1 items-end">
                                     <h4 className="text-xl">
-                                        {user?.defaultCurrency.symbol}
-                                        {Goal.savedAmount?.toLocaleString()}
+                                        {user?.currency}
+                                        {parseFloat(
+                                            Goal.savedAmount!.toFixed(
+                                                user?.decimalPrecision,
+                                            ),
+                                        )?.toLocaleString()}
                                     </h4>
-                                    <p className="flex items-end text-gray-600">
-                                        / {user?.defaultCurrency.symbol}
-                                        {Goal.goalAmount.toLocaleString()}
+                                    <p className="flex items-end text-gray-600 ">
+                                        / {user?.currency}
+                                        {parseFloat(
+                                            Goal.goalAmount.toFixed(
+                                                user?.decimalPrecision,
+                                            ),
+                                        ).toLocaleString()}
                                     </p>
                                 </div>
                             </div>
@@ -212,6 +237,11 @@ const GoalViewModal = ({
                     ></ProgressRing>
 
                     <div className="flex flex-col gap-2 justify-between items-center w-full">
+                        <div
+                            className={`p-2 px-6 font-bold rounded-full text-lg ${Goal.status === "pending" ? "bg-yellow-500 text-white" : Goal.status === "active" ? "bg-blue-500 text-white" : Goal.status === "completed" ? "bg-primary text-white" : "bg-red-500 text-white"}`}
+                        >
+                            {Goal.status.toUpperCase()}
+                        </div>
                         <div
                             className={`text-2xl font-bold line-clamp-1 break-all`}
                         >
@@ -222,8 +252,13 @@ const GoalViewModal = ({
                         </div>
 
                         <p>
-                            {diffES ? user?.defaultCurrency.symbol : null}
-                            {diffES ? `${amount}/day for ${diffES} days` : null}
+                            {Goal.status === "active" ||
+                            Goal.status === "pending"
+                                ? `${user?.currency}
+                        ${amount}/day for ${diffES} days`
+                                : Goal.status === "failed"
+                                  ? "Failed"
+                                  : "Completed"}
                         </p>
                         <p>
                             {transacts?.length}{" "}
@@ -243,6 +278,12 @@ const GoalViewModal = ({
                             })}
                         </div>
                     </div>
+                    <AddButton
+                        showModal={showTxnModal}
+                        setShowModal={setShowTxnModal}
+                        title="Create Transaction"
+                        position="absolute"
+                    />
                     {showModal && (
                         <GoalModal
                             Cancel={Cancel}
@@ -264,18 +305,15 @@ const GoalViewModal = ({
                         <TransactionsModal
                             Cancel={CancelTxn}
                             typeOfModal={typeOfModal}
-                            GetData={GetData}
+                            GetData={()=> {
+                                GetData()
+                                Cancel()
+                            }}
                             editObj={txn! as ITransaction}
                             showTypeSelector={false}
                             allowedGoal={Goal._id}
                         ></TransactionsModal>
                     )}
-                    <AddButton
-                        showModal={showTxnModal}
-                        setShowModal={setShowTxnModal}
-                        title="Create Transaction"
-                        position="absolute"
-                    />
                 </>
             }
         ></ViewModal>

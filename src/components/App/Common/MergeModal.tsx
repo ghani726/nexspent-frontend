@@ -3,8 +3,8 @@ import { useRef, useState } from "react";
 
 import useAuth from "@/hooks/Auth";
 import toast from "react-hot-toast";
-import { MergeCategory } from "@/api/CategoryAPI";
-import { MergeAccount } from "@/api/AccountsAPI";
+import { API_Category_Merge } from "@/api/CategoryAPI";
+import { API_Account_Merge } from "@/api/AccountsAPI";
 import InfoModal from "./InfoModal.js";
 import { ApiError } from "@/types/common.js";
 import HandleErrorMessage from "@/utils/networkError.js";
@@ -17,6 +17,7 @@ interface MergePropsForHandlers {
     Cancel: () => void;
     GetData: () => void;
 }
+
 const handleMergeCategory = async ({
     firstID,
     mergeID,
@@ -27,21 +28,17 @@ const handleMergeCategory = async ({
 }: MergePropsForHandlers) => {
     setIsLoading(true);
     try {
-        const res = await MergeCategory({
-            categoryID: firstID,
-            mergeCategoryID: mergeID,
+        await API_Category_Merge({
+            _id: firstID,
+            mergeID: mergeID,
             token: accessToken,
         });
-        if (res.success) {
-            toast.success("Category merged successfully!");
-            setIsLoading(false);
-            GetData();
-            Cancel();
-            return;
-        } else {
-            setIsLoading(false);
-            return toast.error(res.error.message);
-        }
+
+        toast.success("Category merged successfully!");
+        setIsLoading(false);
+        GetData();
+        Cancel();
+        return;
     } catch (error) {
         setIsLoading(false);
         const err = error as ApiError;
@@ -61,21 +58,16 @@ const handleMergeAccount = async ({
 }: MergePropsForHandlers) => {
     setIsLoading(true);
     try {
-        const res = await MergeAccount({
-            accountID: firstID,
-            mergeAccountID: mergeID,
+        await API_Account_Merge({
+            _id: firstID,
+            mergeID: mergeID,
             token: accessToken,
         });
-        if (res.success) {
-            toast.success("Account merged successfully!");
-            setIsLoading(false);
-            GetData();
-            Cancel();
-            return;
-        } else {
-            setIsLoading(false);
-            return toast.error(res.error.message);
-        }
+
+        toast.success("Account merged successfully!");
+        setIsLoading(false);
+        GetData();
+        Cancel();
     } catch (error) {
         setIsLoading(false);
         const err = error as ApiError;

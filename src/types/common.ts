@@ -1,3 +1,4 @@
+import { IAccount } from "@/types/account";
 import { IBudget } from "@/types/budget";
 import { ICategory } from "@/types/category";
 import { IGoal } from "@/types/goal";
@@ -24,26 +25,12 @@ export interface IDeleteHandlerProps {
     GetData: () => void;
     setIsLoading: (data: boolean) => void;
 }
+
 export interface IColor {
     name: string;
     color: string;
 }
 
-export interface ICurrency {
-    code: string;
-    country: string;
-    symbol: string;
-}
-
-export interface IAccount {
-    _id?: string;
-    name: string;
-    userID: string;
-    decimalPrecision: number;
-    currency: ICurrency;
-    balance?: number;
-    bgColor?: string;
-}
 
 export interface IDataContext {
     accounts: IAccount[];

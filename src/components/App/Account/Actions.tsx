@@ -1,4 +1,4 @@
-import { Eye, EyeOff, LogOut, Trash2 } from "lucide-react";
+import { Eye, EyeOff, LogOut, Minus, Plus, Trash2 } from "lucide-react";
 import useAuth from "@/hooks/Auth";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -47,6 +47,8 @@ const Actions = ({ setSlider }: { setSlider: (value: number) => void }) => {
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    const [dP, setDP] = useState(user?.decimalPrecision ?? 2);
+    const [currency, setCurrency] = useState(user?.currency ?? "$");
     const {
         setUser,
         setAccessToken,
@@ -93,12 +95,15 @@ const Actions = ({ setSlider }: { setSlider: (value: number) => void }) => {
     const handleEdit = async (data: object) => {
         const loading = toast.loading("Updating your details...");
         try {
-            const res = await EditAccount(data, accessToken ?? "");
+            const res = await EditAccount(
+                { ...data, currency: currency, decimalPrecision: dP },
+                accessToken ?? "",
+            );
 
             if (res.success) {
                 toast.dismissAll();
                 toast.success("Account updated successfully");
-                setUser(res.user);
+                setUser(res.data.user);
                 setSlider(0);
             } else {
                 return toast.error(res.error.message);
@@ -107,6 +112,8 @@ const Actions = ({ setSlider }: { setSlider: (value: number) => void }) => {
             toast.dismiss(loading);
             const err = error as ApiError;
             const res = err?.response?.data;
+
+            console.log(res);
 
             if (res) toast.error(res.error.message);
             else HandleErrorMessage(err);
@@ -198,6 +205,54 @@ const Actions = ({ setSlider }: { setSlider: (value: number) => void }) => {
                         />
                         <label htmlFor="userName">Username</label>
                     </div>
+                    <div className="w-full flex justify-center items-center gap-2">
+                        <h3 className="text-xl font-semibold">
+                            Decimal Precision:
+                        </h3>
+                        <div className="border cursor-pointer active:scale-90 duration-300 ease-in-out border-gray-200 dark:border-gray-700 p-2 px-3 rounded-full gap-2 flex justify-between items-center text-xl font-medium">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    setDP((prev) => prev - 1);
+                                }}
+                                disabled={dP <= 1 ? true : false}
+                                className="disabled:bg-red-300 dark:disabled:bg-red-400 disabled:cursor-not-allowed bg-red-500 text-white cursor-pointer active:scale-95 duration-300 ease-in-out rounded-full p-1"
+                            >
+                                <Minus strokeWidth={3.5} size={12}></Minus>
+                            </button>
+                            <button className="cursor-pointer">{dP}</button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    setDP((prev) => prev + 1);
+                                }}
+                                disabled={dP >= 4 ? true : false}
+                                className="bg-primary text-white cursor-pointer active:scale-95 duration-300 disabled:cursor-not-allowed disabled:bg-secondary ease-in-out rounded-full p-1"
+                            >
+                                <Plus strokeWidth={3.5} size={12}></Plus>
+                            </button>
+                        </div>
+                    </div>
+                    <div className="w-full flex justify-center items-center gap-2">
+                        <h3 className="text-xl font-semibold">
+                            Currency Symbol:
+                        </h3>
+                        <input
+                            type="text"
+                            name="Currency Symbol"
+                            value={currency}
+                            onChange={(e) => {
+                                setCurrency(e.target.value);
+                            }}
+                            className="border-gray-600 p-1 focus:bg-white dark:focus:bg-gray-800 w-fit field-sizing-content text-center rounded-t-xl border-b-2 focus:border-primary outline-none text-2xl font-bold max-w-full px-2"
+                            placeholder="$ or Rs"
+                        />
+                    </div>
+                    <h3 className="text-xl font-semibold">
+                        Password Change Area:
+                    </h3>
                     <div className="input-box-p text-lg bg-gray-100 rounded-full px-4">
                         <input
                             type={passwordHidden ? "password" : "text"}

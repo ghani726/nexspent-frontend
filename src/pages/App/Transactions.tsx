@@ -1,6 +1,6 @@
 import { Filter, Shapes } from "lucide-react";
 import AddButton from "@/components/App/Common/AddButton";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import useData from "@/hooks/Data";
 import InfoModal from "@/components/App/Common/InfoModal";
@@ -12,12 +12,15 @@ import TransactionsModal from "@/components/App/Transactions/Modal";
 import { ITransaction } from "@/types/transaction";
 import { formatTransactions } from "@/utils/transaction";
 import TransactionBlock from "@/components/App/Transactions/TransactionBlock";
+import FilterModal from "@/components/App/Transactions/FilterModal";
+import dayjs from "dayjs";
 
 const Transactions = ({ GetData }: { GetData: () => void | string }) => {
     const [searchValue, setSearchValue] = useState("");
 
     // Modal states
     const [showModal, setShowModal] = useState(false);
+    const [showFilterModal, setShowFilterModal] = useState(false);
 
     // Edit States
 
@@ -96,29 +99,50 @@ const Transactions = ({ GetData }: { GetData: () => void | string }) => {
 
     const [slider, setSlider] = useState(0);
 
+    const [txns, setTxns] = useState(
+        transactions.filter((e) => {
+            const now = dayjs();
+            const txDate = dayjs(e.date);
+            return (
+                txDate.month() === now.month() && txDate.year() === now.year()
+            );
+        }),
+    );
+    
+    useEffect(() => {
+        setTxns( //eslint-disable-line
+            transactions.filter((e) => {
+                const now = dayjs();
+                const txDate = dayjs(e.date);
+                return (
+                    txDate.month() === now.month() &&
+                    txDate.year() === now.year()
+                );
+            }).reverse(),
+        );
+    }, [transactions]);
+
     const showTransactions = () => {
         // 1. Filter categories based on search text and slider tab
-        const filteredTransactions = transactions.filter(
-            (txn: ITransaction) => {
-                const matchesSearch = searchValue.trim()
-                    ? txn?.title
-                          ?.toLowerCase()
-                          ?.includes(searchValue.toLowerCase()) ||
-                      (txn?.description &&
-                          txn.description
-                              .toLowerCase()
-                              .includes(searchValue.toLowerCase()))
-                    : true;
+        const filteredTransactions = txns.filter((txn: ITransaction) => {
+            const matchesSearch = searchValue.trim()
+                ? txn?.title
+                      ?.toLowerCase()
+                      ?.includes(searchValue.toLowerCase()) ||
+                  (txn?.description &&
+                      txn.description
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase()))
+                : true;
 
-                const matchesTab =
-                    slider === 0 ||
-                    (slider === 1 && txn.type === "expense") ||
-                    (slider === 2 && txn.type === "income") ||
-                    (slider === 3 && txn.type === "transfer");
+            const matchesTab =
+                slider === 0 ||
+                (slider === 1 && txn.type === "expense") ||
+                (slider === 2 && txn.type === "income") ||
+                (slider === 3 && txn.type === "transfer");
 
-                return matchesSearch && matchesTab;
-            },
-        );
+            return matchesSearch && matchesTab;
+        });
 
         // 2. Format those transactions
         const finalTxns = formatTransactions(filteredTransactions);
@@ -149,7 +173,7 @@ const Transactions = ({ GetData }: { GetData: () => void | string }) => {
                 </h2>
                 <div className="flex">
                     <button
-                        onClick={openInfoModal}
+                        onClick={() => setShowFilterModal((prev) => !prev)}
                         title="Filters"
                         className="p-1.5 h-full hover:bg-gray-200 dark:hover:bg-gray-800 aspect-square flex justify-center items-center rounded-full cursor-pointer"
                     >
@@ -207,6 +231,12 @@ const Transactions = ({ GetData }: { GetData: () => void | string }) => {
                     }}
                 ></TransactionsModal>
             )}
+            <FilterModal
+                showModal={showFilterModal}
+                setShowModal={setShowFilterModal}
+                setTransactions={setTxns}
+                slider={slider}
+            ></FilterModal>
         </div>
     );
 };

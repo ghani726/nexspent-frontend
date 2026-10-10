@@ -2,7 +2,6 @@ import { CloudBackup, PanelRightClose, PanelRightOpen } from "lucide-react";
 import useAuth from "../../../hooks/Auth";
 import AccountCard from "./AccountCard";
 import { Dispatch, SetStateAction, useState } from "react";
-import toast from "react-hot-toast";
 
 const Header = ({
     hide,

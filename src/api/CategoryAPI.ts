@@ -3,28 +3,26 @@ import config from "@/config/config";
 import type { ICategory } from "@/types/category";
 
 // Interfaces
-interface Create extends ICategory {
+interface CreateUpdate extends ICategory {
     token: string;
 }
-interface Edit extends Create {
-    categoryID: string;
-}
+
 interface Delete {
-    categoryID: string;
+    _id: string;
     token: string;
 }
 interface Merge extends Delete {
-    mergeCategoryID: string;
+    mergeID: string;
 }
 
 // Add Account API
-export const CreateCategory = async ({
+export const API_Category_Create = async ({
     name,
     bgColor,
     categoryType,
     icon,
     token,
-}: Create) => {
+}: CreateUpdate) => {
     const res = await axios.post(`${config.BackendURL}/user/category/`, {
         name: name,
         bgColor: bgColor,
@@ -34,41 +32,44 @@ export const CreateCategory = async ({
     });
     return res.data;
 };
-export const UpdateCategory = async ({
+
+export const API_Category_Update = async ({
     name,
     bgColor,
     categoryType,
     icon,
-    categoryID,
+    _id,
     token,
-}: Edit) => {
+}: CreateUpdate) => {
     const res = await axios.patch(`${config.BackendURL}/user/category/`, {
         name: name,
         bgColor: bgColor,
         categoryType: categoryType,
         icon: icon,
-        categoryID: categoryID,
+        categoryID: _id,
         token: token,
     });
     return res.data;
 };
-export const DeleteCategory = async ({ categoryID, token }: Delete) => {
+
+export const API_Category_Delete = async ({ _id, token }: Delete) => {
     const res = await axios.delete(`${config.BackendURL}/user/category/`, {
         data: {
-            categoryID: categoryID,
+            categoryID: _id,
             token: token,
         },
     });
     return res.data;
 };
-export const MergeCategory = async ({
-    categoryID,
-    mergeCategoryID,
+
+export const API_Category_Merge = async ({
+    _id,
+    mergeID,
     token,
 }: Merge) => {
     const res = await axios.post(`${config.BackendURL}/user/category/merge`, {
-        categoryID: categoryID,
-        mergeCategoryID: mergeCategoryID,
+        categoryID: _id,
+        mergeCategoryID: mergeID,
         token: token,
     });
     return res.data;

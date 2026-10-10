@@ -3,7 +3,6 @@ import Menu from "@/components/App/Account/Menu";
 
 import Details from "@/components/App/Account/Details";
 import Actions from "@/components/App/Account/Actions";
-import Devices from "@/components/App/Account/Devices";
 const Account = () => {
 	const [slider, setSlider] = useState(0);
 
@@ -12,11 +11,10 @@ const Account = () => {
 			<Menu slider={slider} setSlider={setSlider}></Menu>
 			{slider === 0 ? (
 				<Details></Details>
-			) : slider === 1 ? (
-				<Devices></Devices>
-			) : (
+			) :(
 				<Actions setSlider={setSlider}></Actions>
 			)}
+			{/* <Devices></Devices> */}
 		</div>
 	);
 };

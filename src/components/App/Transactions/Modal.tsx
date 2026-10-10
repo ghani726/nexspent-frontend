@@ -180,6 +180,9 @@ const TransactionsModal = ({
     editObj,
     GetData,
     showTypeSelector,
+    showTransfer = true,
+    allowCategoryChange = true,
+    allowedAccount,
     allowedGoal,
     allowedBudget,
 }: {
@@ -188,6 +191,9 @@ const TransactionsModal = ({
     editObj?: ITransaction;
     GetData: () => void | string;
     showTypeSelector?: boolean;
+    showTransfer?: boolean
+    allowCategoryChange?: boolean;
+    allowedAccount?: string;
     allowedGoal?: string;
     allowedBudget?: string;
 }) => {
@@ -244,7 +250,7 @@ const TransactionsModal = ({
         editObj?.category || "",
     );
     const [selectedAccount, setSelectedAccount] = useState<string>(
-        editObj?.account || accounts?.[0]?._id || "",
+        editObj?.account || allowedAccount ||  accounts?.[0]?._id || "",
     );
     const [selectedAccountTo, setSelectedAccountTo] = useState<string>(
         editObj?.toAccount || accounts?.[1]?._id || "",
@@ -365,7 +371,7 @@ const TransactionsModal = ({
                         <TypeSelector
                             slider={slider}
                             setSlider={setSlider}
-                            show4={accounts?.length > 1 ? true : false}
+                            show4={accounts?.length > 1 && showTransfer ? true : false}
                             disabledOnes={disabledOnes}
                             extraFunc={(val) => {
                                 if (val && val >= 2) {
@@ -383,7 +389,13 @@ const TransactionsModal = ({
                     >
                         {slider < 2 && (
                             <div
-                                onClick={() => setShowCategoryModal(true)}
+                                onClick={() => {
+                                    if (!allowCategoryChange)
+                                        return toast.error(
+                                            `You can't change category, because you are '${typeOfModal.slice(0, -1)}ing' transaction from Category View Page.`,
+                                        );
+                                    setShowCategoryModal(true);
+                                }}
                                 className={`w-30 h-30 shrink-0 hover:bg-gray-200 dark:hover:bg-gray-700 text-4xl flex justify-center items-center cursor-pointer `}
                             >
                                 <button
@@ -403,7 +415,7 @@ const TransactionsModal = ({
                                 </h3>
                             )}
                             <div className="text-3xl font-bold max-w-full line-clamp-1 wrap-anywhere min-h-lh">
-                                {user?.defaultCurrency?.symbol}
+                                {user?.currency}
                                 {input}
                             </div>
                             <p>{cat?.name}</p>
@@ -426,14 +438,25 @@ const TransactionsModal = ({
                     {/* Account, Budget and Goal */}
 
                     <OptionPicker
-                        allowedGoal={{
-                            type: typeOfModal,
-                            _id: allowedGoal ?? "",
-                        }}
-                        allowedBudget={{
-                            type: typeOfModal,
-                            _id: allowedBudget ?? "",
-                        }}
+                        allowedAccount={
+                            allowedAccount ? allowedAccount : undefined
+                        }
+                        allowedGoal={
+                            allowedGoal
+                                ? {
+                                      type: typeOfModal,
+                                      _id: allowedGoal ?? "",
+                                  }
+                                : undefined
+                        }
+                        allowedBudget={
+                            allowedBudget
+                                ? {
+                                      type: typeOfModal,
+                                      _id: allowedBudget ?? "",
+                                  }
+                                : undefined
+                        }
                         slider={slider}
                         selectedAccount={selectedAccount}
                         setSelectedAccount={setSelectedAccount}

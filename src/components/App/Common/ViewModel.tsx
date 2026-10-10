@@ -3,7 +3,8 @@ import { ReactNode } from "react";
 
 const ViewModal = ({
     title,
-    showDelete,
+    showDelete = true,
+    showUpdate = true,
     openModal,
     handleUpdate,
     Cancel,
@@ -11,8 +12,9 @@ const ViewModal = ({
 }: {
     title: string;
     showDelete?: boolean;
+    showUpdate?: boolean;
     openModal?: () => void;
-    handleUpdate: () => void;
+    handleUpdate?: () => void;
     Cancel: () => void;
     children?: ReactNode;
 }) => {
@@ -39,44 +41,35 @@ const ViewModal = ({
                             {title}
                         </h2>
                     </div>
-                    <div className="flex justify-center items-center border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-full shadow-small">
-                        <button
-                            onClick={handleUpdate}
-                            className="hover:text-primary-hover hover:bg-emerald-100 dark:hover:bg-emerald-900/50 p-3 rounded-full  cursor-pointer duration-300 ease-in-out"
-                        >
-                            <Edit></Edit>
-                        </button>
-                        {showDelete && (
-                            <>
-                                <span className="h-6 w-px bg-gray-300"></span>
+                    {(showUpdate || showDelete) && (
+                        <div className="flex justify-center items-center border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-full shadow-small">
+                            {showUpdate && (
                                 <button
-                                    onClick={openModal}
-                                    className="hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 p-3 rounded-full   cursor-pointer duration-300 ease-in-out"
+                                    onClick={handleUpdate}
+                                    className="hover:text-primary-hover hover:bg-emerald-100 dark:hover:bg-emerald-900/50 p-3 rounded-full  cursor-pointer duration-300 ease-in-out"
                                 >
-                                    <Trash2></Trash2>
+                                    <Edit></Edit>
                                 </button>
-                            </>
-                        )}
-                    </div>
+                            )}
+                            {showUpdate && showDelete && (
+                                <span className="h-6 w-px bg-gray-300"></span>
+                            )}
+                            {showDelete && (
+                                <>
+                                    <button
+                                        onClick={openModal}
+                                        className="hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 p-3 rounded-full   cursor-pointer duration-300 ease-in-out"
+                                    >
+                                        <Trash2></Trash2>
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
                 <div className="w-full h-full justify-start items-center gap-4 flex flex-col px-4 py-18 ms:px-6 ms:pb-6 overflow-auto">
                     {children}
                 </div>
-
-                {/* Buttons */}
-                {/* 
-                <div className="flex justify-end items-center w-full gap-2 fixed ms:static bottom-0 left-0 p-2 ms:p-6 ms:pt-4">
-                    <button
-                        disabled={isLoading}
-                        onClick={handleButtonClick}
-                        className="flex shadow-medium ms:shadow-none w-full ms:w-fit p-4 ms:px-4 gap-2  justify-center items-center disabled:active:scale-100  disabled:bg-primary/70 cursor-pointer active:scale-95 ms:py-2 rounded-full bg-primary hover:bg-primary-hover text-white hover:bg-primary-800 duration-300 ease-in-out font-medium ms:font-normal"
-                    >
-                        {isLoading && (
-                            <LoaderCircle className="animate-spin"></LoaderCircle>
-                        )}
-                        {text}
-                    </button>
-                </div> */}
             </div>
         </div>
     );

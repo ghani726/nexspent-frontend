@@ -168,11 +168,11 @@ const DeviceCard = ({
             </div>
 
             <div className="flex m-0 ms:mx-1 flex-col ms:flex-row justify-between items-center gap-2">
-                {isCurrent && (
+                {/* {isCurrent && (
                     <button className="p-2 px-4 text-sm rounded-full bg-primary text-white">
                         Current
                     </button>
-                )}
+                )} */}
                 <button
                     onClick={handleLogoutClick}
                     className="p-2 px-4 text-sm cursor-pointer duration-300 ease-in-out active:scale-95 rounded-full bg-red-500 text-white"

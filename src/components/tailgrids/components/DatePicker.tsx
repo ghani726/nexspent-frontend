@@ -48,12 +48,14 @@ const DatePickerComponent = ({
 
     const maxDated = maxDate
         ? currentDate.add({
-              [maxDate?.type ?? "months"]: maxDate?.value ?? 1,
+              [maxDate?.type]: maxDate?.value,
           })
         : null;
-    const minDated = currentDate.subtract({
-        [minDate?.type ?? "months"]: minDate?.value ?? 1,
-    });
+    const minDated = minDate
+        ? currentDate.subtract({
+              [minDate?.type]: minDate?.value,
+          })
+        : null;
 
     const [calenderKey, setCalenderKey] = useState(0);
 
@@ -123,8 +125,10 @@ const DatePickerComponent = ({
                                     setDT(new Date());
                                 }}
                                 disabled={
-                                    currentDate.day < minDated.day
-                                        ? true
+                                    minDated
+                                        ? currentDate.day < minDated.day
+                                            ? true
+                                            : false
                                         : false
                                 }
                                 className="px-3 py-1.5 disabled:cursor-not-allowed disabled:line-through disabled:text-gray-500 disabled:font-normal text-xs font-medium text-primary hover:bg-emerald-100 dark:hover:bg-emerald-950/50 rounded-full transition-colors"

@@ -6,6 +6,7 @@ import type { IColor } from "@/types/common";
 import colors from "@/utils/color";
 import { IGoal } from "@/types/goal";
 import { IBudget } from "@/types/budget";
+import useAuth from "@/hooks/Auth";
 
 interface Int {
     obj: ITransaction;
@@ -29,6 +30,7 @@ const TransactionsCard = ({
 }: Int) => {
     const { categories, accounts, budgets, goals } = useData();
 
+    const { user } = useAuth();
     let icon: string | undefined = obj?.icon;
     let bgColor: string | undefined = obj?.bgColor;
     // Category
@@ -50,8 +52,6 @@ const TransactionsCard = ({
     // Account
 
     const foundAccount = accounts?.filter((e) => e._id === obj?.account)[0];
-
-    const currency = foundAccount?.currency;
 
     // Budget
 
@@ -89,9 +89,11 @@ const TransactionsCard = ({
     return (
         <div
             onClick={() => handleEdit()}
-            className={`w-full starting:translate-y-full animate-fade-in flex rounded-5xl justify-between items-center bg-surface dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-2 duration-300 hover:scale-[1.02] cursor-pointer active:scale-99 hover:shadow-medium animate-scroll-card`}
+            className={`w-full starting:translate-y-full animate-fade-in flex rounded-5xl justify-between items-center bg-surface dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-2 duration-300 hover:scale-[1.02] cursor-pointer active:scale-99 hover:shadow-medium gap-1`}
         >
-            <div className={`flex justify-center items-center gap-2`}>
+            <div
+                className={`flex justify-center items-center gap-2 max-w-9/10`}
+            >
                 <div
                     className={`h-full p-2 aspect-square ${currentColor?.color} rounded-full flex justify-center items-center text-2xl`}
                 >
@@ -101,7 +103,7 @@ const TransactionsCard = ({
                     className={`flex flex-col justify-between items-start gap-1`}
                 >
                     <h3
-                        className={`text-lg -my-1 font-medium line-clamp-1 wrap-anywhere`}
+                        className={`text-xl -my-1 font-medium line-clamp-1 wrap-anywhere`}
                     >
                         {obj?.title || foundCategory?.name}
                     </h3>
@@ -131,15 +133,17 @@ const TransactionsCard = ({
                 </div>
             </div>
             <div
-                className={`flex ${obj?.type === "income" ? "text-primary" : "text-red-500"} gap-1 justify-center items-center font-bold pr-2`}
+                className={`flex ${obj?.type === "income" ? "text-primary" : obj?.type === "expense" ? "text-red-500" : "text-blue-500"} gap-1 justify-center items-center font-bold pr-4`}
             >
-                {currency?.symbol}
-                {obj?.amount}
-                <Triangle
-                    className={`${obj?.type === "expense" ? "rotate-180" : "rotate-0"}`}
-                    size={14}
-                    fill="currentColor"
-                ></Triangle>
+                {user?.currency}
+                {parseFloat(obj?.amount.toFixed(user?.decimalPrecision))}
+                {obj?.type !== "transfer" && (
+                    <Triangle
+                        className={`${obj?.type === "expense" ? "rotate-180" : "rotate-0"}`}
+                        size={14}
+                        fill="currentColor"
+                    ></Triangle>
+                )}
             </div>
         </div>
     );

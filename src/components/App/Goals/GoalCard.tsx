@@ -73,8 +73,10 @@ const GoalCard = ({ obj, ViewFunc }: CardProps) => {
 
     const diff = end.diff(start, "days");
 
-    const amount = ((obj.goalAmount - obj.savedAmount!) / diff).toFixed(
-        user!.defaultDecimalPrecision > 2 ? 2 : user?.defaultDecimalPrecision,
+    const amount = parseFloat(
+        ((obj.goalAmount - obj.savedAmount!) / diff).toFixed(
+            user?.decimalPrecision,
+        ),
     );
 
     const transacts = transactions.filter((txn) => txn.goal === obj._id);
@@ -117,8 +119,12 @@ const GoalCard = ({ obj, ViewFunc }: CardProps) => {
                         {obj.title}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {user?.defaultCurrency.symbol}
-                        {amount}/day for {diff} days
+                        {obj.status === "active" || obj.status === "pending"
+                            ? `${user?.currency}
+                        ${amount}/day for ${diff} days`
+                            : obj.status === "failed"
+                              ? "Failed"
+                              : "Completed"}
                     </p>
                 </div>
                 <div
@@ -134,12 +140,16 @@ const GoalCard = ({ obj, ViewFunc }: CardProps) => {
                 </p>
                 <div className="flex justify-between gap-1 items-end">
                     <h4 className="text-xl font-bold">
-                        {user?.defaultCurrency.symbol}
-                        {obj.savedAmount?.toLocaleString()}
+                        {user?.currency}
+                        {parseFloat(
+                            obj.savedAmount!.toFixed(user?.decimalPrecision),
+                        ).toLocaleString()}
                     </h4>
                     <p className="flex items-end text-gray-600">
-                        / {user?.defaultCurrency.symbol}
-                        {obj.goalAmount.toLocaleString()}
+                        / {user?.currency}
+                        {parseFloat(
+                            obj.goalAmount.toFixed(user?.decimalPrecision),
+                        ).toLocaleString()}
                     </p>
                 </div>
             </div>
@@ -149,7 +159,9 @@ const GoalCard = ({ obj, ViewFunc }: CardProps) => {
                         {start.format("MMM DD")}
                     </p>
                     {start.year() !== end.year() && (
-                        <p className="text-xs text-gray-400 dark:text-gray-500">{start.year()}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">
+                            {start.year()}
+                        </p>
                     )}
                 </div>
                 <div
@@ -162,7 +174,12 @@ const GoalCard = ({ obj, ViewFunc }: CardProps) => {
                     <div
                         className={`absolute -top-1/4 left-1/2 -translate-x-1/2 -bottom-1/4 text-xs ${currentColor?.color} p-2 rounded-full flex justify-center items-center text-white px-3 border-2 border-black font-bold`}
                     >
-                        {progress.toFixed(user?.defaultDecimalPrecision || 2)}%
+                        {obj.status === "failed"
+                            ? "Failed"
+                            : `${parseFloat(
+                                  progress.toFixed(user?.decimalPrecision),
+                              )}%`}
+                        
                     </div>
                 </div>
                 <div className="flex shrink-0 flex-col justify-center items-center">

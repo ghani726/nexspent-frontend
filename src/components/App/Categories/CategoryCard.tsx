@@ -1,7 +1,7 @@
 import { ICategory } from "@/types/category";
 import { ITransaction } from "@/types/transaction";
 import colors from "@/utils/color";
-import { Edit, Merge, Trash2 } from "lucide-react";
+import { Merge } from "lucide-react";
 
 interface CardProps extends ICategory {
     obj: ICategory;
@@ -10,34 +10,18 @@ interface CardProps extends ICategory {
         incomeCategories: ICategory[];
         expenseCategories: ICategory[];
     };
-    EditFunc: (obj: ICategory) => void;
-    DeleteFunc: (_id: string) => void;
+    ViewFunc: (obj: ICategory) => void;
     MergeFunc: (_id: string, name: string) => void;
 }
 
 const CategoryCard = ({
-    name,
-    icon,
-    bgColor,
-    categoryType,
     transactions,
     obj,
-    EditFunc,
-    DeleteFunc,
+    ViewFunc,
     MergeFunc,
     totalCategories,
 }: CardProps) => {
-    const currentColor = colors.find((e) => e.name === bgColor);
-
-    const handleEdit = () => {
-        EditFunc?.({
-            name,
-            bgColor,
-            categoryType,
-            icon,
-            _id: obj._id,
-        });
-    };
+    const currentColor = colors.find((e) => e.name === obj.bgColor);
 
     const showActionButtons = () => {
         const MergeButton = () => {
@@ -45,7 +29,7 @@ const CategoryCard = ({
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
-                        MergeFunc(obj._id ?? "", name);
+                        MergeFunc(obj._id ?? "", obj.name);
                     }}
                     title="Merge Category"
                     className="text-blue-500 p-1.5 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900 cursor-pointer"
@@ -54,98 +38,35 @@ const CategoryCard = ({
                 </button>
             );
         };
-        const EditButton = () => {
-            return (
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleEdit();
-                    }}
-                    title="Edit Category"
-                    className="text-primary	 p-1.5 rounded-full hover:bg-secondary/50 cursor-pointer"
-                >
-                    <Edit size={20}></Edit>
-                </button>
-            );
-        };
-
-        const DeleteButton = () => {
-            return (
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        DeleteFunc(obj._id ?? "");
-                    }}
-                    title="Delete"
-                    className="text-red-500 p-1.5 rounded-full hover:bg-red-100 dark:hover:bg-red-950 cursor-pointer"
-                >
-                    <Trash2 size={20}></Trash2>
-                </button>
-            );
-        };
         if (
-            categoryType === "expense" &&
-            totalCategories?.expenseCategories?.length > 1
+            (obj.categoryType === "expense" &&
+                totalCategories?.expenseCategories?.length > 1) ||
+            (obj.categoryType === "income" &&
+                totalCategories?.incomeCategories?.length > 1)
         ) {
-            if (!transactions?.length) {
-                return (
-                    <>
-                        <MergeButton></MergeButton>
-                        <EditButton></EditButton>
-                        <DeleteButton></DeleteButton>
-                    </>
-                );
-            } else {
-                return (
-                    <>
-                        <MergeButton></MergeButton>
-                        <EditButton></EditButton>
-                    </>
-                );
-            }
-        } else if (
-            categoryType === "income" &&
-            totalCategories?.incomeCategories?.length > 1
-        ) {
-            if (!transactions?.length) {
-                return (
-                    <>
-                        <MergeButton></MergeButton>
-                        <EditButton></EditButton>
-                        <DeleteButton></DeleteButton>
-                    </>
-                );
-            } else {
-                return (
-                    <>
-                        <MergeButton></MergeButton>
-                        <EditButton></EditButton>
-                    </>
-                );
-            }
-        } else {
-            return <EditButton></EditButton>;
+            return <MergeButton></MergeButton>;
         }
     };
     return (
         <div
-            className={`w-full starting:translate-y-full animate-fade-in flex rounded-full justify-between items-center bg-surface dark:bg-gray-800 shadow-medium p-3 duration-300 hover:scale-[1.02] cursor-pointer active:scale-99 hover:shadow-large animate-scroll-card`}
+            onClick={() => ViewFunc(obj)}
+            className={`w-full starting:translate-y-full animate-fade-in flex rounded-full justify-between items-center bg-surface dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 duration-300 hover:scale-[1.02] cursor-pointer active:scale-99 hover:shadow-medium animate-scroll-card`}
         >
             <div className={`flex justify-center items-center gap-2`}>
                 <div
                     className={`h-full p-2 pb-3 aspect-square ${currentColor?.color} rounded-full flex justify-center items-center text-3xl`}
                 >
-                    {icon}
+                    {obj.icon}
                 </div>
                 <div className={`flex flex-col justify-center items-start`}>
                     <h3
                         className={`text-[22px] -my-1.5 font-bold line-clamp-1 break-all`}
                     >
-                        {name}
+                        {obj.name}
                     </h3>
                     <p className={`text-xs text-gray-600`}>
-                        {categoryType?.[0].toUpperCase() +
-                            categoryType?.slice(1)}
+                        {obj.categoryType?.[0].toUpperCase() +
+                            obj.categoryType?.slice(1)}
                     </p>
                     <p className={`text-xs text-gray-600`}>
                         {transactions?.length}{" "}

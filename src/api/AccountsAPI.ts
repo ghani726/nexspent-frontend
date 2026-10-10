@@ -1,78 +1,65 @@
 import axios from "axios";
 
 import config from "@/config/config";
-import type { IAccount } from "@/types/common";
+import type { IAccount } from "@/types/account";
 
-interface IAdd extends Omit<IAccount, "_id"> {
+interface ICreate extends IAccount {
     token: string;
-    _id?: string;
-}
-interface IUpdate extends Omit<IAdd, "balance"> {
-    accountID: string;
 }
 interface IDeleteOrMerge {
     token: string;
-    accountID: string;
-    mergeAccountID?: string;
+    _id: string;
+    mergeID?: string;
 }
-// Add Account API
-export const AddAccount = async ({
+// Create Account API
+export const API_Account_Create = async ({
     name,
     balance = 0,
-    decimalPrecision,
     bgColor = "Default",
-    currency,
     token,
-}: IAdd) => {
+}: ICreate) => {
     const res = await axios.post(`${config.BackendURL}/user/accounts/`, {
         name: name,
         balance: balance,
-        decimalPrecision: decimalPrecision,
         bgColor: bgColor,
-        currency: currency,
         token: token,
     });
     return res.data;
 };
 
-export const EditAccount = async ({
+export const API_Account_Update = async ({
     name,
-    decimalPrecision,
     bgColor = "Default",
-    currency,
-    accountID,
+    _id,
     token,
-}: IUpdate) => {
+}: ICreate) => {
     const res = await axios.patch(`${config.BackendURL}/user/accounts/`, {
         name: name,
-        decimalPrecision: decimalPrecision,
         bgColor: bgColor,
-        currency: currency,
-        accountID: accountID,
+        accountID: _id,
         token: token,
     });
     return res.data;
 };
 
-export const DeleteAccount = async ({ accountID, token }: IDeleteOrMerge) => {
+export const API_Account_Delete = async ({ _id, token }: IDeleteOrMerge) => {
     const res = await axios.delete(`${config.BackendURL}/user/accounts/`, {
         data: {
-            accountID: accountID,
+            accountID: _id,
             token: token,
         },
     });
     return res.data;
 };
 
-export const MergeAccount = async ({
-    accountID,
-    mergeAccountID,
+export const API_Account_Merge = async ({
+    _id,
+    mergeID,
     token,
 }: IDeleteOrMerge) => {
     const res = await axios.post(`${config.BackendURL}/user/accounts/merge`, {
-        accountID: accountID,
-        mergeAccountID: mergeAccountID,
-
+        accountID: _id,
+        mergeAccountID: mergeID,
         token: token,
     });
     return res.data;

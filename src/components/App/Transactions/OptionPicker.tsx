@@ -13,6 +13,7 @@ interface Props {
     setSelectedBudget: (data: string) => void;
     selectedGoal: string;
     setSelectedGoal: (data: string) => void;
+    allowedAccount?: string;
     allowedGoal?: {
         type: "Create" | "Update";
         _id: string;
@@ -33,6 +34,7 @@ const OptionPicker = ({
     setSelectedBudget,
     selectedGoal,
     setSelectedGoal,
+    allowedAccount,
     allowedGoal,
     allowedBudget,
 }: Props) => {
@@ -46,42 +48,76 @@ const OptionPicker = ({
                     {slider == 2 ? "From Account" : "Account"}:
                 </h4>
                 <div className="flex items-center gap-1.5 overflow-x-auto w-full pb-1 scrollbar-none">
-                    {accounts?.map((acc) => (
-                        <label
-                            key={acc?._id}
-                            className="relative cursor-pointer flex shrink-0 p-1"
-                        >
-                            <input
-                                type="radio"
-                                name="account"
-                                className="hidden peer"
-                                value={acc?._id}
-                                checked={selectedAccount === acc?._id}
-                                onChange={() => {
-                                    setSelectedAccount(acc._id!);
-
-                                    const filtered = accounts.filter(
-                                        (e) => e._id !== acc._id,
-                                    );
-
-                                    // If it is already select and was not filtered out, let it be, else select the first one.
-                                    if (
-                                        filtered.some(
-                                            (e) =>
-                                                e._id === selectedAccountTo,
-                                        )
-                                    )
-                                        return;
-                                    setSelectedAccountTo(filtered[0]._id!);
-                                }}
-                            />
-                            <span
-                                className={`${colors.find((e: IColor) => e.name === acc?.bgColor)?.color || "bg-emerald-50"} ${acc?.bgColor === "White" ? "text-black" : "text-white"} text-xs font-medium px-3.5 py-2 rounded-full shadow-xs transition-all duration-200 peer-checked:ring-2 peer-checked:ring-offset-2 dark:peer-checked:ring-offset-black peer-checked:ring-black dark:peer-checked:ring-white`}
+                    {allowedAccount &&
+                        accounts.find((e) => e._id === allowedAccount) && (
+                            <label
+                                key={allowedAccount}
+                                className="relative cursor-pointer flex shrink-0 p-1"
                             >
-                                {acc?.name}
-                            </span>
-                        </label>
-                    ))}
+                                <input
+                                    type="radio"
+                                    name="account"
+                                    className="hidden peer"
+                                    value={allowedAccount}
+                                    checked={selectedAccount === allowedAccount}
+                                    onChange={() => {
+                                        setSelectedAccount(allowedAccount);
+
+                                        const filtered = accounts.filter(
+                                            (e) => e._id !== allowedAccount,
+                                        );
+
+                                        setSelectedAccountTo(filtered[0]._id!);
+                                    }}
+                                />
+                                <span
+                                    className={`${colors.find((e: IColor) => e.name === accounts.find((e) => e._id === allowedAccount)?.bgColor)?.color || "bg-emerald-50"} ${accounts.find((e) => e._id === allowedAccount)?.bgColor === "White" ? "text-black" : "text-white"} text-xs font-medium px-3.5 py-2 rounded-full shadow-xs transition-all duration-200 peer-checked:ring-2 peer-checked:ring-offset-2 dark:peer-checked:ring-offset-black peer-checked:ring-black dark:peer-checked:ring-white`}
+                                >
+                                    {
+                                        accounts.find(
+                                            (e) => e._id === allowedAccount,
+                                        )?.name
+                                    }
+                                </span>
+                            </label>
+                        )}
+                    {!allowedAccount &&
+                        accounts?.map((acc) => (
+                            <label
+                                key={acc?._id}
+                                className="relative cursor-pointer flex shrink-0 p-1"
+                            >
+                                <input
+                                    type="radio"
+                                    name="account"
+                                    className="hidden peer"
+                                    value={acc?._id}
+                                    checked={selectedAccount === acc?._id}
+                                    onChange={() => {
+                                        setSelectedAccount(acc._id!);
+
+                                        const filtered = accounts.filter(
+                                            (e) => e._id !== acc._id,
+                                        );
+
+                                        // If it is already select and was not filtered out, let it be, else select the first one.
+                                        if (
+                                            filtered.some(
+                                                (e) =>
+                                                    e._id === selectedAccountTo,
+                                            )
+                                        )
+                                            return;
+                                        setSelectedAccountTo(filtered[0]._id!);
+                                    }}
+                                />
+                                <span
+                                    className={`${colors.find((e: IColor) => e.name === acc?.bgColor)?.color || "bg-emerald-50"} ${acc?.bgColor === "White" ? "text-black" : "text-white"} text-xs font-medium px-3.5 py-2 rounded-full shadow-xs transition-all duration-200 peer-checked:ring-2 peer-checked:ring-offset-2 dark:peer-checked:ring-offset-black peer-checked:ring-black dark:peer-checked:ring-white`}
+                                >
+                                    {acc?.name}
+                                </span>
+                            </label>
+                        ))}
                 </div>
             </div>
 

@@ -4,7 +4,7 @@ import useAuth from "../hooks/Auth";
 import toast from "react-hot-toast";
 import { GetDataNow } from "../api/AuthAPI";
 import { ApiError } from "@/types/common";
-import type { IAccount } from "@/types/common";
+import type { IAccount } from "@/types/account"
 import { ICategory } from "@/types/category";
 import { ITransaction } from "@/types/transaction";
 import HandleErrorMessage from "@/utils/networkError";

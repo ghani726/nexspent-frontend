@@ -1,43 +1,29 @@
-import { Edit, Merge, Trash2, Triangle } from "lucide-react";
+import { Merge, Triangle } from "lucide-react";
 import colors from "@/utils/color";
-import type { IAccount } from "@/types/common";
-import type { ITransaction } from "@/types/transaction";
 
-interface CardProps extends IAccount {
-    accountsLength: number;
-    transactions: ITransaction[];
-    EditFunc: (value: IAccount) => void;
-    DeleteFunc: (_id: string) => void;
+import type { IAccount } from "@/types/account";
+import useAuth from "@/hooks/Auth";
+import useData from "@/hooks/Data";
+
+interface CardProps {
+    obj: IAccount;
+    ViewFunc: (value: IAccount) => void;
     MergeFunc: (_id: string, name: string) => void;
 }
-const AccountCard = ({
-    _id,
-    name,
-    balance,
-    bgColor,
-    accountsLength,
-    currency,
-    transactions,
-    decimalPrecision,
-    EditFunc,
-    DeleteFunc,
-    MergeFunc,
-}: CardProps) => {
+const AccountCard = ({ obj, ViewFunc, MergeFunc }: CardProps) => {
+    const { user } = useAuth();
+    const { accounts, transactions } = useData();
     const bgColors = colors
-        .filter((e) => e.name === bgColor)[0]
+        .filter((e) => e.name === obj.bgColor)[0]
         .color.split("[")[1]
         .slice(0, -1); //Obtain the color code
 
-    const handleEdit = () => {
-        EditFunc({
-            name: name,
-            balance: balance,
-            decimalPrecision: decimalPrecision,
-            bgColor: bgColor,
-            currency: currency,
-            _id: _id,
-        });
-    };
+    const transacts = transactions.filter(
+        (e) =>
+            e.account === obj._id ||
+            e.fromAccount === obj._id ||
+            e.toAccount === obj._id,
+    );
 
     const showActionButtons = () => {
         const MergeButton = () => {
@@ -45,7 +31,7 @@ const AccountCard = ({
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
-                        MergeFunc(_id, name);
+                        MergeFunc(obj._id!, obj.name);
                     }}
                     title="Merge Account"
                     className="text-blue-500 p-1.5 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900 cursor-pointer"
@@ -54,70 +40,27 @@ const AccountCard = ({
                 </button>
             );
         };
-        const EditButton = () => {
-            return (
-                <button
-                    title="Edit Account"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleEdit();
-                    }}
-                    className="text-primary	 p-1.5 rounded-full hover:bg-secondary/50 cursor-pointer"
-                >
-                    <Edit size={20}></Edit>
-                </button>
-            );
-        };
 
-        const DeleteButton = () => {
-            return (
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        DeleteFunc(_id);
-                    }}
-                    title="Delete"
-                    className="text-red-500 p-1.5 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50 cursor-pointer"
-                >
-                    <Trash2 size={20}></Trash2>
-                </button>
-            );
-        };
-
-        if (accountsLength <= 1) return <EditButton></EditButton>;
-
-        if (!transactions?.length) {
-            return (
-                <>
-                    <MergeButton></MergeButton>
-                    <EditButton></EditButton>
-                    <DeleteButton></DeleteButton>
-                </>
-            );
-        } else {
-            return (
-                <>
-                    <MergeButton></MergeButton>
-                    <EditButton></EditButton>
-                </>
-            );
-        }
+        if (accounts.length > 1) return <MergeButton></MergeButton>;
     };
     return (
         <div
             style={{ borderColor: bgColors }}
+            onClick={() => ViewFunc(obj)}
             className={`flex starting:translate-y-full animate-fade-in  cursor-pointer hover:shadow-large hover:scale-[1.02] shadow-medium duration-300 ease-in-out active:scale-99 shrink-0 items-center p-3 px-6 justify-between -space-y-1 w-full bg-surface dark:bg-gray-800 rounded-full border-l-6`}
         >
             <div className="flex flex-col -space-y-1">
                 <h3 className="font-bold text-[22px] -my-1.3 mr-7 line-clamp-1 wrap-anywhere">
-                    {name}
+                    {obj.name}
                 </h3>
                 <p
-                    className={`${balance === 0 ? "text-black dark:text-white" : balance < 0 ? "text-red-500" : "text-primary"} flex justify-start items-center gap-1`}
+                    className={`${obj.balance === 0 ? "text-black dark:text-white" : obj.balance && obj.balance < 0 ? "text-red-500" : "text-primary"} flex justify-start items-center gap-1 font-medium`}
                 >
-                    {currency?.symbol}
-                    {balance}{" "}
-                    {!balance ? null : balance > 0 ? (
+                    {obj.balance! < 0
+                        ? `-${user?.currency}${parseFloat(Math.abs(obj.balance!).toFixed(user?.decimalPrecision)).toLocaleString()}`
+                        : `${user?.currency}
+                        ${parseFloat(obj.balance!.toFixed(user?.decimalPrecision)).toLocaleString()}`}{" "}
+                    {!obj.balance ? null : obj.balance > 0 ? (
                         <Triangle
                             className=""
                             fill="currentColor"
@@ -136,8 +79,8 @@ const AccountCard = ({
                     style={{ color: bgColors }}
                     className={`text-xs flex justify-start items-center gap-1 text-shadow-2xs`}
                 >
-                    {transactions.length}{" "}
-                    {transactions.length === 1 ? "transaction" : "transactions"}
+                    {transacts.length}{" "}
+                    {transacts.length === 1 ? "transaction" : "transactions"}
                 </p>
             </div>
             <div className="flex justify-center items-center">

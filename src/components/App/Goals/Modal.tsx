@@ -206,7 +206,7 @@ const GoalModal = ({
             children={
                 <>
                     {/* Icon and Goal Title */}
-                    <div className="flex justify-start items-center gap-4 w-full">
+                    <div className="flex justify-start items-center gap-4 w-full z-5">
                         <button
                             onClick={() => setShowIconModal((prev) => !prev)}
                             className={`w-16 h-16 shrink-0 text-4xl ${colors.filter((e) => e.name === form.bgColor)[0].color} rounded-full`}
@@ -241,12 +241,12 @@ const GoalModal = ({
                         Target to save
                         <button
                             onClick={() => {
-                                if (typeOfModal === "Create")
+                            
                                     setShowDialPad((prev) => !prev);
                             }}
                             className={`font-bold text-2xl bg-white border border-gray-200 dark:border-transparent dark:bg-gray-800 p-1 rounded-xl cursor-pointer active:scale-95 duration-300 ease-in-out`}
                         >
-                            {user?.defaultCurrency?.symbol}
+                            {user?.currency}
                             {form?.goalAmount?.toLocaleString()}
                         </button>
                     </div>
@@ -292,15 +292,13 @@ const GoalModal = ({
                     ></DatePickerComponent>
 
                     <DialPad
-                        dP={user?.defaultDecimalPrecision}
-                        text="Balance"
+                        text="Amount"
                         input={form.goalAmount!}
                         showModal={showDialPad}
                         setShowModal={setShowDialPad}
                         setInput={(e) =>
                             setForm((prev) => ({ ...prev, goalAmount: e }))
                         }
-                        currencySymbol={user?.defaultCurrency?.symbol}
                     ></DialPad>
                     <EmojiPicker
                         showModal={showIconModal}

@@ -1,38 +1,36 @@
+import useAuth from "@/hooks/Auth";
 import { Divide, Minus, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BsBackspace } from "react-icons/bs";
-import useAuth from "../../../hooks/Auth";
 
 const DialPad = ({
     text = "Amount",
     input = 0,
     setInput,
-    currencySymbol,
-    dP = 0,
     showModal,
     setShowModal,
     showTools = true,
+    minValue = 0,
+    maxValue,
 }: {
     text?: string;
     input: number;
     setInput: (data: number) => void;
-    currencySymbol?: string;
-    dP?: number;
     showModal: boolean;
     setShowModal: (data: boolean | ((prev: boolean) => boolean)) => void;
     showTools?: boolean;
+    minValue?: number;
+    maxValue?: number;
 }) => {
+    const { user } = useAuth();
+    const dP = user!.decimalPrecision!;
     const [value, setValue] = useState(input);
 
     const [secondaryValue, setSecondaryValue] = useState(String(input));
     const [displayValue, setDisplayValue] = useState("");
     const [showDisplayValue, setShowDisplayValue] = useState(false);
-    const {user} = useAuth()
-    
-    if (!currencySymbol) {
-        currencySymbol = user?.defaultCurrency?.symbol
-    }
+
     // NumPad Logic
     useEffect(() => {
         let premadeArray = null; //eslint-disable-line
@@ -142,7 +140,7 @@ const DialPad = ({
                 try {
                     const result = eval(premadeArray.join("")); //eslint-disable-line
                     setValue(result);
-                } catch (err) {// eslint-disable-line
+                } catch {
                     toast.dismissAll();
                     toast.error(
                         `You entered an incorrect decimal number which is mathematically incorrect. Please enter correct values.`,
@@ -194,8 +192,8 @@ const DialPad = ({
                 <div
                     className={`flex justify-end items-center  max-w-full line-clamp-1 wrap-anywhere w-full text-3xl font-bold ${value || secondaryValue.length > 1 ? "text-black dark:text-white" : "text-gray-600"}`}
                 >
-                    {currencySymbol}
-                    {dP > 0 ? value.toFixed(dP) : Math.round(value)}
+                    {user?.currency}
+                    {dP > 0 ? parseFloat(value.toFixed(dP)) : Math.round(value)}
                 </div>
                 {showDisplayValue && (
                     <div className="w-full -my-3 leading-snug max-w-full wrap-anywhere">
@@ -340,6 +338,14 @@ const DialPad = ({
                 </div>
                 <button
                     onClick={() => {
+                        if (minValue && value < minValue) {
+                            toast.error(`Value can't be less than ${minValue}`);
+                            return;
+                        }
+                        if (maxValue && value > maxValue) {
+                            toast.error(`Value can't be more than ${maxValue}`);
+                            return;
+                        }
                         setInput(value);
                         setShowModal(false);
                     }}

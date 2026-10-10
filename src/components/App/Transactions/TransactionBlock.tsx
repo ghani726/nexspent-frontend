@@ -11,7 +11,7 @@ const TransactionBlock = ({
     EditFunc: (obj: ITransaction) => void;
 }) => {
     return (
-        <div className="flex flex-col justify-between items-start w-full gap-2">
+        <div className="flex starting:translate-y-full animate-slide-in-up flex-col justify-between items-start w-full gap-2 pb-2">
             <h4 className="ml-2 text-gray-600">{formatTxnDate(obj.date)}</h4>
             <div className="flex flex-col w-full justify-between items-center gap-2">
                 {obj.trasactions.map((obj) => {

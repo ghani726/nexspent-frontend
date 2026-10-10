@@ -1,4 +1,3 @@
-import { ICurrency } from "@/types/common";
 import { Dispatch, SetStateAction } from "react";
 
 export interface IUser {
@@ -8,8 +7,8 @@ export interface IUser {
     userName: string;
     password?: string;
 
-    defaultCurrency: ICurrency;
-    defaultDecimalPrecision: number;
+    currency?: string;
+    decimalPrecision?: number;
     isEmailVerified?: boolean;
 }
 

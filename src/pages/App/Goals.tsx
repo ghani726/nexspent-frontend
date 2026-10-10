@@ -8,12 +8,14 @@ import useData from "@/hooks/Data";
 import GoalCard from "@/components/App/Goals/GoalCard";
 import GoalViewModal from "@/components/App/Goals/GoalViewModal";
 import GoalModal from "@/components/App/Goals/Modal";
+import SearchBar from "@/components/App/Common/SearchBar";
 
 const Goals = ({ GetData }: { GetData: () => void }) => {
     // 1. States.
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
     const [goal, setGoal] = useState<IGoal | null>(null);
+    const [searchValue, setSearchValue] = useState("");
 
     // 2. Fetch all goals from gloabl context.
     const { goals } = useData();
@@ -34,10 +36,26 @@ const Goals = ({ GetData }: { GetData: () => void }) => {
     // 5. Info Modal
     const infoRef = useRef<HTMLDialogElement>(null);
 
-    // 6. Main Component
+    // 6. Function to render goals
+    const showGoals = () => {
+        // 1. Filter categories based on search text and slider tab
+        const filteredBudgets = goals.filter((go) =>
+            searchValue.trim()
+                ? go.title.toLowerCase().includes(searchValue.toLowerCase())
+                : true,
+        );
+
+        // 2. Map filtered array to JSX and RETURN it
+        return filteredBudgets.map((go) => {
+            return (
+                <GoalCard key={go._id} obj={go} ViewFunc={ViewFunc}></GoalCard>
+            );
+        });
+    };
+    // 7. Main Component
     return (
         <div className="relative w-full lg:max-w-7/10 flex flex-col gap-4">
-            {/* 7. Header */}
+            {/* 8. Header */}
             <div className="flex justify-between items-center">
                 <h2 className="font-bold line-clamp-1 text-3xl text-primary">
                     Goals
@@ -54,23 +72,23 @@ const Goals = ({ GetData }: { GetData: () => void }) => {
                     icon={<Goal size={36}></Goal>}
                 ></InfoModal>
             </div>
-            {/* 8. Body | Goal Cards */}
-            <div className="w-full gap-2 flex flex-col">
-                {goals.map((go) => (
-                    <GoalCard
-                        key={go._id}
-                        obj={go}
-                        ViewFunc={ViewFunc}
-                    ></GoalCard>
-                ))}
+            {/* 9. Search Bar */}
+            <SearchBar
+                title={"Search goal..."}
+                searchValue={searchValue}
+                setSearchValue={setSearchValue}
+            ></SearchBar>
+            {/* 10. Body | Goal Cards */}
+            <div className="w-full gap-2 flex flex-col pb-16">
+                {showGoals()}
             </div>
-            {/* 9. Add Button */}
+            {/* 11. Add Button */}
             <AddButton
                 title="Create Goal"
                 showModal={showCreateModal}
                 setShowModal={setShowCreateModal}
             ></AddButton>
-            {/* 10. View Modal */}
+            {/* 12. View Modal */}
             {showViewModal && (
                 <GoalViewModal
                     Goal={goal!}
@@ -78,7 +96,7 @@ const Goals = ({ GetData }: { GetData: () => void }) => {
                     GetData={GetData}
                 ></GoalViewModal>
             )}
-            {/* 11. Create Modal */}
+            {/* 13. Create Modal */}
             {showCreateModal && (
                 <GoalModal
                     typeOfModal="Create"

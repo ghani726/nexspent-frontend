@@ -21,7 +21,7 @@ const TypeSelector = ({
     return (
         <div className="flex justify-center items-center w-full">
             <div
-                className={`flex duration-300 ease-in-out bg-surface/70 shadow-small dark:bg-gray-800 justify-center items-center rounded-full relative ms:w-fit w-full`}
+                className={`flex duration-300 ease-in-out bg-surface/70 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 justify-center items-center rounded-full relative ms:w-fit w-full`}
             >
                 <div
                     className={`absolute dark:bg-gray-700 shadow-medium top-0 left-0 ${show4 && showAll ? "w-1/4" : !showAll && !show4 ? "w-1/2" : "w-1/3"} h-full rounded-full bg-surface duration-300 ease-in-out`}

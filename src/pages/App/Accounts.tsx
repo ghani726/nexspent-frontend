@@ -8,18 +8,14 @@ import AccountsModal from "@/components/App/Accounts/Modal";
 import useData from "@/hooks/Data";
 import InfoModal from "@/components/App/Common/InfoModal";
 import InfoButton from "@/components/App/Common/InfoButton";
-import DeleteModal from "@/components/App/Common/DeleteModal";
-import { DeleteAccount } from "@/api/AccountsAPI";
+import { API_Account_Delete } from "@/api/AccountsAPI";
 import SearchBar from "@/components/App/Common/SearchBar";
 import MergeModal from "@/components/App/Common/MergeModal";
-import type {
-    ApiError,
-    IAccount,
-    ICurrency,
-    IDeleteHandlerProps,
-} from "@/types/common";
-import { baseCurrency } from "@/utils/currencies";
+import type { ApiError, IDeleteHandlerProps } from "@/types/common";
+import type { IAccount } from "@/types/account";
 import HandleErrorMessage from "@/utils/networkError";
+import AccountsCard from "@/components/App/Home/AccountsCard";
+import AccountViewModal from "@/components/App/Accounts/AccountViewModal";
 
 const DeleteHandler = async ({
     _id,
@@ -30,17 +26,12 @@ const DeleteHandler = async ({
 }: IDeleteHandlerProps) => {
     setIsLoading(true);
     try {
-        const res = await DeleteAccount({ accountID: _id, token });
+        await API_Account_Delete({ _id: _id, token });
 
-        if (res.success) {
-            setIsLoading(false);
-            toast.success("Account Deleted successfully.");
-            GetData();
-            Cancel();
-        } else {
-            setIsLoading(false);
-            return toast.error(res.error.message);
-        }
+        setIsLoading(false);
+        toast.success("Account Deleted successfully.");
+        GetData();
+        Cancel();
     } catch (error) {
         setIsLoading(false);
         const err = error as ApiError;
@@ -67,26 +58,11 @@ const Accounts = ({ GetData }: { GetData: () => void }) => {
 
         // 2. Map filtered array to JSX and RETURN it
         return filteredAccounts.map((e) => {
-            const txns = transactions.filter(
-                (i) =>
-                    i.account === e._id ||
-                    i.fromAccount === e._id ||
-                    i.toAccount === e._id,
-            );
-
             return (
                 <AccountCard
-                    _id={e._id}
+                    obj={e}
                     key={e._id}
-                    name={e.name}
-                    balance={e.balance}
-                    currency={e.currency}
-                    accountsLength={accounts.length}
-                    bgColor={e.bgColor}
-                    transactions={txns}
-                    decimalPrecision={e.decimalPrecision}
-                    EditFunc={EditFunc}
-                    DeleteFunc={DeleteFunc}
+                    ViewFunc={ViewFunc}
                     MergeFunc={MergeFunc}
                 ></AccountCard>
             );
@@ -95,75 +71,44 @@ const Accounts = ({ GetData }: { GetData: () => void }) => {
     // Modal states
     const [showModal, setShowModal] = useState(false);
     const [showMergeModal, setShowMergeModal] = useState(false);
+    const [showViewModal, setShowViewModal] = useState(false);
 
     // Edit States
-    const [typeOfModal, setTypeOfModal] = useState<"Create" | "Update">("Create");
-    const [name, setName] = useState("");
-    const [balance, setBalance] = useState(0);
-    const [decimalPrecision, setDecimalPrecision] = useState(0);
-    const [bgColor, setBgColor] = useState("Default");
-    const [currency, setCurrency] = useState<ICurrency | null>(null);
-
-    // Edit, Delete and Merge States
-    const [accountID, setAccountID] = useState("");
+    const [typeOfModal, setTypeOfModal] = useState<"Create" | "Update">(
+        "Create",
+    );
+    // const [name, setName] = useState("");
+    // const [balance, setBalance] = useState(0);
+    // const [bgColor, setBgColor] = useState("Default");
+    const baseAccount: IAccount = {
+        name: "",
+        balance: 0,
+        bgColor: "",
+        _id: "",
+    };
+    const [account, setAccount] = useState(baseAccount);
 
     // Merge State
     const [mergeAccountID, setMergeAccountID] = useState("");
     const [mergeObj1, setMergeObj1] = useState("");
     const [mergeObj2, setMergeObj2] = useState("");
 
-    const { accounts, transactions } = useData();
+    const { accounts } = useData();
 
     //   Function to get back
     const Cancel = () => {
+        setShowViewModal(false);
         setShowModal(false);
         setTypeOfModal("Create");
-        setName("");
-        setBalance(0);
-        setBgColor("Default");
-        setCurrency(null);
-        setDecimalPrecision(0);
-        setAccountID("");
+        setAccount(baseAccount);
     };
 
     //   Function to control edit.
-    const EditFunc = ({
-        name,
-        balance,
-        decimalPrecision,
-        bgColor,
-        currency,
-        _id,
-    }: IAccount) => {
+    const ViewFunc = (obj: IAccount) => {
         setTypeOfModal("Update");
-        setName(name);
-        setBalance(balance);
-        setDecimalPrecision(decimalPrecision ?? 0);
-        setBgColor(bgColor);
-        setCurrency(currency);
-        setAccountID(_id);
-        setShowModal(true);
+        setAccount(obj);
+        setShowViewModal(true)
     };
-
-    // Delete Function
-
-    const DeleteFunc = (accountID: string) => {
-        setAccountID(accountID);
-        openModal();
-    };
-
-    const CancelDelete = () => {
-        setAccountID("");
-        closeModal();
-    };
-
-    // Modalbackground: var(--color-gray-900);
-
-    const dialogRef = useRef<HTMLDialogElement>(null);
-
-    const openModal = () => dialogRef.current?.showModal();
-
-    const closeModal = () => dialogRef.current?.close();
 
     // Info Modal
 
@@ -174,20 +119,20 @@ const Accounts = ({ GetData }: { GetData: () => void }) => {
     // Merge Modal
 
     const MergeFunc = (id: string, name: string) => {
-        if (!accountID) {
-            setAccountID(id);
+        if (!account._id) {
+            setAccount((prev) => ({ ...prev, _id: id }));
             setMergeObj1(name);
             setShowMergeModal(true);
-        } else if (id === accountID) {
+        } else if (id === account._id) {
             CancelMerge();
-        } else if (id && id !== accountID) {
+        } else if (id && id !== account._id) {
             setMergeAccountID(id);
             setMergeObj2(name);
         }
     };
 
     const CancelMerge = () => {
-        setAccountID("");
+        setAccount((prev) => ({ ...prev, _id: "" }));
         setMergeAccountID("");
         setMergeObj1("");
         setMergeObj2("");
@@ -215,19 +160,17 @@ const Accounts = ({ GetData }: { GetData: () => void }) => {
                 ></InfoModal>
             </div>
             <SearchBar
-                // className="w-full"
                 ph={"Search account..."}
                 title={"Search account..."}
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}
             ></SearchBar>
             <MergeModal
-                // Ref={mergeRef}
                 showMergeModal={showMergeModal}
                 GetData={GetData}
                 Cancel={CancelMerge}
                 type="Account"
-                firstID={accountID}
+                firstID={account._id!}
                 mergeID={mergeAccountID}
                 mergeObj1={mergeObj1}
                 mergeObj2={mergeObj2}
@@ -238,7 +181,7 @@ const Accounts = ({ GetData }: { GetData: () => void }) => {
                 {acts()}
             </div>
             <AddButton
-                title="Add account"
+                title="Create account"
                 showModal={showModal}
                 setShowModal={setShowModal}
             ></AddButton>
@@ -246,26 +189,17 @@ const Accounts = ({ GetData }: { GetData: () => void }) => {
                 <AccountsModal
                     Cancel={Cancel}
                     typeOfModal={typeOfModal}
-                    editObj={{
-                        name,
-                        balance,
-                        decimalPrecision,
-                        bgColor,
-                        currency: currency || baseCurrency,
-                        _id: accountID,
-                    }}
+                    editObj={AccountsCard}
                     GetData={GetData}
                 ></AccountsModal>
             )}
-            <DeleteModal
-                text="account"
-                GetData={GetData}
-                DeleteHandler={DeleteHandler}
-                dialogRef={dialogRef}
-                Cancel={Cancel}
-                handleCancel={CancelDelete}
-                _id={accountID}
-            ></DeleteModal>
+            {showViewModal && (
+                <AccountViewModal
+                    Account={account}
+                    GetData={GetData}
+                    Cancel={Cancel}
+                ></AccountViewModal>
+            )}
         </div>
     );
 };

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import useAuth from "@/hooks/Auth";
 import toast from "react-hot-toast";
-import { CreateCategory, UpdateCategory } from "@/api/CategoryAPI";
+import { API_Category_Create, API_Category_Update } from "@/api/CategoryAPI";
 import ColorPicker from "@/components/App/Common/ColorPicker";
 import useData from "@/hooks/Data";
 import EmojiPicker from "@/components/App/Common/EmojiPicker";
@@ -23,10 +23,12 @@ interface ICreate {
     GetData: () => void;
     accessToken: string;
 }
+
 interface IUpdate extends ICreate {
     _id: string;
     isTypeEditable: boolean;
 }
+
 const handleCreation = async ({
     name,
     selectedColor,
@@ -42,7 +44,7 @@ const handleCreation = async ({
     }
     setIsLoading(true);
     try {
-        await CreateCategory({
+        await API_Category_Create({
             name: name,
             bgColor: selectedColor,
             categoryType: slider === 0 ? "expense" : "income",
@@ -83,13 +85,13 @@ const handleEdit = async ({
     setIsLoading(true);
 
     try {
-        await UpdateCategory({
+        await API_Category_Update({
             name: name,
             bgColor: selectedColor,
             categoryType: isTypeEditable && slider === 0 ? "expense" : "income",
 
             icon: selectedIcon,
-            categoryID: _id,
+            _id: _id,
             token: accessToken,
         });
 
