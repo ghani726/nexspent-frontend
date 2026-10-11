@@ -61,7 +61,7 @@ const GoalViewModal = ({
     const { user } = useAuth();
     const { transactions } = useData();
 
-    // 3. Initiliazing dates at 00:00
+    // 3. Initializing dates at 00:00
     const today = dayjs(new Date()).startOf("day");
     const start = dayjs(Goal.startDate).startOf("day");
     const end = dayjs(Goal.endDate).startOf("day");
@@ -70,7 +70,7 @@ const GoalViewModal = ({
     const diffES = end.diff(start, "days");
     const diffST = today.diff(start, "days");
 
-    // 5. Small util vairables
+    // 5. Small util variables
     const progress = (Goal.savedAmount! / Goal.goalAmount) * 100;
     const currentColor = colors.find((e) => e.name === Goal.bgColor);
     const amount = parseFloat(
@@ -80,7 +80,7 @@ const GoalViewModal = ({
     );
     const transacts = transactions.filter((txn) => txn.goal === Goal._id);
 
-    // 6. Util Functin to render start date.
+    // 6. Util Function to render start date.
     const showStart = () => {
         if (!diffST) return "Today";
 
@@ -175,8 +175,6 @@ const GoalViewModal = ({
         setTypeOfModal("Create");
         setTxn(null);
     };
-
-    console.log(Goal.status);
 
     return (
         <ViewModal

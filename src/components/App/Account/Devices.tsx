@@ -129,6 +129,8 @@ const DeviceCard = ({
         setCurrentSession,
         setIsLoggedIn,
         setDataToSessionStorage,
+        sessions,
+        setSessions
     } = useAuth();
 
     const navigate = useNavigate();
@@ -146,6 +148,8 @@ const DeviceCard = ({
                 setIsLoggedIn,
                 setDataToSessionStorage,
                 navigate,
+                sessions,
+                setSessions
             });
         } else {
             handleLogoutFromSpecificDevice({
@@ -193,6 +197,7 @@ const Devices = () => {
         setCurrentSession,
         setDataToSessionStorage,
         setIsLoggedIn,
+        setSessions
     } = useAuth();
 
     const navigate = useNavigate();
@@ -225,6 +230,8 @@ const Devices = () => {
                         setIsLoggedIn,
                         setDataToSessionStorage,
                         navigate,
+                        sessions,
+                        setSessions
                     });
                 }}
                 className="p-3 px-5 font-semibold cursor-pointer rounded-full bg-primary text-white active:scale-95 ease-in-out duration-300"

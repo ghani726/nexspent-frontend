@@ -47,7 +47,7 @@ const AccountCard = ({ obj, ViewFunc, MergeFunc }: CardProps) => {
         <div
             style={{ borderColor: bgColors }}
             onClick={() => ViewFunc(obj)}
-            className={`flex starting:translate-y-full animate-fade-in  cursor-pointer hover:shadow-large hover:scale-[1.02] shadow-medium duration-300 ease-in-out active:scale-99 shrink-0 items-center p-3 px-6 justify-between -space-y-1 w-full bg-surface dark:bg-gray-800 rounded-full border-l-6`}
+            className={`flex starting:translate-y-full animate-fade-in  cursor-pointer hover:shadow-medium hover:scale-[1.02] border border-gray-200 dark:border-gray-700 duration-300 ease-in-out active:scale-99 shrink-0 items-center p-3 px-6 justify-between -space-y-1 w-full bg-surface dark:bg-gray-800 rounded-full border-x-6`}
         >
             <div className="flex flex-col -space-y-1">
                 <h3 className="font-bold text-[22px] -my-1.3 mr-7 line-clamp-1 wrap-anywhere">

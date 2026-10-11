@@ -5,12 +5,8 @@ export const BaseUserJSON: IUser = {
     fullName: "NexSpent",
     email: "info@nextspent.com",
     userName: "nexspent",
-    defaultDecimalPrecision: 2,
-    defaultCurrency: {
-        symbol: "$",
-        country: "United States",
-        code: "USD",
-    },
+    decimalPrecision: 2,
+    currency: "$"
 };
 const LogoutUtility = ({
     setAccessToken,

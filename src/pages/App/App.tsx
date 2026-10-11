@@ -87,9 +87,6 @@ const App = () => {
         }
     }, [accessToken, isDataFetched]); //eslint-disable-line
 
-    // Transaction Model
-
-    const [showModal, setShowModal] = useState(false);
     return (
         <>
             <Header hide={hide} setHide={setHide} GetData={GetData}></Header>
@@ -104,9 +101,7 @@ const App = () => {
                             path=""
                             element={
                                 <Home
-                                    // GetData={GetData}
-                                    showModal={showModal}
-                                    setShowModal={setShowModal}
+                                    GetData={GetData}
                                 ></Home>
                             }
                         ></Route>

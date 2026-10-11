@@ -1,46 +1,17 @@
+import type { IAccount } from "@/types/account";
 import { useState } from "react";
 import { useRef } from "react";
 import { Wallet } from "lucide-react";
-import toast from "react-hot-toast";
 import AccountCard from "@/components/App/Accounts/AccountCard";
 import AddButton from "@/components/App/Common/AddButton";
 import AccountsModal from "@/components/App/Accounts/Modal";
 import useData from "@/hooks/Data";
 import InfoModal from "@/components/App/Common/InfoModal";
 import InfoButton from "@/components/App/Common/InfoButton";
-import { API_Account_Delete } from "@/api/AccountsAPI";
 import SearchBar from "@/components/App/Common/SearchBar";
 import MergeModal from "@/components/App/Common/MergeModal";
-import type { ApiError, IDeleteHandlerProps } from "@/types/common";
-import type { IAccount } from "@/types/account";
-import HandleErrorMessage from "@/utils/networkError";
-import AccountsCard from "@/components/App/Home/AccountsCard";
 import AccountViewModal from "@/components/App/Accounts/AccountViewModal";
 
-const DeleteHandler = async ({
-    _id,
-    token,
-    Cancel,
-    GetData,
-    setIsLoading,
-}: IDeleteHandlerProps) => {
-    setIsLoading(true);
-    try {
-        await API_Account_Delete({ _id: _id, token });
-
-        setIsLoading(false);
-        toast.success("Account Deleted successfully.");
-        GetData();
-        Cancel();
-    } catch (error) {
-        setIsLoading(false);
-        const err = error as ApiError;
-        const res = err?.response?.data;
-
-        if (res) toast.error(res.error.message);
-        else HandleErrorMessage(err);
-    }
-};
 const Accounts = ({ GetData }: { GetData: () => void }) => {
     //#region
 
@@ -189,7 +160,7 @@ const Accounts = ({ GetData }: { GetData: () => void }) => {
                 <AccountsModal
                     Cancel={Cancel}
                     typeOfModal={typeOfModal}
-                    editObj={AccountsCard}
+                    editObj={account}
                     GetData={GetData}
                 ></AccountsModal>
             )}

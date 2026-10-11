@@ -22,7 +22,7 @@ const DeleteModal = ({
     const handleDelete = async () => {
         setIsLoading(true);
         try {
-            const res = await DeleteAccount(password, accessToken ?? "");
+            await DeleteAccount(password, accessToken ?? "");
             
                 navigate("/login", { replace: true });
                 toast.success("Account deleted successfully");
@@ -34,8 +34,6 @@ const DeleteModal = ({
                 return;
             
         } catch (error) {
-            console.error(error);
-            
             setIsLoading(false);
             const err = error as ApiError;
             const res = err?.response?.data;

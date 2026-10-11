@@ -75,7 +75,7 @@ const Home = ({ GetData }: { GetData: () => void }) => {
                 <div className="flex flex-col">
                     <h3 className="text-xl font-semibold">Total Balance</h3>
                     <h2
-                        className={`text-3xl font-bold ${balance > 0 ? "text-primary" : balance < 0 ? "text-red-600" : "text-black"}`}
+                        className={`text-3xl font-bold ${balance > 0 ? "text-primary" : balance < 0 ? "text-red-600" : "text-black dark:text-white"}`}
                     >
                         {balance < 0
                             ? `-${user?.currency}${parseFloat(Math.abs(balance).toFixed(user?.decimalPrecision)).toLocaleString()}`

@@ -16,28 +16,24 @@ const RegisterPage = () => {
         formState: { errors, isSubmitting },
     } = useForm();
 
-
     const onSubmit = async (data: object) => {
         try {
             const res = await Register(data);
 
-            if (res.success) {
-                toast.dismissAll();
-                setIsLoggedIn(true);
-                setUser(res.data.user);
-                setAccessToken(res.data.token);
-                setCurrentSession(res.data.currentSession);
-                setSessions(res.data.user.sessions);
-                toast.success(<span>Registered successfully</span>);
-                setDataToSessionStorage(true, res.data.user);
-                navigate("/app", { replace: true });
-            } else if (!res.success) {
-                toast.dismissAll();
-                return toast.error(res.data.error.message);
-            }
+            localStorage.setItem("isLoggedIn", "true");
+            toast.dismissAll();
+            setIsLoggedIn(true);
+            setUser(res.data.user);
+            setAccessToken(res.data.token);
+            setCurrentSession(res.data.currentSession);
+            setSessions(res.data.user.sessions);
+            toast.success(<span>Registered successfully</span>);
+            setDataToSessionStorage(true, res.data.user);
+            navigate("/app", { replace: true });
         } catch (err) {
             const error = err as ApiError;
             toast.dismissAll();
+            localStorage.removeItem("isLoggedIn");
             if (error?.response?.data?.error?.message) {
                 return toast.error(error.response.data.error.message);
             } else {

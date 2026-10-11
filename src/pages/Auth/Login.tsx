@@ -21,12 +21,15 @@ const LoginPage = () => {
     } = useAuth();
 
     useEffect(() => {
+        const isLg = localStorage.getItem("isLoggedIn");
+        if (!isLg) return;
         setIsLoggedIn(false);
         const LoginAuto = async () => {
             const loadingToast = toast.loading("Logging in. Please wait...");
             try {
                 const res = await RefreshToken();
 
+                localStorage.setItem("isLoggedIn", "true");
                 setIsLoggedIn(true);
                 setUser(res.data.user);
                 setAccessToken(res.data.token);
@@ -49,6 +52,7 @@ const LoginPage = () => {
                 if (res) {
                     setDataToSessionStorage(false, BaseUserJSON);
                     if (res?.isLoggedOut) {
+                        localStorage.removeItem("isLoggedIn");
                         return toast.success(
                             "You were logged out successfully",
                         );
@@ -71,7 +75,7 @@ const LoginPage = () => {
     const password = watch("password"); //eslint-disable-line
     const first: string = watch("first");
 
-    const validateFirstFeild = () => {
+    const validateFirstField = () => {
         try {
             if (!first?.trim()) {
                 throw new Error("");
@@ -102,7 +106,7 @@ const LoginPage = () => {
     const onSubmit = async (data: { first?: string; password?: string }) => {
         const loadingToast = toast.loading("Logging in. Please wait...");
         try {
-            validateFirstFeild();
+            validateFirstField();
             let finalObj: {
                 userName?: string;
                 email?: string;
@@ -123,6 +127,7 @@ const LoginPage = () => {
 
             const res = await Login(finalObj);
 
+            localStorage.setItem("isLoggedIn", "true");
             toast.dismiss(loadingToast);
             setIsLoggedIn(true);
             setUser(res.data.user);
@@ -142,8 +147,10 @@ const LoginPage = () => {
             const res = err?.response?.data;
 
             if (res) {
-                if (res?.isLoggedOut)
+                if (res?.isLoggedOut) {
+                    localStorage.removeItem("isLoggedIn");
                     toast.success("You were logged out successfully");
+                }
                 toast.error(res.error.message);
             } else HandleErrorMessage(err);
         }
@@ -162,7 +169,7 @@ const LoginPage = () => {
 
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="inputFeilds w-full flex flex-col gap-6"
+                className="inputFields w-full flex flex-col gap-6"
             >
                 <div className="flex flex-col ease-in-out duration-300">
                     <div className="input-box text-lg bg-gray-100 dark:bg-gray-700 rounded-5xl px-4">
@@ -181,7 +188,7 @@ const LoginPage = () => {
                     </div>
 
                     <p className="text-red-500 font-normal px-4">
-                        {validateFirstFeild()}
+                        {validateFirstField()}
                         {errors?.first?.message as string}
                     </p>
                 </div>
